@@ -1,0 +1,36 @@
+{% extends "core/base.html" %}
+
+{% block title %}{{ app.name }} Support — Happy Life Unfolding{% endblock %}
+
+{% block content %}
+<div class="detail-back">
+  <a href="{{ app.get_absolute_url }}">← Back to {{ app.name }}</a>
+</div>
+
+<div class="content-page">
+  <div class="content-header">
+    <div class="detail-icon" style="background: {{ app.accent_color }}20">{{ app.emoji }}</div>
+    <h1>{{ app.name }} Support</h1>
+    <p class="muted">We're here to help.</p>
+  </div>
+
+  <div class="content-body">
+    {% if app.support_url_notes %}
+      {{ app.support_url_notes|linebreaksbr }}
+    {% else %}
+      <h2>Contact Support</h2>
+      <p>Having trouble with {{ app.name }}? We'd love to help.</p>
+    {% endif %}
+
+    {% if app.support_email %}
+    <div class="support-contact">
+      <p>Email us at: <a href="mailto:{{ app.support_email }}" style="color: {{ app.accent_color }}">{{ app.support_email }}</a></p>
+    </div>
+    {% endif %}
+
+    <div class="support-contact">
+      <p>Or use the <a href="{% url 'contact' %}" style="color: {{ app.accent_color }}">contact form</a>.</p>
+    </div>
+  </div>
+</div>
+{% endblock %}

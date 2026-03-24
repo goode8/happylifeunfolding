@@ -1,0 +1,49 @@
+{% extends "core/base.html" %}
+
+{% block title %}{{ app.name }} — Happy Life Unfolding{% endblock %}
+{% block meta_description %}{{ app.tagline }}{% endblock %}
+
+{% block content %}
+<div class="detail-back">
+  <a href="{% url 'app_list' %}">← Back to apps</a>
+</div>
+
+<div class="detail-hero">
+  <div class="detail-content">
+    <div class="detail-icon" style="background: {{ app.accent_color }}20">{{ app.emoji }}</div>
+    <h1>{{ app.name }}</h1>
+    <p class="detail-tagline">{{ app.tagline }}</p>
+    <div class="detail-description">{{ app.description|linebreaksbr }}</div>
+
+    <div class="detail-store-links">
+      {% if app.app_store_url %}
+      <a href="{{ app.app_store_url }}" class="btn-primary" target="_blank" rel="noopener">View on App Store</a>
+      {% else %}
+      <span class="btn-primary btn-disabled">Coming to App Store</span>
+      {% endif %}
+      {% if app.play_store_url %}
+      <a href="{{ app.play_store_url }}" class="btn-ghost" target="_blank" rel="noopener">Google Play</a>
+      {% endif %}
+    </div>
+
+    <div class="detail-links">
+      <a href="{{ app.get_support_url }}" class="detail-link">
+        <strong>Support</strong>
+        <span>Get help →</span>
+      </a>
+      <a href="{{ app.get_privacy_url }}" class="detail-link">
+        <strong>Privacy Policy</strong>
+        <span>Read →</span>
+      </a>
+    </div>
+  </div>
+
+  <div class="detail-visual">
+    <div class="app-badge" style="--accent: {{ app.accent_color }}">
+      <div class="app-badge-icon">{{ app.emoji }}</div>
+      <div class="app-badge-name">{{ app.name }}</div>
+      <div class="app-badge-cat">{{ app.get_category_display }}</div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,32 @@
+{% extends "core/base.html" %}
+
+{% block title %}{{ app.name }} Privacy Policy — Happy Life Unfolding{% endblock %}
+
+{% block content %}
+<div class="detail-back">
+  <a href="{{ app.get_absolute_url }}">← Back to {{ app.name }}</a>
+</div>
+
+<div class="content-page">
+  <div class="content-header">
+    <div class="detail-icon" style="background: {{ app.accent_color }}20">{{ app.emoji }}</div>
+    <h1>{{ app.name }} Privacy Policy</h1>
+    <p class="muted">Last updated: {{ app.updated_at|date:"F j, Y" }}</p>
+  </div>
+
+  <div class="content-body">
+    {% if app.privacy_policy %}
+      {{ app.privacy_policy|linebreaksbr }}
+    {% else %}
+      <h2>Data Collection</h2>
+      <p>{{ app.name }} does not collect any personal data. The app does not require an account, does not track your usage, and does not share any information with third parties.</p>
+
+      <h2>Analytics</h2>
+      <p>We do not use any third-party analytics in this app.</p>
+
+      <h2>Contact</h2>
+      <p>If you have any questions about this privacy policy, please <a href="{% url 'contact' %}" style="color: {{ app.accent_color }}">contact us</a>.</p>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,27 @@
+{% extends "core/base.html" %}
+{% block title %}Contact — Happy Life Unfolding{% endblock %}
+{% block content %}
+<div class="contact-page">
+  <div class="section-label" style="margin-top: 20px">Contact</div>
+  <h1>Get in touch</h1>
+  <p class="muted" style="margin-top: 12px; font-size: 15px; line-height: 1.75">
+    Questions about an app, press inquiries, or just want to say hello.
+  </p>
+
+  {% if submitted %}
+  <div class="form-success">
+    Thanks! I'll get back to you soon.
+  </div>
+  {% else %}
+  <form method="post" class="form-group">
+    {% csrf_token %}
+    <input type="text" name="name" placeholder="Your name" required>
+    <input type="email" name="email" placeholder="Email address" required>
+    <textarea name="message" placeholder="Message" rows="5" required></textarea>
+    <div>
+      <button type="submit" class="btn-primary">Send message</button>
+    </div>
+  </form>
+  {% endif %}
+</div>
+{% endblock %}
