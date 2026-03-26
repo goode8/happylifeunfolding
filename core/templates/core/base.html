@@ -21,7 +21,7 @@
   <ul class="nav-links">
     <li><a href="{% url 'home' %}" {% if request.resolver_match.url_name == 'home' %}class="active"{% endif %}>Home</a></li>
     <li><a href="{% url 'app_list' %}" {% if 'app' in request.resolver_match.url_name %}class="active"{% endif %}>Apps</a></li>
-    <li><a href="{% url 'blog' %}" {% if request.resolver_match.url_name == 'blog' %}class="active"{% endif %}>Blog</a></li>
+    {% comment %} <li><a href="{% url 'blog' %}" {% if request.resolver_match.url_name == 'blog' %}class="active"{% endif %}>Blog</a></li> {% endcomment %}
     <li><a href="{% url 'contact' %}" {% if request.resolver_match.url_name == 'contact' %}class="active"{% endif %}>Contact</a></li>
   </ul>
     <label class="theme-switch" aria-label="Toggle theme">
@@ -40,7 +40,7 @@
     <nav class="footer-nav">
       <a href="{% url 'app_list' %}">Apps</a>
       <a href="{% url 'about' %}">About</a>
-      <a href="{% url 'blog' %}">Blog</a>
+      {% comment %} <a href="{% url 'blog' %}">Blog</a> {% endcomment %}
       <a href="{% url 'contact' %}">Contact</a>
     </nav>
     <p class="footer-copy">&copy; {% now "Y" %} Happy Life Unfolding</p>

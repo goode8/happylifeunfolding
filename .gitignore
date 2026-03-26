@@ -5,3 +5,19 @@
 .env
 
 db.sqlite3
+
+# Django
+local_settings.py
+
+# Logs
+*.log
+
+# Pytest
+.pytest_cache/
+
+# Coverage
+.coverage
+htmlcov/
+
+# Jupyter
+.ipynb_checkpoints/
