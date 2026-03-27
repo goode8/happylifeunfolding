@@ -1,4 +1,4 @@
-{% load static %}
+{% load static hosts %}
 <!DOCTYPE html>
 <html lang="en" data-theme="dark">
 <head>
@@ -17,12 +17,12 @@
 <body>
 
 <nav class="site-nav">
-  <a href="{% url 'home' %}" class="nav-logo">happy life <span>unfolding</span></a>
+  <a href="{% host_url 'home' host 'main' %}" class="nav-logo">happy life <span>unfolding</span></a>
   <ul class="nav-links">
-    <li><a href="{% url 'home' %}" {% if request.resolver_match.url_name == 'home' %}class="active"{% endif %}>Home</a></li>
-    <li><a href="{% url 'app_list' %}" {% if 'app' in request.resolver_match.url_name %}class="active"{% endif %}>Apps</a></li>
+    <li><a href="{% host_url 'home' host 'main' %}" {% if request.resolver_match.url_name == 'home' %}class="active"{% endif %}>Home</a></li>
+    <li><a href="{% host_url 'app_list' host 'main' %}" {% if 'app' in request.resolver_match.url_name %}class="active"{% endif %}>Apps</a></li>
     {% comment %} <li><a href="{% url 'blog' %}" {% if request.resolver_match.url_name == 'blog' %}class="active"{% endif %}>Blog</a></li> {% endcomment %}
-    <li><a href="{% url 'contact' %}" {% if request.resolver_match.url_name == 'contact' %}class="active"{% endif %}>Contact</a></li>
+    <li><a href="{% host_url 'contact' host 'main' %}" {% if request.resolver_match.url_name == 'contact' %}class="active"{% endif %}>Contact</a></li>
   </ul>
     <label class="theme-switch" aria-label="Toggle theme">
       <input type="checkbox" id="themeToggle">
@@ -36,12 +36,12 @@
 
 <footer class="site-footer">
   <div class="footer-inner">
-    <a href="{% url 'home' %}" class="footer-logo">happy life <span>unfolding</span></a>
+    <a href="{% host_url 'home' host 'main' %}" class="footer-logo">happy life <span>unfolding</span></a>
     <nav class="footer-nav">
-      <a href="{% url 'app_list' %}">Apps</a>
-      <a href="{% url 'about' %}">About</a>
+      <a href="{% host_url 'app_list' host 'main' %}">Apps</a>
+      <a href="{% host_url 'about' host 'main' %}">About</a>
       {% comment %} <a href="{% url 'blog' %}">Blog</a> {% endcomment %}
-      <a href="{% url 'contact' %}">Contact</a>
+      <a href="{% host_url 'contact' host 'main' %}">Contact</a>
     </nav>
     <p class="footer-copy">&copy; {% now "Y" %} Happy Life Unfolding</p>
   </div>

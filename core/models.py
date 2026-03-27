@@ -6,6 +6,7 @@ class App(models.Model):
         ('science', 'Science'),
         ('weather', 'Weather'),
         ('education', 'Education'),
+        ('lifestyle', 'Lifestyle'),
         ('other', 'Other'),
     ]
 
@@ -18,6 +19,7 @@ class App(models.Model):
     emoji = models.CharField(max_length=10, default='📱')
 
     # URLs
+    product_url = models.URLField(blank=True, help_text='Link to the product page or website')
     app_store_url = models.URLField(blank=True)
     play_store_url = models.URLField(blank=True)
     support_email = models.EmailField(blank=True)

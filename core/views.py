@@ -14,17 +14,27 @@ def app_list(request):
 
 def app_detail(request, slug):
     app = get_object_or_404(App, slug=slug, is_published=True)
-    return render(request, 'core/app_detail.html', {'app': app})
+    return render(request, 'core/app_detail.html', {
+        'app': app,
+        'support_url': app.get_support_url(),
+        'privacy_url': app.get_privacy_url(),
+    })
 
 
 def app_support(request, slug):
     app = get_object_or_404(App, slug=slug, is_published=True)
-    return render(request, 'core/app_support.html', {'app': app})
+    return render(request, 'core/app_support.html', {
+        'app': app,
+        'back_url': app.get_absolute_url(),
+    })
 
 
 def app_privacy(request, slug):
     app = get_object_or_404(App, slug=slug, is_published=True)
-    return render(request, 'core/app_privacy.html', {'app': app})
+    return render(request, 'core/app_privacy.html', {
+        'app': app,
+        'back_url': app.get_absolute_url(),
+    })
 
 
 def blog(request):

@@ -20,7 +20,7 @@ class AppAdmin(admin.ModelAdmin):
             'fields': ('name', 'slug', 'emoji', 'category', 'tagline', 'description', 'accent_color')
         }),
         ('Store Links', {
-            'fields': ('app_store_url', 'play_store_url', 'support_email')
+            'fields': ('product_url', 'app_store_url', 'play_store_url', 'support_email')
         }),
         ('Apple / Google Required', {
             'fields': ('support_url_notes', 'privacy_policy'),

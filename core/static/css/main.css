@@ -260,6 +260,17 @@ img {
   border-color: var(--muted);
 }
 
+.btn-product {
+  border-color: var(--product-accent);
+  color: var(--product-accent);
+}
+
+.btn-product:hover {
+  background: var(--product-accent);
+  border-color: var(--product-accent);
+  color: #04342c;
+}
+
 /* ─── SECTIONS ───────────────────────────────────────── */
 .section {
   padding: 40px 32px 64px;
