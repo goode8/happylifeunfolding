@@ -1,5 +1,4 @@
 {% extends "core/base.html" %}
-{% load hosts %}
 
 {% block title %}{{ app.name }} Support — Happy Life Unfolding{% endblock %}
 
@@ -30,7 +29,7 @@
     {% endif %}
 
     <div class="support-contact">
-      <p>Or use the <a href="{% host_url 'contact' host 'main' %}" style="color: {{ app.accent_color }}">contact form</a>.</p>
+      <p>Or use the <a href="{% url 'contact' %}" style="color: {{ app.accent_color }}">contact form</a>.</p>
     </div>
   </div>
 </div>

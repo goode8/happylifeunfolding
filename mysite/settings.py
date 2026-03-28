@@ -42,15 +42,10 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     #Custom
-    "django_hosts",
     "core",
-    "myunclethetrex",
-    "tempesttoday",
-    "beingneighborly",
 ]
 
 MIDDLEWARE = [
-    "django_hosts.middleware.HostsRequestMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -58,13 +53,9 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "django_hosts.middleware.HostsResponseMiddleware",
 ]
 
 ROOT_URLCONF = "mysite.urls"
-ROOT_HOSTCONF = "mysite.hosts"
-DEFAULT_HOST = "main"
-PARENT_HOST = os.environ.get('PARENT_HOST', 'localhost:8000')
 
 TEMPLATES = [
     {

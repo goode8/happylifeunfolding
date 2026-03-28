@@ -1,12 +1,11 @@
 {% extends "core/base.html" %}
-{% load hosts %}
 
 {% block title %}{{ app.name }} — Happy Life Unfolding{% endblock %}
 {% block meta_description %}{{ app.tagline }}{% endblock %}
 
 {% block content %}
 <div class="detail-back">
-  <a href="{% host_url 'app_list' host 'main' %}">← Back to apps</a>
+  <a href="{% url 'app_list' %}">← Back to apps</a>
 </div>
 
 <div class="detail-hero">

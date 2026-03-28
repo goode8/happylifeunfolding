@@ -41,10 +41,6 @@ def blog(request):
     return render(request, 'core/blog.html')
 
 
-def about(request):
-    return render(request, 'core/about.html')
-
-
 def contact(request):
     submitted = False
     if request.method == 'POST':
