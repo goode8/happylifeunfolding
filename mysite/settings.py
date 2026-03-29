@@ -29,7 +29,7 @@ SECRET_KEY = os.environ.get('SECRET KEY', ''),
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = ['www.happylifeunfolding.com', 'happylifeunfolding.com']
 
 
 # Application definition
