@@ -16,12 +16,12 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-# from core.views import index
-
-
+from core.views import apple_app_site_association
 
 urlpatterns = [
-    # path("admin/", admin.site.urls),
+    # Apple Universal Links — must be served at domain root, no redirects
+    path('.well-known/apple-app-site-association', apple_app_site_association, name='aasa'),
+
     path("", include("core.urls")),
     path('admin/', admin.site.urls),
 ]

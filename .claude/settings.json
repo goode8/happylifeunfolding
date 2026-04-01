@@ -1,7 +1,9 @@
 {
   "permissions": {
     "allow": [
-      "Bash(pip install:*)"
+      "Bash(pip install:*)",
+      "Bash(python3 manage.py makemigrations)",
+      "Bash(python3 manage.py migrate)"
     ]
   }
 }
