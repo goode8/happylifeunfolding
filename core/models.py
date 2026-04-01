@@ -20,6 +20,7 @@ class App(models.Model):
 
     # URLs
     product_url = models.URLField(blank=True, help_text='Link to the product page or website')
+    product_url_label = models.CharField(max_length=50, default='Visit Website', blank=True)
     app_store_url = models.URLField(blank=True)
     play_store_url = models.URLField(blank=True)
     support_email = models.EmailField(blank=True)
