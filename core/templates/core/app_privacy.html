@@ -17,7 +17,54 @@
   <div class="content-body">
     {% if app.privacy_policy %}
       {{ app.privacy_policy|linebreaksbr }}
+
+    {% elif app.slug == 'tempest-today' %}
+      <p>Tempest Today is a weather app. We are committed to protecting your privacy.</p>
+
+      <h2>What we collect</h2>
+      <p>Your most recent city or zip code search, saved locally on your device so the app can remember your last location. This is not linked to you or shared with anyone.</p>
+      <p>Bookmarks you save are stored locally on your device only.</p>
+
+      <h2>What we don't collect</h2>
+      <ul>
+        <li>We do not collect your name, email, or any personal information.</li>
+        <li>We do not create user accounts.</li>
+        <li>We do not track you across apps or websites.</li>
+        <li>We do not use analytics or advertising.</li>
+      </ul>
+
+      <h2>Third parties</h2>
+      <p>Weather data is retrieved from external data sources. Your city or zip code is sent to these services solely to retrieve weather information. No personal information is shared.</p>
+
+      <div class="policy-contact">
+        <h2>Contact</h2>
+        <p>Questions? Reach us at <a href="mailto:apphelp@happylifeunfolding.com" style="color: {{ app.accent_color }}">apphelp@happylifeunfolding.com</a> or <a href="{% url 'contact' %}" style="color: {{ app.accent_color }}">happylifeunfolding.com/contact</a>.</p>
+      </div>
+
+    {% elif app.slug == 'my-uncle-the-t-rex' %}
+      <p>My Uncle the T-Rex is an educational app. We are committed to protecting your privacy.</p>
+
+      <h2>What we collect</h2>
+      <p>Your daily streak count, saved locally on your device. This data never leaves your phone and is not linked to you.</p>
+
+      <h2>What we don't collect</h2>
+      <ul>
+        <li>We do not collect your name, email, or any personal information.</li>
+        <li>We do not create user accounts.</li>
+        <li>We do not track you across apps or websites.</li>
+        <li>We do not use analytics or advertising.</li>
+      </ul>
+
+      <h2>Third parties</h2>
+      <p>None. No data is shared with third parties.</p>
+
+      <div class="policy-contact">
+        <h2>Contact</h2>
+        <p>Questions? Reach us at <a href="mailto:apphelp@happylifeunfolding.com" style="color: {{ app.accent_color }}">apphelp@happylifeunfolding.com</a> or <a href="{% url 'contact' %}" style="color: {{ app.accent_color }}">happylifeunfolding.com/contact</a>.</p>
+      </div>
+
     {% else %}
+
       <h2>Data Collection</h2>
       <p>{{ app.name }} does not collect any personal data. The app does not require an account, does not track your usage, and does not share any information with third parties.</p>
 

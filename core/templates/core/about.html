@@ -1,0 +1,214 @@
+{% extends "core/base.html" %}
+{% block title %}About Dawn — Happy Life Unfolding{% endblock %}
+{% block meta_description %}Dawn Goodnight — Problem Solver, Software Engineer, and Project Manager based in San Jose, California.{% endblock %}
+
+{% block extra_css %}
+<style>
+  .about-hero {
+    padding: 80px 32px 60px;
+    max-width: var(--max-width);
+    margin: 0 auto;
+  }
+  .about-hero h1 {
+    font-family: var(--font-display);
+    font-size: clamp(36px, 5vw, 60px);
+    line-height: 1.05;
+    margin-bottom: 16px;
+  }
+  .about-hero h1 em { color: var(--accent); font-style: italic; }
+  .about-hero .subtitle {
+    font-size: 17px;
+    color: var(--muted);
+    max-width: 560px;
+    line-height: 1.75;
+    margin-bottom: 36px;
+  }
+  .projects-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  .project-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 32px;
+    transition: border-color var(--transition);
+  }
+  .project-card:hover { border-color: var(--accent2); }
+  .project-org {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .project-card h3 {
+    font-family: var(--font-display);
+    font-size: 26px;
+    margin-bottom: 14px;
+    color: var(--text);
+  }
+  .project-card p {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.75;
+    margin-bottom: 16px;
+  }
+  .project-card p:last-of-type { margin-bottom: 20px; }
+  .project-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .tech-tags { display: flex; gap: 8px; flex-wrap: wrap; }
+  .tech-tag {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    padding: 4px 10px;
+    border-radius: var(--radius-sm);
+    background: var(--surface2);
+    color: var(--muted);
+    border: 1px solid var(--border);
+  }
+  .testimonial-block {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--accent);
+    border-radius: var(--radius-md);
+    padding: 28px 32px;
+    margin-bottom: 28px;
+  }
+  .testimonial-block blockquote {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.8;
+    margin-bottom: 12px;
+  }
+  .testimonial-attr {
+    font-family: var(--font-mono);
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: .06em;
+  }
+  .about-bio p {
+    font-size: 15px;
+    color: var(--muted);
+    line-height: 1.75;
+    margin-bottom: 16px;
+  }
+  .project-card details summary {
+    cursor: pointer;
+    list-style: none;
+  }
+  .project-card details summary::-webkit-details-marker { display: none; }
+  .project-card details summary h3::after {
+    content: ' ↓';
+    font-size: 14px;
+    color: var(--accent);
+    font-family: var(--font-mono);
+  }
+  .project-card details[open] summary h3::after {
+    content: ' ↑';
+  }
+  .project-card details p,
+  .project-card details a {
+    margin-top: 16px;
+  }
+  @media (max-width: 768px) {
+    .about-hero { padding: 48px 20px 40px; }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="about-hero">
+  <div class="hero-tag">Portfolio</div>
+  <h1>Hi, I'm <em>Dawn Goodnight</em></h1>
+  <p class="subtitle">Problem Solver, Software Engineer, and Project Manager based in the Bay Area.</p>
+  <div class="hero-cta">
+    <a href="https://buymeacoffee.com/tempesttoday" target="_blank" rel="noopener" class="btn-primary">☕ Buy Me a Coffee</a>
+    <a href="{% url 'contact' %}" class="btn-ghost">Get in touch</a>
+  </div>
+  <div class="section-label" style="margin-top: 40px;">About</div>
+  <div class="about-bio">
+    <p>I prioritize storytelling and thrive solving challenging problems, whether hidden in data, top features, or unsolved tickets. I excel at weaving details together to create a compelling narrative. I appreciate complex problems and an upset customer — those are the ones where I can make the biggest difference.</p>
+    <p>I have a keen interest in making technology accessible to everyone. While waiting for my flying car, I engage in hobbies like cooking, walking with neighbors, knitting hats, and swimming — though not all at once.</p>
+  </div>
+</div>
+
+<section class="section">
+  <div class="section-label">Approved by Dawn</div>
+  <div class="testimonial-block">
+    <blockquote>"In my experience Dawn was an excellent colleague and a quick learner. She is very dedicated and focused on meeting project deadlines with quality solutions. I had the privilege of helping mentor Dawn and witnessed her amazing growth as a software developer to the point that she was able to take ownership and no longer needed assistance. In addition Dawn's positive attitude always brightened my day. I enjoyed working with her and would do so again if our paths cross."</blockquote>
+    <div class="testimonial-attr">— MM, LinkedIn Recommendation</div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="section-label">Past Projects</div>
+  <div class="projects-grid">
+
+    <div class="project-card">
+      <details>
+        <summary>
+          <div class="project-org">Grove Collaborative · Software Engineer</div>
+          <h3>Data Engineering &amp; Analytics</h3>
+          <div class="tech-tags">
+            <span class="tech-tag">Python</span>
+            <span class="tech-tag">SQL</span>
+            <span class="tech-tag">Celery</span>
+            <span class="tech-tag">Snowflake</span>
+            <span class="tech-tag">Boto3</span>
+            <span class="tech-tag">Linux</span>
+          </div>
+        </summary>
+        <p>Implemented an automated financial reconciliation system that reduced average resolution time from five weeks to 24 hours. Built features on an internal financial operations portal comparing daily trial balance snapshots across inventory, banking, and accounting systems, with automated alerting for data discrepancies.</p>
+        <p>Worked extensively with Python, SQL, Celery, cron jobs, and Bash scripting on Linux. Leveraged pytest, Boto3, and Snowflake Python Libraries. Engaged in paired programming with the lead engineer for code reviews and design feedback.</p>
+      </details>
+    </div>
+
+    <div class="project-card">
+      <details>
+        <summary>
+          <div class="project-org">Master's Program · Research &amp; Implementation</div>
+          <h3>Encryption Implementation</h3>
+          <div class="tech-tags">
+            <span class="tech-tag">Python</span>
+            <span class="tech-tag">Ruby</span>
+            <span class="tech-tag">AES-256</span>
+            <span class="tech-tag">Cryptography</span>
+          </div>
+        </summary>
+        <p>Wrote a research paper on Modern Cryptographic Concepts and implemented round one of AES-256 in Python, following NIST FIPS 197 standards. The implementation covers the Substitution Box for confusion, Shift Rows and Mix Columns for diffusion, and Key Addition — all applied repeatedly across rounds.</p>
+        <p>Also includes a Ruby program for password guessing. The paper provides a detailed walk-through of the code, covering the S-Box, Galois Field multiplication in MixColumns, and the RCON variable used for key expansion.</p>
+      </details>
+    </div>
+
+    <div class="project-card">
+      <details>
+        <summary>
+          <div class="project-org">DeAnza WiCS · Team Project</div>
+          <h3>College Transfer Search</h3>
+          <div class="tech-tags">
+            <span class="tech-tag">Python</span>
+            <span class="tech-tag">Flask</span>
+            <span class="tech-tag">FastAPI</span>
+            <span class="tech-tag">Data Analysis</span>
+          </div>
+        </summary>
+        <p>Part of a five-person team at Women in Computer Science (WiCS) that built a web app helping DeAnza College graduates find the best four-year school to transfer to. Used data from the Department of Education College Scorecard to determine which measures to surface. Collaborated through weekly planning and paired work sessions.</p>
+        <p>Led framework research, evaluating Flask and FastAPI to select the best fit. Designed the UI to scale for future enhancements. Presented at a quarterly WiCS meeting and continued mentoring student groups on subsequent projects.</p>
+        <a href="https://github.com/goode8/wics_transfer_2021" target="_blank" rel="noopener" class="btn-ghost">GitHub →</a>
+      </details>
+    </div>
+
+  </div>
+</section>
+
+{% endblock %}
