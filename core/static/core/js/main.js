@@ -5,11 +5,11 @@
   const stored = localStorage.getItem('theme') || 'dark';
 
   html.setAttribute('data-theme', stored);
-  if (toggle) toggle.checked = (stored === 'light');
+  if (toggle) toggle.checked = (stored === 'dark');
 
   if (toggle) {
     toggle.addEventListener('change', () => {
-      const next = toggle.checked ? 'light' : 'dark';
+      const next = toggle.checked ? 'dark' : 'light';
       html.setAttribute('data-theme', next);
       localStorage.setItem('theme', next);
     });
