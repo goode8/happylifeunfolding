@@ -2,7 +2,14 @@ import os
 from django.contrib import admin
 from django.urls import path, include
 from django.http import HttpResponse
+from django.contrib.sitemaps.views import sitemap
 from core.views import apple_app_site_association
+from core.sitemaps import StaticViewSitemap, AppSitemap
+
+sitemaps = {
+    'static': StaticViewSitemap,
+    'apps': AppSitemap,
+}
 
 SECRET_ADMIN_URL_PATH = os.environ.get('SECRET_ADMIN_URL_PATH', 'default-fallback')
 
@@ -42,6 +49,7 @@ def robots_txt(request):
 
 urlpatterns = [
     path('robots.txt', robots_txt),
+    path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap'),
 
     # Apple Universal Links — must be served at domain root, no redirects
     path('.well-known/apple-app-site-association', apple_app_site_association, name='aasa'),
