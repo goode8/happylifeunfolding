@@ -1,4 +1,5 @@
 {% extends "core/base.html" %}
+{% load static %}
 
 {% block title %}{{ app.name }} — Happy Life Unfolding{% endblock %}
 {% block meta_description %}{{ app.tagline }}{% endblock %}
@@ -10,7 +11,7 @@
 
 <div class="detail-hero">
   <div class="detail-content">
-    <div class="detail-icon" style="background: {{ app.accent_color }}20">{{ app.emoji }}</div>
+    <div class="detail-icon" style="background: {{ app.accent_color }}20"><img src="{% static app.icon_path %}" alt="{{ app.name }}"></div>
     <h1>{{ app.name }}</h1>
     <p class="detail-tagline">{{ app.tagline }}</p>
     <div class="detail-description">{{ app.description|linebreaksbr }}</div>
@@ -41,7 +42,7 @@
 
   <div class="detail-visual">
     <div class="app-badge" style="--accent: {{ app.accent_color }}">
-      <div class="app-badge-icon">{{ app.emoji }}</div>
+      <div class="app-badge-icon"><img src="{% static app.icon_path %}" alt="{{ app.name }}"></div>
       <div class="app-badge-name">{{ app.name }}</div>
       <div class="app-badge-cat">{{ app.get_category_display }}</div>
     </div>

@@ -52,6 +52,10 @@ class App(models.Model):
     def __str__(self):
         return self.name
 
+    @property
+    def icon_path(self):
+        return f'core/images/{self.slug}.png'
+
     def get_absolute_url(self):
         from django.urls import reverse
         return reverse('app_detail', kwargs={'slug': self.slug})
