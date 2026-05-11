@@ -15,6 +15,6 @@ urlpatterns = [
     path('apps/<slug:slug>/support/', views.app_support, name='app_support'),
     path('apps/<slug:slug>/privacy/', views.app_privacy, name='app_privacy'),
     path('about/', views.about, name='about'),
-    path('blog/', views.blog, name='blog'),
+    # path('blog/', views.blog, name='blog'),
     path('contact/', views.contact, name='contact'),
 ]
