@@ -1,14 +1,14 @@
 import json
 from django.shortcuts import render, get_object_or_404, redirect
-from django.http import HttpResponse, JsonResponse
+from django.http import HttpResponse
 from .models import App, ContactMessage
 
-# ── My Uncle the T-Rex smart app linking ─────────────────────────────────────
+# ── Tia T-Rex smart app linking ─────────────────────────────────────
 
-MUTT_APP_STORE_URL = "https://apps.apple.com/app/idYOUR_APP_ID"          # fill in when published
-MUTT_PLAY_STORE_URL = "https://play.google.com/store/apps/details?id=com.yourname.myunclethetrex"
-MUTT_BUNDLE_ID = "com.yourname.myunclethetrex"
-MUTT_TEAM_ID = "XXXXXXXXXX"   # fill in when you have your Apple Team ID
+TIA_APP_STORE_URL = "https://apps.apple.com/app/idYOUR_APP_ID"          # fill in when published
+TIA_PLAY_STORE_URL = "https://play.google.com/store/apps/details?id=com.dawngoodnight.tiatrex"
+TIA_BUNDLE_ID = "com.dawngoodnight.tiatrex"
+TIA_TEAM_ID = "XXXXXXXXXX"   # fill in when you have your Apple Team ID
 
 
 def _detect_device(request):
@@ -21,24 +21,24 @@ def _detect_device(request):
     return "desktop"
 
 
-def myunclethetrex_daily(request):
+def tiatrex_daily(request):
     """/daily — redirect mobile to store, desktop to app detail page."""
     device = _detect_device(request)
     if device == "ios":
         return redirect(MUTT_APP_STORE_URL)
     if device == "android":
         return redirect(MUTT_PLAY_STORE_URL)
-    return redirect("app_detail", slug="my-uncle-the-t-rex")
+    return redirect("app_detail", slug="tiatrex")
 
 
-def myunclethetrex_daily_date(request, date):
+def tiatrex_daily_date(request, date):
     """/daily/<date> — redirect mobile to store, desktop to app detail page."""
     device = _detect_device(request)
     if device == "ios":
         return redirect(MUTT_APP_STORE_URL)
     if device == "android":
         return redirect(f"{MUTT_PLAY_STORE_URL}&deep_link=daily/{date}")
-    return redirect("app_detail", slug="my-uncle-the-t-rex")
+    return redirect("app_detail", slug="tiatrex")
 
 
 def apple_app_site_association(request):
@@ -56,8 +56,8 @@ def apple_app_site_association(request):
                     # Format: TEAMID.BUNDLEID
                     "appID": f"{MUTT_TEAM_ID}.{MUTT_BUNDLE_ID}",
                     "paths": [
-                        "/apps/my-uncle-the-t-rex",
-                        "/apps/my-uncle-the-t-rex/*",
+                        "/apps/tiatrex",
+                        "/apps/tiatrex/*",
                     ],
                 }
             ],

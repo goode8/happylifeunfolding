@@ -54,6 +54,8 @@ urlpatterns = [
     # Apple Universal Links — must be served at domain root, no redirects
     path('.well-known/apple-app-site-association', apple_app_site_association, name='aasa'),
 
+    path("accounts/", include("django.contrib.auth.urls")),
+    path("tiatrex/", include("tia_core.urls")),
     path("", include("core.urls")),
     path(f"{SECRET_ADMIN_URL_PATH}/", admin.site.urls),
 ]

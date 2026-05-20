@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TiaTrex — Sign In</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-white font-sans text-gray-900 antialiased min-h-screen flex items-center justify-center px-4">
+
+<div class="w-full max-w-sm">
+
+  <div class="text-center mb-8">
+    <div class="text-5xl mb-3">🦖</div>
+    <h1 class="text-2xl font-black tracking-tight">TiaTrex</h1>
+    <p class="text-sm text-gray-400 mt-1">Sign in to play</p>
+  </div>
+
+  <form method="post" class="flex flex-col gap-3">
+    {% csrf_token %}
+
+    {% if form.errors %}
+    <div class="bg-red-50 border border-red-200 text-red-700 text-sm rounded-xl px-4 py-3 text-center">
+      Wrong username or password. Try again.
+    </div>
+    {% endif %}
+
+    <input type="text" name="username" placeholder="Username"
+           autofocus autocomplete="username"
+           class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300">
+
+    <input type="password" name="password" placeholder="Password"
+           autocomplete="current-password"
+           class="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300">
+
+    <input type="hidden" name="next" value="{{ next }}">
+
+    <button type="submit"
+            class="w-full bg-gray-900 hover:bg-gray-700 text-white font-bold py-3 rounded-xl transition text-sm mt-1">
+      Sign In
+    </button>
+  </form>
+
+</div>
+</body>
+</html>

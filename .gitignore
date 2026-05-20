@@ -1,48 +1,52 @@
 # Python
-*.pyc
-*.pyo
+__pycache__/
 *.py[cod]
 *$py.class
 *.so
-__pycache__/
 *.egg-info/
-*.egg
-.Python
-build/
-dist/
-downloads/
-eggs/
 .eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
-develop-eggs/
+.Python
+
+# Virtual environments
+venv/
+env/
+.venv/
+.env/
+ENV/
 
 # Django
+*.log
+*.pot
+*.pyc
 db.sqlite3
 db.sqlite3-journal
-local_settings.py
-*.log
+getphylopics.sqlite3
 /media/
+/static/
 /staticfiles/
-staticfiles/
+/static_collected/
+tiatrex/images/
+animals/management/commands/
+taxonomy/management/commands/
+tia_animals/management/commands/fix_extinction_flags.py
+tia_animals/management/commands/import_legacy_data.py
+tia_animals/management/commands/import_wikidata.py
+tia_animals/management/commands/seed_extinction_dates.py
+tia_taxonomy/management/commands/seed_clade_descriptions.py
+tia_taxonomy/management/commands/seed_divergence_dates.py
+tia_taxonomy/management/commands/seed_divergence_times.py
+tia_taxonomy/management/commands/seed_phylo_divergence.py
 
-# Migrations
+# Migrations (keep __init__.py)
 */migrations/*
 !*/migrations/__init__.py
+# Django boilerplate
+**/__init__.py
 
-# Environment
+# Environment variables
 .env
 .env.local
-
-# Virtual Environment
-env/
-venv/
-ENV/
-.venv/
+.env.*.local
 
 # IDE
 .vscode/
@@ -55,13 +59,42 @@ ENV/
 .DS_Store
 Thumbs.db
 
-# Testing
-.pytest_cache/
+# Testing & coverage
 .coverage
+.pytest_cache/
 htmlcov/
+.tox/
 
-# Jupyter
-.ipynb_checkpoints/
+# Node (for Tailwind/build tools)
+node_modules/
+package-lock.json
 
-# Old/backup files
+# Secrets & sensitive files
+secrets.json
+*.pem
+*.key
+
+# Build artifacts
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+
+# Local/import data
+import_data/
 old-versions/
+tiatrex_data.json
+
+# PythonAnywhere specific
+.pythonanywhere/
+
+# Management commands (dev only)
+animals/management/commands/
+taxonomy/management/commands/

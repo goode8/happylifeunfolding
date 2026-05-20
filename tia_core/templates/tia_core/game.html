@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TiaTrex — Daily Game</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>const PHYLO_IMG_BASE = "{% url 'phylo_image' uuid='00000000-0000-0000-0000-000000000000' %}".replace('00000000-0000-0000-0000-000000000000.png', '');</script>
+</head>
+<body class="bg-white font-sans text-gray-900 antialiased min-h-screen">
+
+<div class="max-w-lg mx-auto px-4 pt-6 pb-24">
+
+  <!-- Header -->
+  <div class="flex items-center justify-between mb-5">
+    <div>
+      <a href="{% url 'play' %}" class="inline-flex items-center gap-1 text-xs text-gray-400 hover:text-gray-600 mb-0.5">
+        <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"
+             stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+        Games
+      </a>
+      <h1 class="text-xl font-black leading-tight tracking-tight">Daily Challenge</h1>
+      <p class="text-xs text-gray-400 mt-0.5">Day #{{ day_number }}</p>
+    </div>
+    <!-- Progress dots -->
+    <div class="flex gap-2">
+      {% for i in "12345" %}
+      <div class="progress-dot w-2.5 h-2.5 rounded-full bg-gray-200 transition-colors duration-300"></div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- ── Round display ───────────────────────────────────────────────────── -->
+  <div id="round-display">
+
+    <!-- Round badge -->
+    <div class="flex items-center gap-2 mb-5">
+      <span class="inline-flex items-center gap-1 bg-blue-50 border border-blue-100 rounded-full px-3 py-1">
+        <span class="text-blue-500 font-black text-xs">#</span>
+        <span id="round-label" class="text-xs font-bold text-blue-700"></span>
+      </span>
+    </div>
+
+    <!-- Question heading -->
+    <div class="mb-5">
+      <h2 class="text-3xl font-black leading-tight">🦖 How Long Ago?</h2>
+      <p class="text-gray-400 text-sm mt-1">When did these two share a common ancestor?</p>
+    </div>
+
+    <!-- Animal pair -->
+    <div class="flex items-stretch gap-3 mb-1">
+      <div class="flex-1 bg-gray-100 rounded-2xl p-3 flex flex-col items-center justify-center text-center">
+        <div class="w-28 h-28 flex items-center justify-center mb-2">
+          <img id="animal-a-img" src="" alt="" class="max-w-full max-h-full object-contain">
+        </div>
+        <p id="animal-a-name" class="font-bold text-sm leading-tight"></p>
+        <p id="animal-a-taxon" class="text-xs italic text-gray-400 mt-0.5"></p>
+      </div>
+      <div class="flex items-center justify-center text-3xl font-thin text-gray-300 px-1">&amp;</div>
+      <div class="flex-1 bg-gray-100 rounded-2xl p-3 flex flex-col items-center justify-center text-center">
+        <div class="w-28 h-28 flex items-center justify-center mb-2">
+          <img id="animal-b-img" src="" alt="" class="max-w-full max-h-full object-contain">
+        </div>
+        <p id="animal-b-name" class="font-bold text-sm leading-tight"></p>
+        <p id="animal-b-taxon" class="text-xs italic text-gray-400 mt-0.5"></p>
+      </div>
+    </div>
+    <p class="text-center text-xs italic text-gray-300 mb-5">Images not to scale</p>
+
+    <!-- Option buttons (single column, populated by JS) -->
+    <div id="options-grid" class="flex flex-col gap-2.5 mb-4"></div>
+
+    <!-- Feedback banner -->
+    <div id="feedback-banner" class="hidden rounded-2xl px-4 py-3.5 text-center font-bold text-xl mb-4"></div>
+
+    <!-- LCA reveal (hidden until answer chosen) -->
+    <div id="lca-reveal" class="hidden bg-amber-50 border border-amber-200 rounded-2xl overflow-hidden">
+      <div class="p-5">
+        <div class="flex items-center gap-2 mb-3">
+          <span class="text-base">🧬</span>
+          <p class="text-xs text-amber-600 font-bold uppercase tracking-widest">Common Ancestor</p>
+        </div>
+        <div class="flex items-center gap-4">
+          <div class="w-16 h-16 flex-shrink-0 bg-white rounded-xl border border-amber-100 flex items-center justify-center">
+            <img id="lca-img" src="" alt="" class="w-14 h-14 object-contain">
+          </div>
+          <div>
+            <p id="lca-name" class="font-black text-2xl leading-tight"></p>
+            <p id="lca-mya" class="text-amber-700 font-medium text-sm mt-0.5"></p>
+          </div>
+        </div>
+      </div>
+      <div class="border-t border-amber-100 px-5 pb-5 pt-4 flex flex-col gap-2.5">
+        <button onclick="openTrace()"
+                class="w-full border border-amber-300 bg-white hover:bg-amber-50 text-amber-800 font-semibold py-3 rounded-xl transition text-sm">
+          Trace the lineage →
+        </button>
+        <button id="next-btn"
+                onclick="nextRound()"
+                class="w-full bg-gray-900 hover:bg-gray-700 text-white font-bold py-3 rounded-xl transition text-sm">
+        </button>
+      </div>
+    </div>
+
+  </div><!-- /round-display -->
+
+  <!-- ── End screen ─────────────────────────────────────────────────────── -->
+  <div id="end-screen" class="hidden text-center">
+
+    <div class="text-6xl mb-4">🦖</div>
+    <h2 class="text-2xl font-bold mb-1">Daily #{{ day_number }} Complete!</h2>
+    <p class="text-gray-400 text-sm mb-6">Come back tomorrow for a new game.</p>
+
+    <!-- Score card -->
+    <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 mb-5">
+      <div id="final-score" class="text-5xl font-black text-blue-600 mb-2"></div>
+      <div id="emoji-row" class="text-3xl tracking-widest mb-1"></div>
+      <p class="text-xs text-gray-400">correct out of 5 rounds</p>
+    </div>
+
+    <!-- Round breakdown -->
+    <div id="round-breakdown" class="space-y-2 mb-6 text-left"></div>
+
+    <!-- Share button -->
+    <button id="share-btn"
+            onclick="shareResult()"
+            class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 rounded-2xl transition flex items-center justify-center gap-2 text-base mb-3">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none"
+           viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"
+           stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+        <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+      </svg>
+      <span id="share-label">Share Result</span>
+    </button>
+
+    <button onclick="replayGame()"
+            class="w-full border border-gray-200 hover:border-gray-300 bg-white hover:bg-gray-50 text-gray-700 font-semibold py-3.5 rounded-2xl transition text-base mb-3">
+      Play Again
+    </button>
+
+ 
+
+  </div><!-- /end-screen -->
+
+</div>
+
+<script>
+const rounds   = {{ rounds_json|safe }};
+const DAY      = {{ day_number }};
+const TODAY    = '{{ today_iso }}';
+const STORAGE  = `tiatrex-${TODAY}`;
+const N        = rounds.length;
+
+let current = 0;
+let results = new Array(N).fill(null);  // true | false | null
+
+// ── Restore saved progress ────────────────────────────────────────────────────
+const saved = JSON.parse(localStorage.getItem(STORAGE) || 'null');
+if (saved) {
+  current = saved.current ?? 0;
+  results = saved.results ?? results;
+}
+
+function save() {
+  localStorage.setItem(STORAGE, JSON.stringify({ current, results }));
+}
+
+// ── MYA label ─────────────────────────────────────────────────────────────────
+function formatMya(mya) {
+  if (mya >= 1) return `~${Math.round(mya).toLocaleString()} million years ago`;
+  if (mya >= 0.001) return `~${Math.round(mya * 1000).toLocaleString()} thousand years ago`;
+  return `~${Math.round(mya * 1000000).toLocaleString()} years ago`;
+}
+
+// ── Progress dots ─────────────────────────────────────────────────────────────
+function updateDots(activeIdx) {
+  document.querySelectorAll('.progress-dot').forEach((dot, i) => {
+    dot.className = 'progress-dot w-2.5 h-2.5 rounded-full transition-colors duration-300 ';
+    if (results[i] === true)       dot.className += 'bg-green-500';
+    else if (results[i] === false) dot.className += 'bg-red-400';
+    else if (i === activeIdx)      dot.className += 'bg-blue-500 ring-2 ring-blue-200';
+    else                           dot.className += 'bg-gray-200';
+  });
+}
+
+// ── Show a round ──────────────────────────────────────────────────────────────
+function showRound(n) {
+  if (n >= N) { showEndScreen(); return; }
+
+  const r = rounds[n];
+  document.getElementById('round-label').textContent = `Round ${n + 1}/${N}`;
+
+  document.getElementById('animal-a-img').src = `${PHYLO_IMG_BASE}${r.animal_a.uuid}.png`;
+  document.getElementById('animal-a-img').alt = r.animal_a.common_name;
+  document.getElementById('animal-a-name').textContent = r.animal_a.common_name;
+  document.getElementById('animal-a-taxon').textContent = r.animal_a.taxon_name;
+
+  document.getElementById('animal-b-img').src = `${PHYLO_IMG_BASE}${r.animal_b.uuid}.png`;
+  document.getElementById('animal-b-img').alt = r.animal_b.common_name;
+  document.getElementById('animal-b-name').textContent = r.animal_b.common_name;
+  document.getElementById('animal-b-taxon').textContent = r.animal_b.taxon_name;
+
+  // Build option buttons (single column)
+  const grid = document.getElementById('options-grid');
+  grid.innerHTML = '';
+  r.options.forEach(opt => {
+    const btn = document.createElement('button');
+    btn.className = 'option-btn w-full text-left px-5 py-4 rounded-2xl bg-gray-100 hover:bg-gray-200 transition text-base font-semibold text-gray-800';
+    btn.dataset.mya = opt.mya;
+    btn.dataset.correct = opt.correct;
+    btn.textContent = opt.label;
+    btn.onclick = () => selectOption(btn, opt.mya, r.correct_mya, n);
+    grid.appendChild(btn);
+  });
+
+  document.getElementById('lca-reveal').classList.add('hidden');
+  document.getElementById('feedback-banner').classList.add('hidden');
+  updateDots(n);
+}
+
+// ── Handle answer selection ───────────────────────────────────────────────────
+function selectOption(btn, mya, correctMya, roundIdx) {
+  const correct = (mya === correctMya);
+  results[roundIdx] = correct;
+  save();
+
+  // Feedback banner
+  const banner = document.getElementById('feedback-banner');
+  banner.classList.remove('hidden');
+  if (correct) {
+    banner.className = 'rounded-2xl px-4 py-3.5 text-center font-bold text-xl mb-4 bg-green-50 text-green-700';
+    banner.textContent = '🎉 Correct!';
+  } else {
+    banner.className = 'rounded-2xl px-4 py-3.5 text-center font-bold text-xl mb-4 bg-red-50 text-red-600';
+    banner.textContent = '😬 Not quite';
+  }
+
+  // Colour option buttons
+  document.querySelectorAll('.option-btn').forEach(b => {
+    b.disabled = true;
+    b.classList.remove('hover:bg-gray-200');
+    if (Number(b.dataset.correct)) {
+      b.classList.replace('bg-gray-100', 'bg-green-50');
+      b.classList.add('text-green-800');
+      b.innerHTML = `<span class="flex items-center justify-between w-full"><span>${b.textContent}</span><span class="text-green-500 text-sm font-bold">✓ correct</span></span>`;
+    } else {
+      b.classList.add('text-gray-400');
+    }
+  });
+  if (!correct) {
+    btn.classList.replace('bg-gray-100', 'bg-red-50');
+    btn.classList.remove('text-gray-400');
+    btn.classList.add('text-red-500');
+  }
+
+  // Show LCA reveal
+  const r = rounds[roundIdx];
+  document.getElementById('lca-name').textContent = r.lca_name;
+  document.getElementById('lca-mya').textContent = formatMya(r.correct_mya);
+  if (r.lca_image_uuid) {
+    document.getElementById('lca-img').src = `${PHYLO_IMG_BASE}${r.lca_image_uuid}.png`;
+    document.getElementById('lca-img').style.display = '';
+  } else {
+    document.getElementById('lca-img').style.display = 'none';
+  }
+  document.getElementById('next-btn').textContent =
+    roundIdx < N - 1 ? 'Next Round →' : 'See Results →';
+  document.getElementById('lca-reveal').classList.remove('hidden');
+
+  updateDots(roundIdx);
+}
+
+// ── Next round ────────────────────────────────────────────────────────────────
+function nextRound() {
+  current++;
+  save();
+  if (current >= N) showEndScreen();
+  else showRound(current);
+}
+
+// ── End screen ────────────────────────────────────────────────────────────────
+function showEndScreen() {
+  document.getElementById('round-display').classList.add('hidden');
+  document.getElementById('end-screen').classList.remove('hidden');
+  updateDots(-1);
+
+  const score = results.filter(Boolean).length;
+  document.getElementById('final-score').textContent = `${score} / ${N}`;
+  document.getElementById('emoji-row').textContent = results.map(r => r ? '🟩' : '🟥').join('');
+
+  // Per-round breakdown
+  const bd = document.getElementById('round-breakdown');
+  bd.innerHTML = '';
+  rounds.forEach((r, i) => {
+    const ok = results[i];
+    const div = document.createElement('div');
+    div.className = `flex items-center gap-3 p-3 rounded-xl ${ok ? 'bg-green-50' : 'bg-red-50'}`;
+    div.innerHTML = `
+      <span class="text-xl flex-shrink-0">${ok ? '🟩' : '🟥'}</span>
+      <div class="min-w-0">
+        <p class="text-sm font-semibold truncate">${r.animal_a.common_name} + ${r.animal_b.common_name}</p>
+        <p class="text-xs text-gray-500 truncate">${r.lca_name} · ${formatMya(r.correct_mya)}</p>
+      </div>`;
+    bd.appendChild(div);
+  });
+}
+
+// ── Share ─────────────────────────────────────────────────────────────────────
+function shareResult() {
+  const score = results.filter(Boolean).length;
+  const emoji = results.map(r => r ? '🟩' : '🟥').join('');
+  const text = `TiaTrex Daily #${DAY} 🦕\n${score}/${N}\n${emoji}\n${window.location.origin}/play/daily/`;
+
+  navigator.clipboard.writeText(text).then(() => {
+    const lbl = document.getElementById('share-label');
+    lbl.textContent = 'Copied to clipboard!';
+    setTimeout(() => { lbl.textContent = 'Share Result'; }, 2500);
+  }).catch(() => {
+    // Fallback: show text in a prompt
+    prompt('Copy this to share:', text);
+  });
+}
+
+// ── Replay ────────────────────────────────────────────────────────────────────
+function replayGame() {
+  current = 0;
+  results = new Array(N).fill(null);
+  save();
+  document.getElementById('end-screen').classList.add('hidden');
+  document.getElementById('round-display').classList.remove('hidden');
+  showRound(0);
+}
+
+// ── Init ─────────────────────────────────────────────────────────────────────
+if (saved && saved.current >= N) {
+  showEndScreen();
+} else {
+  showRound(current);
+}
+</script>
+
+<!-- ── Lineage trace modal ──────────────────────────────────────────────── -->
+<div id="lineage-modal" class="fixed inset-0 bg-gray-50 z-30 overflow-y-auto hidden">
+  <div class="max-w-lg mx-auto px-4 pt-6 pb-32">
+
+    <!-- Header -->
+    <div class="flex items-center justify-between mb-5">
+      <h2 class="font-bold text-lg leading-tight">Lineage Trace</h2>
+      <button onclick="closeTrace()"
+              class="w-9 h-9 rounded-full bg-white border border-gray-200 flex items-center justify-center text-gray-500 hover:text-gray-800">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24"
+             stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Animal pair -->
+    <div id="trace-animals" class="grid grid-cols-2 gap-4 mb-4"></div>
+
+    <!-- Flipbook (shown during animation) -->
+    <div id="trace-flipbook" class="grid grid-cols-2 gap-3 mb-4">
+      <div class="flex flex-col items-center">
+        <p id="flip-label-a" class="text-xs font-semibold text-blue-400 uppercase tracking-wider mb-2 truncate w-full text-center"></p>
+        <div id="flip-card-a"
+             class="w-full bg-white border border-gray-200 rounded-2xl p-4 text-center flex flex-col items-center justify-center"
+             style="min-height:130px; transition:transform 0.1s ease-in-out; transform-origin:center;"></div>
+      </div>
+      <div class="flex flex-col items-center">
+        <p id="flip-label-b" class="text-xs font-semibold text-purple-400 uppercase tracking-wider mb-2 truncate w-full text-center"></p>
+        <div id="flip-card-b"
+             class="w-full bg-white border border-gray-200 rounded-2xl p-4 text-center flex flex-col items-center justify-center"
+             style="min-height:130px; transition:transform 0.1s ease-in-out; transform-origin:center;"></div>
+      </div>
+    </div>
+
+    <!-- Full tree (revealed after animation) -->
+    <div id="trace-tree" class="hidden" style="opacity:0;"></div>
+
+  </div>
+</div>
+
+<!-- Bottom bar for lineage modal (always visible when modal is open) -->
+<div id="trace-bottom-bar"
+     class="hidden fixed bottom-0 left-0 right-0 z-40 flex border-t border-gray-200">
+  <button onclick="traceScrollTop()"
+          class="flex-1 bg-white text-gray-700 text-sm font-semibold py-4 border-r border-gray-200">
+    ↑ Top
+  </button>
+  <button id="trace-next-btn" onclick="traceNextRound()"
+          class="flex-1 bg-gray-900 text-white text-sm font-semibold py-4">
+  </button>
+</div>
+
+<script>
+// ── Lineage trace ──────────────────────────────────────────────────────────
+
+const _modal      = document.getElementById('lineage-modal');
+const _bottomBar  = document.getElementById('trace-bottom-bar');
+
+_modal.addEventListener('scroll', () => {
+  // show bar as soon as modal is open (scroll listener fires on auto-scroll too)
+});
+
+function _easeScroll(el, target, duration) {
+  const start = el.scrollTop;
+  const dist  = target - start;
+  const t0    = performance.now();
+  function step(now) {
+    const p = Math.min((now - t0) / duration, 1);
+    const e = p < 0.5 ? 2 * p * p : -1 + (4 - 2 * p) * p;
+    el.scrollTop = start + dist * e;
+    if (p < 1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+
+function openTrace() {
+  const r = rounds[current];
+
+  // Animal pair
+  function animalCard(animal) {
+    return `
+      <div class="flex flex-col items-center text-center">
+        <div class="w-28 h-28 bg-white rounded-2xl border border-gray-100 shadow-sm flex items-center justify-center mb-2">
+          <img src="${PHYLO_IMG_BASE}${animal.uuid}.png" alt="${animal.common_name}" class="w-24 h-24 object-contain">
+        </div>
+        <p class="font-bold text-sm leading-tight">${animal.common_name}</p>
+        <p class="text-xs italic text-gray-400 mt-0.5">${animal.taxon_name}</p>
+      </div>`;
+  }
+  document.getElementById('trace-animals').innerHTML =
+    animalCard(r.animal_a) + animalCard(r.animal_b);
+
+  // Flipbook labels
+  document.getElementById('flip-label-a').textContent = r.animal_a.common_name;
+  document.getElementById('flip-label-b').textContent = r.animal_b.common_name;
+
+  // Reset visibility
+  const flipbook = document.getElementById('trace-flipbook');
+  const tree     = document.getElementById('trace-tree');
+  flipbook.style.opacity = '1';
+  flipbook.style.transition = '';
+  flipbook.classList.remove('hidden');
+  tree.classList.add('hidden');
+  tree.style.opacity = '0';
+
+  // Label the next-round button correctly
+  document.getElementById('trace-next-btn').textContent =
+    current < N - 1 ? 'Next Round →' : 'See Results →';
+
+  _modal.classList.remove('hidden');
+  _modal.scrollTop = 0;
+  _bottomBar.classList.remove('hidden');
+
+  // Play flipbook, then reveal full tree + scroll to LCA
+  runFlipbook(r, () => {
+    flipbook.style.transition = 'opacity 0.3s';
+    flipbook.style.opacity = '0';
+
+    renderFullTree(r);
+    tree.classList.remove('hidden');
+
+    setTimeout(() => {
+      flipbook.classList.add('hidden');
+      tree.style.transition = 'opacity 0.4s';
+      tree.style.opacity = '1';
+      setTimeout(() => _easeScroll(_modal, _modal.scrollHeight, 1600), 350);
+    }, 300);
+  });
+}
+
+function runFlipbook(r, onDone) {
+  const pathA  = r.path_a;
+  const pathB  = r.path_b;
+  const maxLen = Math.max(pathA.length, pathB.length);
+  const cardA  = document.getElementById('flip-card-a');
+  const cardB  = document.getElementById('flip-card-b');
+
+  function cardHtml(node, isLca) {
+    const imgEl = node.image_uuid
+      ? `<img src="${PHYLO_IMG_BASE}${node.image_uuid}.png" alt="${node.name}" class="w-14 h-14 object-contain">`
+      : `<div class="w-14 h-14 rounded bg-gray-100"></div>`;
+    const bg   = isLca ? 'bg-amber-50 border-amber-200' : 'bg-gray-50 border-gray-100';
+    const text = isLca ? 'text-amber-700 font-semibold' : 'text-gray-500';
+    return `
+      <div class="w-16 h-16 rounded-xl ${bg} border flex items-center justify-center mb-2">
+        ${imgEl}
+      </div>
+      <p class="text-xs italic ${text} leading-tight">${node.name}</p>`;
+  }
+
+  function flip(cardEl, html) {
+    cardEl.style.transform = 'scaleY(0)';
+    setTimeout(() => {
+      cardEl.innerHTML = html;
+      cardEl.style.transform = 'scaleY(1)';
+    }, 100);
+  }
+
+  let idx = 0;
+  function step() {
+    if (idx >= maxLen) { setTimeout(onDone, 500); return; }
+    const isLca = idx === maxLen - 1;
+    flip(cardA, cardHtml(pathA[Math.min(idx, pathA.length - 1)], isLca));
+    flip(cardB, cardHtml(pathB[Math.min(idx, pathB.length - 1)], isLca));
+    idx++;
+    setTimeout(step, 380);
+  }
+  step();
+}
+
+function renderFullTree(r) {
+  const tree = document.getElementById('trace-tree');
+
+  function ancestorNode(node) {
+    const imgEl = node.image_uuid
+      ? `<img src="${PHYLO_IMG_BASE}${node.image_uuid}.png" alt="${node.name}" class="w-9 h-9 object-contain">`
+      : `<div class="w-9 h-9 rounded bg-gray-100"></div>`;
+    return `
+      <div class="flex flex-col items-center text-center w-full">
+        <div class="w-10 h-10 rounded-xl bg-gray-50 border border-gray-100 flex items-center justify-center">
+          ${imgEl}
+        </div>
+        <p class="text-xs italic text-gray-600 mt-1 leading-tight">${node.name}</p>
+      </div>
+      <div class="w-px h-4 bg-gray-200 mx-auto"></div>`;
+  }
+
+  const pathAHtml = r.path_a.slice(0, -1).map(ancestorNode).join('');
+  const pathBHtml = r.path_b.slice(0, -1).map(ancestorNode).join('');
+  const lcaImgEl  = r.lca_image_uuid
+    ? `<img src="${PHYLO_IMG_BASE}${r.lca_image_uuid}.png" alt="${r.lca_name}" class="w-16 h-16 object-contain">`
+    : `<div class="w-16 h-16 rounded bg-amber-100"></div>`;
+
+  tree.innerHTML = `
+    <div class="grid grid-cols-2 gap-4">
+      <div class="flex flex-col items-center">
+        <div class="w-px h-5 bg-gray-200"></div>
+        ${pathAHtml}
+      </div>
+      <div class="flex flex-col items-center">
+        <div class="w-px h-5 bg-gray-200"></div>
+        ${pathBHtml}
+      </div>
+    </div>
+    <div class="grid grid-cols-2">
+      <div class="border-r-2 border-b-2 border-gray-200 rounded-br-2xl h-5"></div>
+      <div class="border-l-2 border-b-2 border-gray-200 rounded-bl-2xl h-5"></div>
+    </div>
+    <div class="flex flex-col items-center text-center py-5 px-4 bg-amber-50 border border-amber-200 rounded-2xl">
+      <p class="text-xs uppercase tracking-widest text-amber-600 font-semibold mb-2">Common Ancestor</p>
+      <div class="w-20 h-20 rounded-2xl bg-white border border-amber-200 flex items-center justify-center mb-2">
+        ${lcaImgEl}
+      </div>
+      <p class="font-bold text-lg">${r.lca_name}</p>
+      <p class="text-amber-700 font-medium text-sm mt-1">${formatMya(r.correct_mya)}</p>
+    </div>`;
+}
+
+function closeTrace() {
+  _modal.classList.add('hidden');
+  _bottomBar.classList.add('hidden');
+}
+
+function traceScrollTop() {
+  _easeScroll(_modal, 0, 900);
+}
+
+function traceNextRound() {
+  closeTrace();
+  nextRound();
+}
+</script>
+
+<!-- Bottom nav -->
+<nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-10 safe-bottom">
+  <div class="max-w-lg mx-auto flex">
+    <a href="{% url 'play' %}" class="flex-1 flex flex-col items-center gap-0.5 py-3 text-blue-600">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+        <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2Zm-1.5 14.5v-9l6 4.5Z"/>
+      </svg>
+      <span class="text-xs font-semibold">Play</span>
+    </a>
+    <a href="{% url 'explore' %}" class="flex-1 flex flex-col items-center gap-0.5 py-3 text-gray-400">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24"
+           stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+      </svg>
+      <span class="text-xs font-medium">Explore</span>
+    </a>
+    <a href="{% url 'credits' %}" class="flex-1 flex flex-col items-center gap-0.5 py-3 text-gray-400">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24"
+           stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/>
+      </svg>
+      <span class="text-xs font-medium">Credits</span>
+    </a>
+  </div>
+</nav>
+
+</body>
+</html>

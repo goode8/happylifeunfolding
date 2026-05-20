@@ -5,10 +5,10 @@ urlpatterns = [
     path('', views.home, name='home'),
     path('apps/', views.app_list, name='app_list'),
 
-    # ── My Uncle the T-Rex deep link routes ───────────────────────────────
+    # ── Tia T-Rex deep link routes ───────────────────────────────
     # Must come BEFORE the generic apps/<slug>/ pattern.
-    path('apps/my-uncle-the-t-rex/daily/', views.myunclethetrex_daily, name='mutt_daily'),
-    path('apps/my-uncle-the-t-rex/daily/<str:date>/', views.myunclethetrex_daily_date, name='mutt_daily_date'),
+    path('apps/tiatrex/daily/', views.tiatrex_daily, name='tia_daily'),
+    path('apps/tiatrex/daily/<str:date>/', views.tiatrex_daily_date, name='tiatrex_daily_date'),
     # ──────────────────────────────────────────────────────────────────────
 
     path('apps/<slug:slug>/', views.app_detail, name='app_detail'),

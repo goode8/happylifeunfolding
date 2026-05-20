@@ -29,7 +29,7 @@ SECRET_KEY = os.environ.get('SECRET KEY', ''),
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
-ALLOWED_HOSTS = ['www.happylifeunfolding.com', 'happylifeunfolding.com', '127.0.0.1', 'localhost']
+ALLOWED_HOSTS = os.environ.get('DJANGO_ALLOWED_HOSTS', '').split(',')
 
 
 # Application definition
@@ -44,7 +44,15 @@ INSTALLED_APPS = [
     "django.contrib.sitemaps",
     #Custom
     "core",
+    "tia_animals",
+    "tia_core",
+    "tia_game",
+    "tia_phylo",
+    "tia_players",
+    "tia_taxonomy",
 ]
+DATABASE_ROUTERS = ['tia_phylo.routers.PhyloRouter']
+
 
 MIDDLEWARE = [
     "core.middleware.BlockIPMiddleware",
@@ -62,7 +70,7 @@ ROOT_URLCONF = "mysite.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [],
+        "DIRS": [BASE_DIR / "tiatrex/templates"],
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
@@ -85,7 +93,13 @@ DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
         "NAME": BASE_DIR / "db.sqlite3",
-    }
+    },
+
+    "getphylopics": {
+    "ENGINE": "django.db.backends.sqlite3",
+    "NAME": Path(os.environ.get('GETPHYLOPICS_DB', str(BASE_DIR / 'getphylopics.sqlite3'))),
+    },
+
 }
 
 
@@ -108,6 +122,10 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
+LOGIN_URL = '/accounts/login/'
+LOGIN_REDIRECT_URL = '/tiatrex/play/'
+
+
 # Internationalization
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 
@@ -125,6 +143,9 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 STATIC_ROOT = os.environ.get('STATIC_ROOT', BASE_DIR / 'staticfiles')
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
