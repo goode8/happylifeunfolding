@@ -104,7 +104,9 @@ def game(request):
         for n in PhyloLineageNode.objects.values('id', 'name', 'image_uuid')
     }
 
-    div_by_name = {d.name: d.divergence_mya for d in PhyloDivergence.objects.all()}
+    div_map = {d.name: d for d in PhyloDivergence.objects.all()}
+    div_by_name = {name: d.divergence_mya for name, d in div_map.items()}
+    fact_by_name = {name: d.fun_fact for name, d in div_map.items()}
     all_myos = sorted(set(div_by_name.values()))
 
     rounds = []
@@ -156,6 +158,7 @@ def game(request):
             'animal_b': {k: animal_map[b_id][k] for k in ('uuid', 'common_name', 'taxon_name')},
             'lca_name': lca_node['name'],
             'lca_image_uuid': lca_node['image_uuid'] or '',
+            'lca_fun_fact': fact_by_name.get(lca_node['name'], ''),
             'correct_mya': correct_mya,
             'options': [
                 {'mya': mya, 'label': _format_mya_label(mya), 'correct': mya == correct_mya}
@@ -287,9 +290,9 @@ def credits(request):
 
     lineage_nodes = list(
         PhyloLineageNode.objects
-        .order_by('name')
         .values('name', 'image_uuid', 'license_type', 'license_url', 'contributor_name', 'contributor_url')
     )
+    lineage_nodes.sort(key=lambda n: n['name'].lower())
     lineage_by_letter = [
         (letter, list(grp))
         for letter, grp in groupby(lineage_nodes, key=lambda n: n['name'][0].upper())

@@ -91,6 +91,8 @@ wheels/
 import_data/
 old-versions/
 tiatrex_data.json
+images/
+        
 
 # PythonAnywhere specific
 .pythonanywhere/
@@ -98,3 +100,4 @@ tiatrex_data.json
 # Management commands (dev only)
 animals/management/commands/
 taxonomy/management/commands/
+tia_taxonomy/management/commands/fetch_phylo_facts.py

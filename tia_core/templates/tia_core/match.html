@@ -78,19 +78,13 @@
 
     </div>
 
-    <!-- Next round button (hidden until round complete) -->
-    <div id="next-wrap" class="hidden mt-5">
-      <button id="next-btn" onclick="nextRound()"
-              class="w-full bg-gray-900 hover:bg-gray-700 text-white font-bold py-3.5 rounded-2xl transition text-sm">
-      </button>
-    </div>
 
   </div><!-- /round-display -->
 
   <!-- ── End screen ──────────────────────────────────────────────────────── -->
   <div id="end-screen" class="hidden text-center pt-4">
 
-    <div class="text-6xl mb-3">🦖</div>
+    <div id="end-dino" class="text-6xl mb-3"></div>
     <h2 class="text-2xl font-black mb-1">Match-Up #{{ day_number }} Complete!</h2>
     <p class="text-gray-400 text-sm mb-6">Come back tomorrow for a new set!</p>
 
@@ -131,6 +125,9 @@ const DAY     = {{ day_number }};
 const TODAY   = '{{ today_iso }}';
 const STORAGE = `tiatrex-match-${TODAY}`;
 const N       = rounds.length;
+
+const ANIMAL_EMOJIS = ['🦖','🦕','🐘','🦁','🐋','🦈','🦅','🐢','🦊','🐺','🦒','🦓','🐊','🦜','🦩','🦭','🐙','🦑','🦞','🦋','🐬','🦔','🦡','🦦','🦥','🐧','🦃','🦚','🦌','🐍','🦎','🦏','🦛','🐠','🦐'];
+const DAILY_EMOJI   = ANIMAL_EMOJIS[DAY % ANIMAL_EMOJIS.length];
 
 // ── Persistent state ──────────────────────────────────────────────────────────
 let current    = 0;
@@ -214,7 +211,7 @@ function showRound(n) {
     animalsCol.appendChild(card);
   });
 
-  document.getElementById('next-wrap').classList.add('hidden');
+  document.getElementById('next-bar').classList.add('hidden');
 }
 
 // ── Click handlers ────────────────────────────────────────────────────────────
@@ -307,9 +304,8 @@ function onAnimalClick(ai) {
       save();
 
       setTimeout(() => {
-        const nextBtn = document.getElementById('next-btn');
-        nextBtn.textContent = current < N - 1 ? 'Next Round →' : 'See Results →';
-        document.getElementById('next-wrap').classList.remove('hidden');
+        document.getElementById('next-label').textContent = current < N - 1 ? 'Next Round' : 'See Results';
+        document.getElementById('next-bar').classList.remove('hidden');
       }, 400);
     }
 
@@ -349,10 +345,12 @@ function nextRound() {
 function showEndScreen() {
   document.getElementById('round-display').classList.add('hidden');
   document.getElementById('end-screen').classList.remove('hidden');
+  document.getElementById('next-bar').classList.add('hidden');
 
   document.getElementById('progress-bar').style.width = '100%';
   document.getElementById('round-label').textContent = 'Complete!';
 
+  document.getElementById('end-dino').textContent = DAILY_EMOJI;
   document.getElementById('final-stars').textContent = `⭐ ${totalStars}`;
 
   // Emoji grid — one row per round
@@ -380,7 +378,7 @@ function showEndScreen() {
 // ── Share ─────────────────────────────────────────────────────────────────────
 function shareResult() {
   const emojiBlock = roundEmoji.map(row => row || '🟥🟥🟥🟥').join('\n');
-  const text = `TiaTrex Match-Up #${DAY} 🦕\n⭐ ${totalStars}/20\n${emojiBlock}\n${window.location.origin}/play/match/`;
+  const text = `Tia T-Rex Match-Up #${DAY} ${DAILY_EMOJI}\n⭐ ${totalStars}/20\n${emojiBlock}\nWanna find out more? ${window.location.origin}/play/match/`;
 
   navigator.clipboard.writeText(text).then(() => {
     const lbl = document.getElementById('share-label');
@@ -410,6 +408,15 @@ if (saved && saved.current >= N && roundStars.every(s => s !== null)) {
   showRound(current);
 }
 </script>
+
+<!-- Fixed next bar -->
+<div id="next-bar" class="hidden fixed bottom-14 left-0 right-0 z-20 flex justify-center px-6 pb-1">
+  <button id="next-btn" onclick="nextRound()"
+          class="bg-gray-900 hover:bg-gray-700 active:scale-95 text-white font-bold px-8 py-2.5 rounded-full text-sm shadow-lg transition flex items-center gap-2">
+    <span id="next-label">Next</span>
+    <span class="text-base leading-none">›</span>
+  </button>
+</div>
 
 <!-- Bottom nav -->
 <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-10">

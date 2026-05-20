@@ -280,14 +280,9 @@
     </button>
     {% endfor %}
 
-    <!-- Lineage toggle -->
-    <button id="lineage-toggle" onclick="toggleLineage()"
-            class="text-[8px] font-bold text-gray-400 uppercase tracking-widest leading-none mt-2 mb-1 hover:text-gray-600 transition-colors">
-      Lineage<br><span id="lineage-arrow" class="text-[10px]">▾</span>
-    </button>
-
-    <!-- Lineage letters (hidden until toggled or scrolled into) -->
-    <div id="lineage-az" class="hidden flex-col items-center">
+    <!-- Lineage -->
+    <div class="text-[8px] font-bold text-gray-400 uppercase tracking-widest leading-none mt-2 mb-1">Lineage</div>
+    <div id="lineage-az" class="flex flex-col items-center">
       {% for letter in lineage_letters %}
       <button data-section="lineage" data-letter="{{ letter }}"
               onclick="jumpToSection('lineage','{{ letter }}')"
@@ -381,20 +376,8 @@
     updateLetterHeaders();
   });
 
-  // ── Lineage toggle ───────────────────────────────────────────────────────
-  const lineageAz    = document.getElementById('lineage-az');
-  const lineageArrow = document.getElementById('lineage-arrow');
-  let lineageOpen = false;
-
-  function toggleLineage(forceOpen) {
-    lineageOpen = forceOpen !== undefined ? forceOpen : !lineageOpen;
-    lineageAz.style.display    = lineageOpen ? 'flex' : 'none';
-    lineageArrow.textContent   = lineageOpen ? '▴' : '▾';
-  }
-
   // ── Jump to section+letter ───────────────────────────────────────────────
   function jumpToSection(section, letter) {
-    if (section === 'lineage' && !lineageOpen) toggleLineage(true);
     const el = document.getElementById(section + '-' + letter);
     if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
@@ -427,8 +410,6 @@
       const color = section === 'animals' ? 'bg-blue-500' : 'bg-purple-500';
       btn.classList.remove('text-blue-300', 'text-purple-300');
       btn.classList.add('text-white', color, 'rounded-full', 'scale-110');
-      // auto-open lineage panel if needed
-      if (section === 'lineage' && !lineageOpen) toggleLineage(true);
     }
   }
 

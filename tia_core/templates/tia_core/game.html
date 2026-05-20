@@ -89,15 +89,12 @@
             <p id="lca-mya" class="text-amber-700 font-medium text-sm mt-0.5"></p>
           </div>
         </div>
+        <p id="lca-fun-fact" class="hidden text-gray-600 text-sm mt-3 leading-snug"></p>
       </div>
-      <div class="border-t border-amber-100 px-5 pb-5 pt-4 flex flex-col gap-2.5">
+      <div class="border-t border-amber-100 px-5 pb-5 pt-4">
         <button onclick="openTrace()"
                 class="w-full border border-amber-300 bg-white hover:bg-amber-50 text-amber-800 font-semibold py-3 rounded-xl transition text-sm">
           Trace the lineage →
-        </button>
-        <button id="next-btn"
-                onclick="nextRound()"
-                class="w-full bg-gray-900 hover:bg-gray-700 text-white font-bold py-3 rounded-xl transition text-sm">
         </button>
       </div>
     </div>
@@ -107,7 +104,7 @@
   <!-- ── End screen ─────────────────────────────────────────────────────── -->
   <div id="end-screen" class="hidden text-center">
 
-    <div class="text-6xl mb-4">🦖</div>
+    <div id="end-dino" class="text-6xl mb-4"></div>
     <h2 class="text-2xl font-bold mb-1">Daily #{{ day_number }} Complete!</h2>
     <p class="text-gray-400 text-sm mb-6">Come back tomorrow for a new game.</p>
 
@@ -151,6 +148,9 @@ const DAY      = {{ day_number }};
 const TODAY    = '{{ today_iso }}';
 const STORAGE  = `tiatrex-${TODAY}`;
 const N        = rounds.length;
+
+const ANIMAL_EMOJIS = ['🦖','🦕','🐘','🦁','🐋','🦈','🦅','🐢','🦊','🐺','🦒','🦓','🐊','🦜','🦩','🦭','🐙','🦑','🦞','🦋','🐬','🦔','🦡','🦦','🦥','🐧','🦃','🦚','🦌','🐍','🦎','🦏','🦛','🐠','🦐'];
+const DAILY_EMOJI   = ANIMAL_EMOJIS[DAY % ANIMAL_EMOJIS.length];
 
 let current = 0;
 let results = new Array(N).fill(null);  // true | false | null
@@ -216,6 +216,7 @@ function showRound(n) {
 
   document.getElementById('lca-reveal').classList.add('hidden');
   document.getElementById('feedback-banner').classList.add('hidden');
+  document.getElementById('next-bar').classList.add('hidden');
   updateDots(n);
 }
 
@@ -258,14 +259,17 @@ function selectOption(btn, mya, correctMya, roundIdx) {
   const r = rounds[roundIdx];
   document.getElementById('lca-name').textContent = r.lca_name;
   document.getElementById('lca-mya').textContent = formatMya(r.correct_mya);
+  const factEl = document.getElementById('lca-fun-fact');
+  factEl.textContent = r.lca_fun_fact || '';
+  factEl.classList.toggle('hidden', !r.lca_fun_fact);
   if (r.lca_image_uuid) {
     document.getElementById('lca-img').src = `${PHYLO_IMG_BASE}${r.lca_image_uuid}.png`;
     document.getElementById('lca-img').style.display = '';
   } else {
     document.getElementById('lca-img').style.display = 'none';
   }
-  document.getElementById('next-btn').textContent =
-    roundIdx < N - 1 ? 'Next Round →' : 'See Results →';
+  document.getElementById('next-label').textContent = roundIdx < N - 1 ? 'Next Round' : 'See Results';
+  document.getElementById('next-bar').classList.remove('hidden');
   document.getElementById('lca-reveal').classList.remove('hidden');
 
   updateDots(roundIdx);
@@ -283,9 +287,11 @@ function nextRound() {
 function showEndScreen() {
   document.getElementById('round-display').classList.add('hidden');
   document.getElementById('end-screen').classList.remove('hidden');
+  document.getElementById('next-bar').classList.add('hidden');
   updateDots(-1);
 
   const score = results.filter(Boolean).length;
+  document.getElementById('end-dino').textContent = DAILY_EMOJI;
   document.getElementById('final-score').textContent = `${score} / ${N}`;
   document.getElementById('emoji-row').textContent = results.map(r => r ? '🟩' : '🟥').join('');
 
@@ -310,7 +316,7 @@ function showEndScreen() {
 function shareResult() {
   const score = results.filter(Boolean).length;
   const emoji = results.map(r => r ? '🟩' : '🟥').join('');
-  const text = `TiaTrex Daily #${DAY} 🦕\n${score}/${N}\n${emoji}\n${window.location.origin}/play/daily/`;
+  const text = `Tia T-Rex Daily Challenge #${DAY} ${DAILY_EMOJI}\n${score}/${N}\n${emoji}\nWanna find out more? ${window.location.origin}/play/daily/`;
 
   navigator.clipboard.writeText(text).then(() => {
     const lbl = document.getElementById('share-label');
@@ -573,6 +579,15 @@ function traceNextRound() {
   nextRound();
 }
 </script>
+
+<!-- Fixed next bar -->
+<div id="next-bar" class="hidden fixed bottom-14 left-0 right-0 z-20 flex justify-center px-6 pb-1">
+  <button id="next-btn" onclick="nextRound()"
+          class="bg-gray-900 hover:bg-gray-700 active:scale-95 text-white font-bold px-8 py-2.5 rounded-full text-sm shadow-lg transition flex items-center gap-2">
+    <span id="next-label">Next</span>
+    <span class="text-base leading-none">›</span>
+  </button>
+</div>
 
 <!-- Bottom nav -->
 <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-10 safe-bottom">

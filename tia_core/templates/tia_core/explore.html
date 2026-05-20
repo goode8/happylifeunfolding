@@ -215,6 +215,16 @@
 const ANIMALS = {{ animals_json|safe }};
 const picks = { a: null, b: null };
 
+function normalize(s) {
+  return s.toLowerCase().replace(/\./g, '').replace(/-/g, ' ').replace(/\s+/g, ' ').trim();
+}
+
+function matchesQuery(animal, q) {
+  const nq = normalize(q);
+  return normalize(animal.common_name).includes(nq) ||
+         normalize(animal.taxon_name).includes(nq);
+}
+
 function buildItem(animal, side) {
   const div = document.createElement('div');
   div.className = 'flex items-center gap-3 px-4 py-3 cursor-pointer hover:bg-gray-50 active:bg-gray-100 border-b border-gray-100 last:border-b-0';
@@ -259,22 +269,18 @@ function onType(side) {
     document.getElementById(`clear_${side}`).classList.add('hidden');
     updateBtn();
   }
-  const q = val.toLowerCase();
-  const filtered = q
-    ? ANIMALS.filter(a =>
-        a.common_name.toLowerCase().includes(q) ||
-        a.taxon_name.toLowerCase().includes(q))
+  const q = val;
+  const filtered = q.trim()
+    ? ANIMALS.filter(a => matchesQuery(a, q))
     : ANIMALS;
   renderDrop(side, filtered);
   openDrop(side);
 }
 
 function openDrop(side) {
-  const q = document.getElementById(`input_${side}`).value.toLowerCase();
-  const filtered = q
-    ? ANIMALS.filter(a =>
-        a.common_name.toLowerCase().includes(q) ||
-        a.taxon_name.toLowerCase().includes(q))
+  const q = document.getElementById(`input_${side}`).value;
+  const filtered = q.trim()
+    ? ANIMALS.filter(a => matchesQuery(a, q))
     : ANIMALS;
   renderDrop(side, filtered);
   document.getElementById(`drop_${side}`).classList.remove('hidden');
