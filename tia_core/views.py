@@ -10,7 +10,7 @@ from django.http import FileResponse, Http404
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 
-from tia_animals.models import Fact as AnimalFact
+from tia_animals.models import Animal, Fact as AnimalFact
 from tia_phylo.models import PhyloAnimal, PhyloAnimalLineage, PhyloLineageNode
 from tia_taxonomy.models import PhyloDivergence
 
@@ -95,6 +95,10 @@ def game(request):
     animal_map = {a['id']: a for a in all_animals}
     animal_ids = list(animal_map)
 
+    extinct_names = set(
+        Animal.objects.filter(is_extinct=True).values_list('common_name', flat=True)
+    )
+
     lineage_map = {}
     for row in PhyloAnimalLineage.objects.values('animal_id', 'node_id', 'depth'):
         lineage_map.setdefault(row['animal_id'], {})[row['node_id']] = row['depth']
@@ -153,9 +157,15 @@ def game(request):
             if d <= d_b and nid in node_map
         ]
 
+        def _animal_data(aid):
+            a = animal_map[aid]
+            return {k: a[k] for k in ('uuid', 'common_name', 'taxon_name')} | {
+                'is_extinct': a['common_name'] in extinct_names
+            }
+
         rounds.append({
-            'animal_a': {k: animal_map[a_id][k] for k in ('uuid', 'common_name', 'taxon_name')},
-            'animal_b': {k: animal_map[b_id][k] for k in ('uuid', 'common_name', 'taxon_name')},
+            'animal_a': _animal_data(a_id),
+            'animal_b': _animal_data(b_id),
             'lca_name': lca_node['name'],
             'lca_image_uuid': lca_node['image_uuid'] or '',
             'lca_fun_fact': fact_by_name.get(lca_node['name'], ''),

@@ -6,6 +6,15 @@
   <title>TiaTrex — Daily Game</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script>const PHYLO_IMG_BASE = "{% url 'phylo_image' uuid='00000000-0000-0000-0000-000000000000' %}".replace('00000000-0000-0000-0000-000000000000.png', '');</script>
+  <style>
+    @keyframes pop {
+      0%   { transform: scale(1); }
+      35%  { transform: scale(1.05); }
+      65%  { transform: scale(0.97); }
+      100% { transform: scale(1); }
+    }
+    .answer-pop { animation: pop 0.38s ease-out forwards; }
+  </style>
 </head>
 <body class="bg-white font-sans text-gray-900 antialiased min-h-screen">
 
@@ -45,24 +54,27 @@
     <div class="mb-5">
       <h2 class="text-3xl font-black leading-tight">🦖 How Long Ago?</h2>
       <p class="text-gray-400 text-sm mt-1">When did these two share a common ancestor?</p>
+      <p class="text-gray-400 text-sm mt-0.5">Find the time to their shared <span class="font-semibold text-amber-600">clade</span>.</p>
     </div>
 
     <!-- Animal pair -->
-    <div class="flex items-stretch gap-3 mb-1">
-      <div class="flex-1 bg-gray-100 rounded-2xl p-3 flex flex-col items-center justify-center text-center">
-        <div class="w-28 h-28 flex items-center justify-center mb-2">
+    <div class="grid mb-1" style="grid-template-columns: 1fr 28px 1fr; gap: 8px; align-items: stretch;">
+      <div class="bg-gray-100 rounded-2xl p-3 flex flex-col items-center justify-center text-center">
+        <div class="w-24 h-24 flex items-center justify-center mb-2">
           <img id="animal-a-img" src="" alt="" class="max-w-full max-h-full object-contain">
         </div>
         <p id="animal-a-name" class="font-bold text-sm leading-tight"></p>
         <p id="animal-a-taxon" class="text-xs italic text-gray-400 mt-0.5"></p>
+        <span id="animal-a-extinct" class="hidden mt-1 text-xs font-semibold text-rose-500">† Extinct</span>
       </div>
-      <div class="flex items-center justify-center text-3xl font-thin text-gray-300 px-1">&amp;</div>
-      <div class="flex-1 bg-gray-100 rounded-2xl p-3 flex flex-col items-center justify-center text-center">
-        <div class="w-28 h-28 flex items-center justify-center mb-2">
+      <div class="flex items-center justify-center text-2xl font-thin text-gray-300">&amp;</div>
+      <div class="bg-gray-100 rounded-2xl p-3 flex flex-col items-center justify-center text-center">
+        <div class="w-24 h-24 flex items-center justify-center mb-2">
           <img id="animal-b-img" src="" alt="" class="max-w-full max-h-full object-contain">
         </div>
         <p id="animal-b-name" class="font-bold text-sm leading-tight"></p>
         <p id="animal-b-taxon" class="text-xs italic text-gray-400 mt-0.5"></p>
+        <span id="animal-b-extinct" class="hidden mt-1 text-xs font-semibold text-rose-500">† Extinct</span>
       </div>
     </div>
     <p class="text-center text-xs italic text-gray-300 mb-5">Images not to scale</p>
@@ -195,11 +207,13 @@ function showRound(n) {
   document.getElementById('animal-a-img').alt = r.animal_a.common_name;
   document.getElementById('animal-a-name').textContent = r.animal_a.common_name;
   document.getElementById('animal-a-taxon').textContent = r.animal_a.taxon_name;
+  document.getElementById('animal-a-extinct').classList.toggle('hidden', !r.animal_a.is_extinct);
 
   document.getElementById('animal-b-img').src = `${PHYLO_IMG_BASE}${r.animal_b.uuid}.png`;
   document.getElementById('animal-b-img').alt = r.animal_b.common_name;
   document.getElementById('animal-b-name').textContent = r.animal_b.common_name;
   document.getElementById('animal-b-taxon').textContent = r.animal_b.taxon_name;
+  document.getElementById('animal-b-extinct').classList.toggle('hidden', !r.animal_b.is_extinct);
 
   // Build option buttons (single column)
   const grid = document.getElementById('options-grid');
@@ -240,19 +254,21 @@ function selectOption(btn, mya, correctMya, roundIdx) {
   // Colour option buttons
   document.querySelectorAll('.option-btn').forEach(b => {
     b.disabled = true;
-    b.classList.remove('hover:bg-gray-200');
-    if (Number(b.dataset.correct)) {
-      b.classList.replace('bg-gray-100', 'bg-green-50');
-      b.classList.add('text-green-800');
-      b.innerHTML = `<span class="flex items-center justify-between w-full"><span>${b.textContent}</span><span class="text-green-500 text-sm font-bold">✓ correct</span></span>`;
+    const isCorrectBtn = b.dataset.correct === 'true';
+    if (isCorrectBtn) {
+      const label = b.textContent;
+      b.className = 'option-btn w-full text-left px-5 py-4 rounded-2xl answer-pop font-semibold text-base';
+      b.style.cssText = 'background:#16a34a; color:#fff; border:none; outline:none;';
+      b.innerHTML = `<span style="display:flex;align-items:center;justify-content:space-between;width:100%;"><span>${label}</span><span style="font-size:1.2rem;font-weight:900;">✓</span></span>`;
     } else {
-      b.classList.add('text-gray-400');
+      b.classList.remove('hover:bg-gray-200');
+      b.classList.add('text-gray-300');
     }
   });
   if (!correct) {
-    btn.classList.replace('bg-gray-100', 'bg-red-50');
-    btn.classList.remove('text-gray-400');
-    btn.classList.add('text-red-500');
+    btn.style.background = '#fee2e2';
+    btn.style.color = '#ef4444';
+    btn.style.outline = '2px solid #fca5a5';
   }
 
   // Show LCA reveal
@@ -427,6 +443,9 @@ function openTrace() {
 
   // Animal pair
   function animalCard(animal) {
+    const extinctBadge = animal.is_extinct
+      ? `<span class="mt-1 text-xs font-semibold text-rose-500">† Extinct</span>`
+      : '';
     return `
       <div class="flex flex-col items-center text-center">
         <div class="w-28 h-28 bg-white rounded-2xl border border-gray-100 shadow-sm flex items-center justify-center mb-2">
@@ -434,6 +453,7 @@ function openTrace() {
         </div>
         <p class="font-bold text-sm leading-tight">${animal.common_name}</p>
         <p class="text-xs italic text-gray-400 mt-0.5">${animal.taxon_name}</p>
+        ${extinctBadge}
       </div>`;
   }
   document.getElementById('trace-animals').innerHTML =
