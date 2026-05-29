@@ -342,6 +342,9 @@ def match_up(request):
         pa['common_name']: pa
         for pa in PhyloAnimal.objects.values('common_name', 'taxon_name', 'uuid')
     }
+    extinct_names = set(
+        Animal.objects.filter(is_extinct=True).values_list('common_name', flat=True)
+    )
 
     # Group facts by animal common_name, only for animals that have phylo data
     facts_by_name = {}
@@ -354,45 +357,41 @@ def match_up(request):
 
     eligible = list(facts_by_name.keys())
     rng.shuffle(eligible)
-    selected_names = eligible[:20]  # 5 rounds × 4 animals
+    selected_names = eligible[:20]
 
-    rounds = []
-    for round_idx in range(5):
-        group = selected_names[round_idx * 4: round_idx * 4 + 4]
-
-        animals_data = []
-        for animal_idx, name in enumerate(group):
-            pa = pa_map[name]
-            fact_text = rng.choice(facts_by_name[name])
-            animals_data.append({
-                'animal_idx': animal_idx,
-                'common_name': name,
-                'taxon_name': pa['taxon_name'],
-                'uuid': pa['uuid'],
-                'fact': _obscure_name(fact_text, name),
-            })
-
-        # Shuffle facts and animals independently so positions don't match
-        fact_order = list(range(4))
-        animal_order = list(range(4))
-        rng.shuffle(fact_order)
-        rng.shuffle(animal_order)
-
-        rounds.append({
-            'facts': [
-                {'text': animals_data[i]['fact'], 'animal_idx': animals_data[i]['animal_idx']}
-                for i in fact_order
-            ],
-            'animals': [
-                {
-                    'common_name': animals_data[i]['common_name'],
-                    'taxon_name': animals_data[i]['taxon_name'],
-                    'uuid': animals_data[i]['uuid'],
-                    'animal_idx': animals_data[i]['animal_idx'],
-                }
-                for i in animal_order
-            ],
+    animals_data = []
+    for animal_idx, name in enumerate(selected_names):
+        pa = pa_map[name]
+        fact_text = rng.choice(facts_by_name[name])
+        animals_data.append({
+            'animal_idx': animal_idx,
+            'common_name': name,
+            'taxon_name': pa['taxon_name'],
+            'uuid': pa['uuid'],
+            'fact': _obscure_name(fact_text, name),
         })
+
+    fact_order = list(range(20))
+    animal_order = list(range(20))
+    rng.shuffle(fact_order)
+    rng.shuffle(animal_order)
+
+    rounds = [{
+        'facts': [
+            {'text': animals_data[i]['fact'], 'animal_idx': animals_data[i]['animal_idx']}
+            for i in fact_order
+        ],
+        'animals': [
+            {
+                'common_name': animals_data[i]['common_name'],
+                'taxon_name': animals_data[i]['taxon_name'],
+                'uuid': animals_data[i]['uuid'],
+                'animal_idx': animals_data[i]['animal_idx'],
+                'is_extinct': animals_data[i]['common_name'] in extinct_names,
+            }
+            for i in animal_order
+        ],
+    }]
 
     return render(request, 'tia_core/match.html', {
         'rounds_json': json.dumps(rounds),

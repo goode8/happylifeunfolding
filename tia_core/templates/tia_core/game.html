@@ -332,7 +332,7 @@ function showEndScreen() {
 function shareResult() {
   const score = results.filter(Boolean).length;
   const emoji = results.map(r => r ? '🟩' : '🟥').join('');
-  const text = `Tia T-Rex Daily Challenge #${DAY} ${DAILY_EMOJI}\n${score}/${N}\n${emoji}\nWanna find out more? ${window.location.origin}/play/daily/`;
+  const text = `Tia T-Rex Daily Challenge #${DAY} ${DAILY_EMOJI}\n${score}/${N}\n${emoji}\nWanna find out more? https://www.happylifeunfolding.com/tiatrex/play/daily/`;
 
   navigator.clipboard.writeText(text).then(() => {
     const lbl = document.getElementById('share-label');

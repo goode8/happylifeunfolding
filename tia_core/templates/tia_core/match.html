@@ -38,18 +38,16 @@
       </svg>
     </a>
     <h1 class="font-black text-lg tracking-tight">Animal Match-Up</h1>
-    <!-- Stars counter -->
+    <!-- First-try counter -->
     <div class="flex items-center gap-1 flex-shrink-0">
-      <svg class="w-5 h-5 text-amber-400 fill-amber-400" viewBox="0 0 24 24">
-        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
-      </svg>
-      <span id="star-count" class="font-black text-base text-gray-800">0</span>
+      <span class="text-lg">🟪</span>
+      <span id="purple-count" class="font-black text-base text-gray-800">0</span>
     </div>
   </div>
 
   <!-- ── Progress bar ────────────────────────────────────────────────────── -->
   <div class="flex items-center gap-3 mb-5">
-    <span id="round-label" class="text-xs font-bold text-gray-500 whitespace-nowrap">Round 1/5</span>
+    <span id="match-label" class="text-xs font-bold text-gray-500 whitespace-nowrap">0 / 10 matched</span>
     <div class="flex-1 h-1.5 bg-gray-200 rounded-full overflow-hidden">
       <div id="progress-bar" class="h-full bg-teal-500 rounded-full transition-all duration-500"
            style="width:0%"></div>
@@ -60,7 +58,7 @@
   <div id="round-display">
 
     <p class="text-center text-sm font-semibold text-gray-500 mb-4">
-      Match each fact to the correct animal!
+      Tap a fact or animal, then tap its match!
     </p>
 
     <!-- Two-column matching grid -->
@@ -78,6 +76,15 @@
 
     </div>
 
+    <!-- Solved pairs — accumulate here in order of solving -->
+    <div id="solved-section" class="hidden mt-4">
+      <div class="flex items-center gap-2 mb-2">
+        <div class="flex-1 h-px bg-gray-200"></div>
+        <span class="text-xs font-bold uppercase tracking-wider text-gray-400">Solved</span>
+        <div class="flex-1 h-px bg-gray-200"></div>
+      </div>
+      <div id="solved-list" class="flex flex-col gap-2"></div>
+    </div>
 
   </div><!-- /round-display -->
 
@@ -90,13 +97,10 @@
 
     <!-- Score card -->
     <div class="bg-white rounded-2xl border border-gray-200 shadow-sm p-6 mb-5">
-      <div id="final-stars" class="text-5xl font-black text-amber-500 mb-1"></div>
-      <p class="text-xs text-gray-400 mb-3">stars out of 20</p>
-      <div id="emoji-grid" class="font-mono text-lg leading-relaxed"></div>
+      <div id="final-purple" class="text-4xl font-black text-purple-600 mb-0.5"></div>
+      <p class="text-xs text-gray-400 mb-4">first try out of 20</p>
+      <div id="emoji-grid" class="font-mono text-xl leading-relaxed tracking-wide break-all"></div>
     </div>
-
-    <!-- Per-round breakdown -->
-    <div id="round-breakdown" class="space-y-2 mb-6 text-left"></div>
 
     <!-- Share -->
     <button onclick="shareResult()"
@@ -130,50 +134,63 @@ const ANIMAL_EMOJIS = ['🦖','🦕','🐘','🦁','🐋','🦈','🦅','🐢','
 const DAILY_EMOJI   = ANIMAL_EMOJIS[DAY % ANIMAL_EMOJIS.length];
 
 // ── Persistent state ──────────────────────────────────────────────────────────
-let current    = 0;
-let totalStars = 0;
-let roundStars = new Array(N).fill(null);  // stars earned per round (0–4)
-let roundEmoji = new Array(N).fill(null);  // emoji string per round
+let current     = 0;
+let purpleCount = 0;
+let roundEmoji  = new Array(N).fill(null);
 
 // Per-round ephemeral state (reset each round)
-let selectedFactIdx = null;   // 0–3, which fact card is active
-let matched         = {};     // { animal_idx: true } for completed pairs
-let wrongAttempts   = {};     // { fact_position: true } if a wrong guess was made for this fact
+let selectedFactIdx   = null;
+let selectedAnimalIdx = null;
+let matched           = {};   // { animal_idx: true }
+let wrongAttempts     = {};   // { fact_position: count } — wrong taps per fact
 
 // ── Restore saved progress ────────────────────────────────────────────────────
 const saved = JSON.parse(localStorage.getItem(STORAGE) || 'null');
 if (saved) {
-  current    = saved.current    ?? 0;
-  totalStars = saved.totalStars ?? 0;
-  roundStars = saved.roundStars ?? roundStars;
-  roundEmoji = saved.roundEmoji ?? roundEmoji;
+  current     = saved.current     ?? 0;
+  purpleCount = saved.purpleCount ?? 0;
+  roundEmoji  = saved.roundEmoji  ?? roundEmoji;
 }
 
 function save() {
-  localStorage.setItem(STORAGE, JSON.stringify({ current, totalStars, roundStars, roundEmoji }));
+  localStorage.setItem(STORAGE, JSON.stringify({ current, purpleCount, roundEmoji }));
+}
+
+// ── ROYGBIV scoring ───────────────────────────────────────────────────────────
+function retryToEmoji(wrongCount) {
+  if (!wrongCount)      return '🟪';
+  if (wrongCount === 1) return '🟦';
+  if (wrongCount === 2) return '🟩';
+  if (wrongCount === 3) return '🟨';
+  if (wrongCount === 4) return '🟧';
+  return '🟥';
 }
 
 // ── UI helpers ────────────────────────────────────────────────────────────────
-function updateStarCount() {
-  document.getElementById('star-count').textContent = totalStars;
+function updatePurpleCount() {
+  document.getElementById('purple-count').textContent = purpleCount;
 }
 
-function updateProgress(roundIdx) {
-  const pct = (roundIdx / N) * 100;
-  document.getElementById('progress-bar').style.width = pct + '%';
-  document.getElementById('round-label').textContent = `Round ${roundIdx + 1}/${N}`;
+function updateMatchProgress() {
+  const count = Object.keys(matched).length;
+  const total = rounds[0].animals.length;
+  document.getElementById('progress-bar').style.width = (count / total * 100) + '%';
+  document.getElementById('match-label').textContent = `${count} / ${total} matched`;
 }
 
 // ── Build a round ─────────────────────────────────────────────────────────────
 function showRound(n) {
   if (n >= N) { showEndScreen(); return; }
 
-  selectedFactIdx = null;
-  matched         = {};
-  wrongAttempts   = {};
+  selectedFactIdx   = null;
+  selectedAnimalIdx = null;
+  matched           = {};
+  wrongAttempts     = {};
+  document.getElementById('solved-list').innerHTML = '';
+  document.getElementById('solved-section').classList.add('hidden');
 
-  updateProgress(n);
-  updateStarCount();
+  updateMatchProgress();
+  updatePurpleCount();
 
   const r = rounds[n];
 
@@ -200,13 +217,17 @@ function showRound(n) {
     card.className = 'animal-card bg-white border-2 border-gray-200 rounded-2xl p-2.5 cursor-pointer select-none flex flex-col items-center text-center transition-all duration-150 active:scale-[.97]';
     card.dataset.ai = ai;
     card.dataset.animalIdx = animal.animal_idx;
+    const extinctBadge = animal.is_extinct
+      ? `<span class="text-[10px] font-semibold text-rose-500 mt-0.5">† Extinct</span>`
+      : '';
     card.innerHTML = `
       <div class="w-14 h-14 flex items-center justify-center mb-1.5">
         <img src="${PHYLO_IMG_BASE}${animal.uuid}.png" alt="${animal.common_name}"
              class="max-w-full max-h-full object-contain">
       </div>
       <p class="text-xs font-bold leading-tight text-gray-800">${animal.common_name}</p>
-      <p class="text-[10px] italic text-gray-400 leading-tight mt-0.5">${animal.taxon_name}</p>`;
+      <p class="text-[10px] italic text-gray-400 leading-tight mt-0.5">${animal.taxon_name}</p>
+      ${extinctBadge}`;
     card.addEventListener('click', () => onAnimalClick(ai));
     animalsCol.appendChild(card);
   });
@@ -214,95 +235,159 @@ function showRound(n) {
   document.getElementById('next-bar').classList.add('hidden');
 }
 
+// ── Solved row expand/collapse ────────────────────────────────────────────────
+function toggleSolvedRow(row) {
+  row.querySelector('.solved-collapsed').classList.toggle('hidden');
+  row.querySelector('.solved-expanded').classList.toggle('hidden');
+}
+
+// ── Selection helpers ─────────────────────────────────────────────────────────
+function selectFact(fi) {
+  selectedFactIdx = fi;
+  document.getElementById(`fact-${fi}`).classList.add('border-teal-400', 'bg-teal-50');
+}
+function deselectFact() {
+  if (selectedFactIdx === null) return;
+  const prev = document.getElementById(`fact-${selectedFactIdx}`);
+  if (prev && !prev.dataset.matched) prev.classList.remove('border-teal-400', 'bg-teal-50');
+  selectedFactIdx = null;
+}
+function selectAnimal(ai) {
+  selectedAnimalIdx = ai;
+  document.getElementById(`animal-${ai}`).classList.add('border-teal-400', 'bg-teal-50');
+}
+function deselectAnimal() {
+  if (selectedAnimalIdx === null) return;
+  const prev = document.getElementById(`animal-${selectedAnimalIdx}`);
+  if (prev && !prev.dataset.matched) prev.classList.remove('border-teal-400', 'bg-teal-50');
+  selectedAnimalIdx = null;
+}
+
 // ── Click handlers ────────────────────────────────────────────────────────────
 function onFactClick(fi) {
-  const r = rounds[current];
   const card = document.getElementById(`fact-${fi}`);
-
-  // Ignore if already matched
   if (card.dataset.matched) return;
 
-  if (selectedFactIdx === fi) {
-    // Deselect
-    selectedFactIdx = null;
-    card.classList.remove('border-teal-400', 'bg-teal-50');
-    return;
-  }
+  if (selectedFactIdx === fi) { deselectFact(); return; }
 
-  // Deselect any previously selected
-  if (selectedFactIdx !== null) {
-    const prev = document.getElementById(`fact-${selectedFactIdx}`);
-    if (prev && !prev.dataset.matched) {
-      prev.classList.remove('border-teal-400', 'bg-teal-50');
-    }
+  if (selectedAnimalIdx !== null) {
+    const ai = selectedAnimalIdx;
+    deselectAnimal();
+    attemptMatch(fi, ai);
+  } else {
+    deselectFact();
+    selectFact(fi);
   }
-
-  selectedFactIdx = fi;
-  card.classList.add('border-teal-400', 'bg-teal-50');
 }
 
 function onAnimalClick(ai) {
-  if (selectedFactIdx === null) return;
+  const card = document.getElementById(`animal-${ai}`);
+  if (card.dataset.matched) return;
 
+  if (selectedAnimalIdx === ai) { deselectAnimal(); return; }
+
+  if (selectedFactIdx !== null) {
+    const fi = selectedFactIdx;
+    deselectFact();
+    attemptMatch(fi, ai);
+  } else {
+    deselectAnimal();
+    selectAnimal(ai);
+  }
+}
+
+// ── Match attempt ─────────────────────────────────────────────────────────────
+function attemptMatch(fi, ai) {
   const r          = rounds[current];
-  const factCard   = document.getElementById(`fact-${selectedFactIdx}`);
+  const factCard   = document.getElementById(`fact-${fi}`);
   const animalCard = document.getElementById(`animal-${ai}`);
 
   if (factCard.dataset.matched || animalCard.dataset.matched) return;
 
   const factAnimalIdx   = parseInt(factCard.dataset.animalIdx);
   const animalAnimalIdx = parseInt(animalCard.dataset.animalIdx);
-  const fi              = selectedFactIdx;
 
   if (factAnimalIdx === animalAnimalIdx) {
     // ── Correct ──────────────────────────────────────────────────────────────
     const firstTry = !wrongAttempts[fi];
     const animal   = r.animals[ai];
 
-    // Lock both cards
     factCard.dataset.matched   = '1';
     animalCard.dataset.matched = '1';
     factCard.style.cursor      = 'default';
     animalCard.style.cursor    = 'default';
 
-    factCard.classList.remove('border-teal-400', 'bg-teal-50', 'border-gray-200');
+    // Brief flash of success before collapsing
+    factCard.classList.remove('border-gray-200');
     animalCard.classList.remove('border-gray-200');
     factCard.classList.add('border-teal-400', 'bg-teal-50');
     animalCard.classList.add('border-teal-400', 'bg-teal-50');
-
-    // Reveal animal name on fact card
-    const label = document.createElement('p');
-    label.className = 'text-[10px] font-bold text-teal-600 mt-2 pt-2 border-t border-teal-200 flex items-center gap-1';
-    label.innerHTML = `<span class="text-teal-500">✓</span> ${animal.common_name}`;
-    factCard.appendChild(label);
-
-    // Star animation on animal card
-    if (firstTry) {
-      totalStars++;
-      updateStarCount();
-      const starEl = document.createElement('div');
-      starEl.className = 'text-amber-400 text-base pop';
-      starEl.textContent = '⭐';
-      animalCard.appendChild(starEl);
-    }
-
     animalCard.classList.add('pop');
     setTimeout(() => animalCard.classList.remove('pop'), 300);
 
-    selectedFactIdx = null;
+    if (firstTry) {
+      purpleCount++;
+      updatePurpleCount();
+    }
+
+    // After flash, remove from columns and append a combined solved row
+    const factText     = r.facts[fi].text;
+    const extinctBadge = animal.is_extinct
+      ? `<span class="text-[10px] font-semibold text-rose-500 mt-0.5">† Extinct</span>` : '';
+    const roygbivBadge = `<span class="text-sm flex-shrink-0">${retryToEmoji(wrongAttempts[fi])}</span>`;
+
+    setTimeout(() => {
+      factCard.remove();
+      animalCard.remove();
+
+      const row = document.createElement('div');
+      row.className = 'solved-row cursor-pointer';
+      row.addEventListener('click', () => toggleSolvedRow(row));
+      row.innerHTML = `
+        <div class="solved-collapsed grid gap-2" style="grid-template-columns:1fr 1fr;">
+          <div class="border-2 border-teal-200 rounded-2xl px-3 py-2 bg-teal-50">
+            <div class="flex items-center gap-1.5">
+              <span class="text-teal-500 font-black text-xs flex-shrink-0">✓</span>
+              <span class="text-xs font-semibold text-teal-700 truncate flex-1">${animal.common_name}</span>
+              ${roygbivBadge}
+            </div>
+          </div>
+          <div class="border-2 border-teal-200 rounded-2xl px-3 py-2 bg-teal-50">
+            <div class="flex items-center gap-1.5">
+              <img src="${PHYLO_IMG_BASE}${animal.uuid}.png" class="w-6 h-6 object-contain flex-shrink-0">
+              <span class="text-xs font-semibold text-teal-700 truncate flex-1">${animal.common_name}</span>
+              ${roygbivBadge}
+            </div>
+          </div>
+        </div>
+        <div class="solved-expanded hidden grid gap-2 mt-1" style="grid-template-columns:1fr 1fr;">
+          <div class="border-2 border-teal-200 rounded-2xl p-3 bg-teal-50">
+            <p class="text-xs text-gray-700 leading-snug">${factText}</p>
+            <p class="text-[10px] font-bold text-teal-600 mt-2 pt-2 border-t border-teal-200 flex items-center gap-1">
+              <span>✓</span> ${animal.common_name}
+            </p>
+          </div>
+          <div class="border-2 border-teal-200 rounded-2xl p-3 bg-teal-50 flex flex-col items-center text-center">
+            <div class="w-14 h-14 flex items-center justify-center mb-1.5">
+              <img src="${PHYLO_IMG_BASE}${animal.uuid}.png" class="max-w-full max-h-full object-contain">
+            </div>
+            <p class="text-xs font-bold text-gray-800">${animal.common_name}</p>
+            <p class="text-[10px] italic text-gray-400 mt-0.5">${animal.taxon_name}</p>
+            ${extinctBadge}
+          </div>
+        </div>`;
+
+      document.getElementById('solved-list').appendChild(row);
+      document.getElementById('solved-section').classList.remove('hidden');
+    }, 420);
+
     matched[factAnimalIdx] = true;
+    updateMatchProgress();
 
-    // Check round complete
-    if (Object.keys(matched).length === 4) {
-      const stars = Object.values(wrongAttempts).length === 0 ? 4 :
-        r.facts.filter((_, idx) => !wrongAttempts[idx]).length;
-      roundStars[current] = stars;
-
-      // Build emoji string for this round
-      const emojiRow = r.facts.map((_, idx) => wrongAttempts[idx] ? '🟨' : '🟩').join('');
+    if (Object.keys(matched).length === r.animals.length) {
+      const emojiRow = r.facts.map((_, idx) => retryToEmoji(wrongAttempts[idx])).join('');
       roundEmoji[current] = emojiRow;
       save();
-
       setTimeout(() => {
         document.getElementById('next-label').textContent = current < N - 1 ? 'Next Round' : 'See Results';
         document.getElementById('next-bar').classList.remove('hidden');
@@ -311,14 +396,10 @@ function onAnimalClick(ai) {
 
   } else {
     // ── Wrong ────────────────────────────────────────────────────────────────
-    wrongAttempts[fi] = true;
+    wrongAttempts[fi] = (wrongAttempts[fi] || 0) + 1;
 
-    // Flash both cards red
-    factCard.classList.remove('border-teal-400', 'bg-teal-50');
     factCard.classList.add('border-red-400', 'bg-red-50', 'shake');
     animalCard.classList.add('border-red-400', 'bg-red-50', 'shake');
-
-    selectedFactIdx = null;
 
     setTimeout(() => {
       factCard.classList.remove('border-red-400', 'bg-red-50', 'shake');
@@ -348,37 +429,24 @@ function showEndScreen() {
   document.getElementById('next-bar').classList.add('hidden');
 
   document.getElementById('progress-bar').style.width = '100%';
-  document.getElementById('round-label').textContent = 'Complete!';
+  document.getElementById('match-label').textContent = 'Complete!';
 
   document.getElementById('end-dino').textContent = DAILY_EMOJI;
-  document.getElementById('final-stars').textContent = `⭐ ${totalStars}`;
+  document.getElementById('final-purple').textContent = `🟪 ${purpleCount} / 20`;
 
-  // Emoji grid — one row per round
-  const grid = document.getElementById('emoji-grid');
-  grid.innerHTML = roundEmoji.map(row => `<div class="tracking-widest">${row || '🟥🟥🟥🟥'}</div>`).join('');
-
-  // Per-round breakdown
-  const bd = document.getElementById('round-breakdown');
-  bd.innerHTML = '';
-  rounds.forEach((r, i) => {
-    const stars = roundStars[i] ?? 0;
-    const div   = document.createElement('div');
-    div.className = 'flex items-center gap-3 p-3 rounded-xl bg-white border border-gray-100';
-    div.innerHTML = `
-      <span class="text-lg flex-shrink-0">${roundEmoji[i] || '🟥🟥🟥🟥'}</span>
-      <div class="flex-1 min-w-0 text-left">
-        <p class="text-xs font-semibold text-gray-700">Round ${i + 1}</p>
-        <p class="text-xs text-gray-400">${stars}/4 first try</p>
-      </div>
-      <span class="text-sm font-bold text-amber-500 flex-shrink-0">⭐ ${stars}</span>`;
-    bd.appendChild(div);
-  });
+  // Emoji grid — split into two rows of 10 for readability
+  const fullRow = roundEmoji[0] || '🟥'.repeat(20);
+  const chars   = Array.from(fullRow);
+  const grid    = document.getElementById('emoji-grid');
+  grid.innerHTML = `<div>${chars.slice(0, 10).join('')}</div><div>${chars.slice(10).join('')}</div>`;
 }
 
 // ── Share ─────────────────────────────────────────────────────────────────────
 function shareResult() {
-  const emojiBlock = roundEmoji.map(row => row || '🟥🟥🟥🟥').join('\n');
-  const text = `Tia T-Rex Match-Up #${DAY} ${DAILY_EMOJI}\n⭐ ${totalStars}/20\n${emojiBlock}\nWanna find out more? ${window.location.origin}/play/match/`;
+  const row     = roundEmoji[0] || '🟥'.repeat(20);
+  const chars   = Array.from(row);
+  const emojiBlock = chars.slice(0, 10).join('') + ' ' + chars.slice(10).join('');
+  const text = `Tia T-Rex Match-Up #${DAY} ${DAILY_EMOJI}\n🟪 ${purpleCount}/20\n${emojiBlock}\nWanna find out more? https://www.happylifeunfolding.com/tiatrex/play/match/`;
 
   navigator.clipboard.writeText(text).then(() => {
     const lbl = document.getElementById('share-label');
@@ -391,10 +459,9 @@ function shareResult() {
 
 // ── Replay ────────────────────────────────────────────────────────────────────
 function replayGame() {
-  current    = 0;
-  totalStars = 0;
-  roundStars = new Array(N).fill(null);
-  roundEmoji = new Array(N).fill(null);
+  current     = 0;
+  purpleCount = 0;
+  roundEmoji  = new Array(N).fill(null);
   save();
   document.getElementById('end-screen').classList.add('hidden');
   document.getElementById('round-display').classList.remove('hidden');
@@ -402,7 +469,7 @@ function replayGame() {
 }
 
 // ── Init ──────────────────────────────────────────────────────────────────────
-if (saved && saved.current >= N && roundStars.every(s => s !== null)) {
+if (saved && saved.current >= N && saved.roundEmoji && saved.roundEmoji[0]) {
   showEndScreen();
 } else {
   showRound(current);
