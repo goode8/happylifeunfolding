@@ -22,11 +22,20 @@
       100% { transform: scale(1); }
     }
     .pop { animation: pop 0.25s ease; }
+
+    /* Thin scrollbar for each column */
+    .col-scroll::-webkit-scrollbar { width: 3px; }
+    .col-scroll::-webkit-scrollbar-track { background: transparent; }
+    .col-scroll::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 99px; }
+
+    /* Solved caret rotation */
+    #solved-caret.open { transform: rotate(180deg); }
+    #solved-caret { transition: transform 0.2s ease; }
   </style>
 </head>
 <body class="bg-gray-50 font-sans text-gray-900 antialiased min-h-screen">
 
-<div class="max-w-lg mx-auto px-4 pt-5 pb-28">
+<div id="main-container" class="max-w-lg mx-auto px-4 pt-5 pb-16">
 
   <!-- ── Header ──────────────────────────────────────────────────────────── -->
   <div class="flex items-center justify-between mb-4">
@@ -58,32 +67,56 @@
   <div id="round-display">
 
     <p class="text-center text-sm font-semibold text-gray-500 mb-4">
-      Tap a fact or animal, then tap its match!
+      Tap an animal or fact, then tap its match!
     </p>
 
-    <!-- Two-column matching grid -->
-    <div class="grid grid-cols-2 gap-2.5">
+    <!-- Two-column matching grid — Animals LEFT, Facts RIGHT -->
+    <div class="grid grid-cols-2 gap-2.5 items-start">
 
-      <!-- Facts column -->
-      <div id="facts-col" class="flex flex-col gap-2.5">
-        <p class="text-center text-xs font-bold uppercase tracking-wider text-gray-400">Facts</p>
+      <!-- Animals column (LEFT) — independently scrollable -->
+      <div class="relative">
+        <div id="animals-col" class="col-scroll flex flex-col gap-2.5 max-h-[50vh] overflow-y-auto pb-5">
+          <p class="text-center text-xs font-bold uppercase tracking-wider text-gray-400">Animals</p>
+        </div>
+        <!-- Fade gradient to hint at more content below -->
+        <div class="absolute bottom-0 left-0 right-0 h-6 bg-gradient-to-t from-gray-50 to-transparent pointer-events-none"></div>
       </div>
 
-      <!-- Animals column -->
-      <div id="animals-col" class="flex flex-col gap-2.5">
-        <p class="text-center text-xs font-bold uppercase tracking-wider text-gray-400">Animals</p>
+      <!-- Facts column (RIGHT) — independently scrollable -->
+      <div class="relative">
+        <div id="facts-col" class="col-scroll flex flex-col gap-2.5 max-h-[50vh] overflow-y-auto pb-5">
+          <p class="text-center text-xs font-bold uppercase tracking-wider text-gray-400">Facts</p>
+        </div>
+        <!-- Fade gradient to hint at more content below -->
+        <div class="absolute bottom-0 left-0 right-0 h-6 bg-gradient-to-t from-gray-50 to-transparent pointer-events-none"></div>
       </div>
 
     </div>
 
-    <!-- Solved pairs — accumulate here in order of solving -->
+    <!-- Solved pairs — collapsible drawer with peek -->
     <div id="solved-section" class="hidden mt-4">
-      <div class="flex items-center gap-2 mb-2">
+
+      <!-- Toggle header with caret arrow -->
+      <button onclick="toggleSolvedSection()"
+              class="w-full flex items-center gap-2 mb-2 py-1 cursor-pointer">
         <div class="flex-1 h-px bg-gray-200"></div>
-        <span class="text-xs font-bold uppercase tracking-wider text-gray-400">Solved</span>
+        <span class="flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-gray-400 select-none">
+          <span id="solved-count-label">Solved</span>
+          <svg id="solved-caret" class="w-3.5 h-3.5 text-gray-400 open"
+               fill="none" viewBox="0 0 24 24" stroke="currentColor"
+               stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="m6 9 6 6 6-6"/>
+          </svg>
+        </span>
         <div class="flex-1 h-px bg-gray-200"></div>
-      </div>
-      <div id="solved-list" class="flex flex-col gap-2"></div>
+      </button>
+
+      <!-- Peek: compact preview of most recent solved item (visible when collapsed) -->
+      <div id="solved-peek" class="mb-1 hidden"></div>
+
+      <!-- Full solved list (scrollable when many matches) -->
+      <div id="solved-list" class="flex flex-col gap-2 overflow-y-auto max-h-64"></div>
+
     </div>
 
   </div><!-- /round-display -->
@@ -143,6 +176,8 @@ let selectedFactIdx   = null;
 let selectedAnimalIdx = null;
 let matched           = {};   // { animal_idx: true }
 let wrongAttempts     = {};   // { fact_position: count } — wrong taps per fact
+let solvedOpen        = true;
+let solvedCount       = 0;
 
 // ── Restore saved progress ────────────────────────────────────────────────────
 const saved = JSON.parse(localStorage.getItem(STORAGE) || 'null');
@@ -167,6 +202,12 @@ function retryToEmoji(wrongCount) {
 }
 
 // ── UI helpers ────────────────────────────────────────────────────────────────
+function setContainerPadding(large) {
+  const c = document.getElementById('main-container');
+  c.classList.toggle('pb-28', large);
+  c.classList.toggle('pb-16', !large);
+}
+
 function updatePurpleCount() {
   document.getElementById('purple-count').textContent = purpleCount;
 }
@@ -178,6 +219,38 @@ function updateMatchProgress() {
   document.getElementById('match-label').textContent = `${count} / ${total} matched`;
 }
 
+// ── Solved section drawer ─────────────────────────────────────────────────────
+function toggleSolvedSection() {
+  solvedOpen = !solvedOpen;
+  const peek  = document.getElementById('solved-peek');
+  const list  = document.getElementById('solved-list');
+  const caret = document.getElementById('solved-caret');
+
+  if (solvedOpen) {
+    peek.classList.add('hidden');
+    list.classList.remove('hidden');
+    caret.classList.add('open');
+  } else {
+    peek.classList.remove('hidden');
+    list.classList.add('hidden');
+    caret.classList.remove('open');
+  }
+}
+
+function updateSolvedPeek(animal, roygbivEmoji) {
+  if (solvedOpen) return;
+  const more = solvedCount > 1
+    ? `<span class="text-[10px] text-gray-400 ml-0.5">+${solvedCount - 1} more</span>`
+    : '';
+  document.getElementById('solved-peek').innerHTML = `
+    <div class="border-2 border-teal-200 rounded-2xl px-3 py-2 bg-teal-50 flex items-center gap-2">
+      <img src="${PHYLO_IMG_BASE}${animal.uuid}.png" class="w-5 h-5 object-contain flex-shrink-0">
+      <span class="text-xs font-semibold text-teal-700 flex-1 truncate">${animal.common_name}</span>
+      <span class="text-sm flex-shrink-0">${roygbivEmoji}</span>
+      ${more}
+    </div>`;
+}
+
 // ── Build a round ─────────────────────────────────────────────────────────────
 function showRound(n) {
   if (n >= N) { showEndScreen(); return; }
@@ -186,29 +259,23 @@ function showRound(n) {
   selectedAnimalIdx = null;
   matched           = {};
   wrongAttempts     = {};
-  document.getElementById('solved-list').innerHTML = '';
+  solvedOpen        = true;
+  solvedCount       = 0;
+
+  document.getElementById('solved-list').innerHTML  = '';
+  document.getElementById('solved-list').classList.remove('hidden');
+  document.getElementById('solved-peek').innerHTML  = '';
+  document.getElementById('solved-peek').classList.add('hidden');
   document.getElementById('solved-section').classList.add('hidden');
+  document.getElementById('solved-caret').classList.add('open');
+  setContainerPadding(false);
 
   updateMatchProgress();
   updatePurpleCount();
 
   const r = rounds[n];
 
-  // Facts column
-  const factsCol = document.getElementById('facts-col');
-  factsCol.innerHTML = '<p class="text-center text-xs font-bold uppercase tracking-wider text-gray-400">Facts</p>';
-  r.facts.forEach((fact, fi) => {
-    const card = document.createElement('div');
-    card.id = `fact-${fi}`;
-    card.className = 'fact-card bg-white border-2 border-gray-200 rounded-2xl p-3 cursor-pointer select-none transition-all duration-150 active:scale-[.97]';
-    card.dataset.fi = fi;
-    card.dataset.animalIdx = fact.animal_idx;
-    card.innerHTML = `<p class="text-xs text-gray-700 leading-snug">${fact.text}</p>`;
-    card.addEventListener('click', () => onFactClick(fi));
-    factsCol.appendChild(card);
-  });
-
-  // Animals column
+  // Animals column (LEFT)
   const animalsCol = document.getElementById('animals-col');
   animalsCol.innerHTML = '<p class="text-center text-xs font-bold uppercase tracking-wider text-gray-400">Animals</p>';
   r.animals.forEach((animal, ai) => {
@@ -232,13 +299,21 @@ function showRound(n) {
     animalsCol.appendChild(card);
   });
 
-  document.getElementById('next-bar').classList.add('hidden');
-}
+  // Facts column (RIGHT)
+  const factsCol = document.getElementById('facts-col');
+  factsCol.innerHTML = '<p class="text-center text-xs font-bold uppercase tracking-wider text-gray-400">Facts</p>';
+  r.facts.forEach((fact, fi) => {
+    const card = document.createElement('div');
+    card.id = `fact-${fi}`;
+    card.className = 'fact-card bg-white border-2 border-gray-200 rounded-2xl p-3 cursor-pointer select-none transition-all duration-150 active:scale-[.97]';
+    card.dataset.fi = fi;
+    card.dataset.animalIdx = fact.animal_idx;
+    card.innerHTML = `<p class="text-xs text-gray-700 leading-snug">${fact.text}</p>`;
+    card.addEventListener('click', () => onFactClick(fi));
+    factsCol.appendChild(card);
+  });
 
-// ── Solved row expand/collapse ────────────────────────────────────────────────
-function toggleSolvedRow(row) {
-  row.querySelector('.solved-collapsed').classList.toggle('hidden');
-  row.querySelector('.solved-expanded').classList.toggle('hidden');
+  document.getElementById('next-bar').classList.add('hidden');
 }
 
 // ── Selection helpers ─────────────────────────────────────────────────────────
@@ -317,7 +392,6 @@ function attemptMatch(fi, ai) {
     factCard.style.cursor      = 'default';
     animalCard.style.cursor    = 'default';
 
-    // Brief flash of success before collapsing
     factCard.classList.remove('border-gray-200');
     animalCard.classList.remove('border-gray-200');
     factCard.classList.add('border-teal-400', 'bg-teal-50');
@@ -330,15 +404,18 @@ function attemptMatch(fi, ai) {
       updatePurpleCount();
     }
 
-    // After flash, remove from columns and append a combined solved row
     const factText     = r.facts[fi].text;
     const extinctBadge = animal.is_extinct
       ? `<span class="text-[10px] font-semibold text-rose-500 mt-0.5">† Extinct</span>` : '';
-    const roygbivBadge = `<span class="text-sm flex-shrink-0">${retryToEmoji(wrongAttempts[fi])}</span>`;
+    const roygbivEmoji = retryToEmoji(wrongAttempts[fi]);
+    const roygbivBadge = `<span class="text-sm flex-shrink-0">${roygbivEmoji}</span>`;
 
     setTimeout(() => {
       factCard.remove();
       animalCard.remove();
+
+      solvedCount++;
+      document.getElementById('solved-count-label').textContent = `${solvedCount} Solved`;
 
       const row = document.createElement('div');
       row.className = 'solved-row cursor-pointer';
@@ -379,6 +456,9 @@ function attemptMatch(fi, ai) {
 
       document.getElementById('solved-list').appendChild(row);
       document.getElementById('solved-section').classList.remove('hidden');
+
+      // Update peek (shows when drawer is collapsed)
+      updateSolvedPeek(animal, roygbivEmoji);
     }, 420);
 
     matched[factAnimalIdx] = true;
@@ -391,6 +471,7 @@ function attemptMatch(fi, ai) {
       setTimeout(() => {
         document.getElementById('next-label').textContent = current < N - 1 ? 'Next Round' : 'See Results';
         document.getElementById('next-bar').classList.remove('hidden');
+        setContainerPadding(true);
       }, 400);
     }
 
@@ -410,6 +491,12 @@ function attemptMatch(fi, ai) {
   }
 }
 
+// ── Solved row expand/collapse (per-row toggle) ───────────────────────────────
+function toggleSolvedRow(row) {
+  row.querySelector('.solved-collapsed').classList.toggle('hidden');
+  row.querySelector('.solved-expanded').classList.toggle('hidden');
+}
+
 // ── Navigation ────────────────────────────────────────────────────────────────
 function nextRound() {
   current++;
@@ -427,6 +514,7 @@ function showEndScreen() {
   document.getElementById('round-display').classList.add('hidden');
   document.getElementById('end-screen').classList.remove('hidden');
   document.getElementById('next-bar').classList.add('hidden');
+  setContainerPadding(false);
 
   document.getElementById('progress-bar').style.width = '100%';
   document.getElementById('match-label').textContent = 'Complete!';
@@ -434,7 +522,6 @@ function showEndScreen() {
   document.getElementById('end-dino').textContent = DAILY_EMOJI;
   document.getElementById('final-purple').textContent = `🟪 ${purpleCount} / 20`;
 
-  // Emoji grid — split into two rows of 10 for readability
   const fullRow = roundEmoji[0] || '🟥'.repeat(20);
   const chars   = Array.from(fullRow);
   const grid    = document.getElementById('emoji-grid');
@@ -443,8 +530,8 @@ function showEndScreen() {
 
 // ── Share ─────────────────────────────────────────────────────────────────────
 function shareResult() {
-  const row     = roundEmoji[0] || '🟥'.repeat(20);
-  const chars   = Array.from(row);
+  const row        = roundEmoji[0] || '🟥'.repeat(20);
+  const chars      = Array.from(row);
   const emojiBlock = chars.slice(0, 10).join('') + ' ' + chars.slice(10).join('');
   const text = `Tia T-Rex Match-Up #${DAY} ${DAILY_EMOJI}\n🟪 ${purpleCount}/20\n${emojiBlock}\nWanna find out more? https://www.happylifeunfolding.com/tiatrex/play/match/`;
 

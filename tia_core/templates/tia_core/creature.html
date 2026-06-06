@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TiaTrex — Daily Creature</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>const PHYLO_IMG_BASE = "{% url 'phylo_image' uuid='00000000-0000-0000-0000-000000000000' %}".replace('00000000-0000-0000-0000-000000000000.png', '');</script>
+  <style>
+    @keyframes pop {
+      0%   { transform: scale(1); }
+      40%  { transform: scale(1.1); }
+      100% { transform: scale(1); }
+    }
+    .pop { animation: pop 0.28s ease; }
+
+    @keyframes fadein {
+      from { opacity: 0; transform: translateY(-5px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .fadein { animation: fadein 0.22s ease; }
+
+    /* line-clamp polyfill for older browsers */
+    .clamp2 {
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+  </style>
+</head>
+<body class="bg-gray-50 font-sans text-gray-900 antialiased min-h-screen">
+
+<div class="max-w-lg mx-auto px-4 pt-5 pb-20">
+
+  <!-- ── Header ────────────────────────────────────────────────────────────── -->
+  <div class="flex items-center justify-between mb-5">
+    <a href="{% url 'play' %}"
+       class="w-9 h-9 rounded-full bg-white border border-gray-200 shadow-sm flex items-center justify-center text-gray-500 hover:text-gray-800 flex-shrink-0">
+      <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+           stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="m15 18-6-6 6-6"/>
+      </svg>
+    </a>
+    <div class="text-center">
+      <h1 class="font-black text-lg tracking-tight leading-none">Daily Creature</h1>
+      <p class="text-xs text-gray-400 mt-0.5">#{{ day_number }}</p>
+    </div>
+    <div class="flex items-center gap-2 flex-shrink-0">
+      <div id="trail-display" class="text-base leading-relaxed"></div>
+      <button id="restart-btn" onclick="restartGame()" title="Restart"
+              class="w-9 h-9 rounded-full bg-white border border-gray-200 shadow-sm flex items-center justify-center text-gray-400 hover:text-gray-700 flex-shrink-0">
+        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+             stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+          <path d="M3 3v5h5"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- ── Game screen ────────────────────────────────────────────────────────── -->
+  <div id="game-screen">
+
+    <!-- Clue stack -->
+    <div id="clue-stack" class="flex flex-col gap-2 mb-4"></div>
+
+    <!-- Letter blanks -->
+    <p id="letter-blanks"
+       class="text-center font-mono text-lg tracking-[0.25em] text-gray-300 mb-4 select-none"></p>
+
+    <!-- Search -->
+    <div class="relative mb-3">
+      <input id="search-input" type="text" placeholder="Guess the animal…"
+             autocomplete="off" spellcheck="false"
+             class="w-full bg-white border-2 border-gray-200 rounded-2xl px-4 py-3 text-sm font-medium focus:border-teal-400 focus:outline-none transition-colors">
+      <div id="search-dropdown"
+           class="hidden absolute left-0 right-0 top-full mt-1 bg-white border border-gray-200 rounded-2xl shadow-lg z-30 overflow-hidden max-h-64 overflow-y-auto">
+      </div>
+    </div>
+
+    <!-- Pool count -->
+    <p id="pool-count" class="text-center text-xs font-bold text-gray-400 mb-1"></p>
+    <!-- Final guess counter (shown after all clues revealed) -->
+    <p id="final-guess-counter" class="hidden text-center text-sm font-black text-rose-500 mb-3"></p>
+
+    <!-- Action buttons — above the grid so they're always visible -->
+    <button id="next-clue-btn" onclick="takeClue()"
+            class="w-full flex items-center justify-center gap-2 bg-gray-900 hover:bg-gray-700 active:scale-[.97] text-white font-bold py-3 rounded-2xl text-sm transition mb-2">
+      <span>Next Clue</span>
+      <span>💡</span>
+    </button>
+    <button id="see-answer-btn" onclick="revealAnswer()"
+            class="hidden w-full border border-gray-200 bg-white hover:bg-gray-50 text-gray-400 font-semibold py-2.5 rounded-2xl text-sm transition mb-2">
+      See Answer
+    </button>
+
+    <!-- Silhouette grid — scroll down to browse -->
+    <div id="sil-grid" class="grid grid-cols-4 gap-1.5 mt-2"></div>
+
+  </div><!-- /game-screen -->
+
+  <!-- ── Reveal screen ──────────────────────────────────────────────────────── -->
+  <div id="reveal-screen" class="hidden">
+
+    <!-- Result message -->
+    <p id="reveal-msg" class="text-center text-base font-black text-gray-900 mb-5"></p>
+
+    <!-- Animal showcase -->
+    <div class="text-center mb-5">
+      <div class="w-36 h-36 mx-auto flex items-center justify-center mb-3">
+        <img id="reveal-img" alt="" class="max-w-full max-h-full object-contain pop">
+      </div>
+      <h2 id="reveal-name" class="text-2xl font-black text-gray-900 mb-0.5"></h2>
+      <p id="reveal-sci" class="text-sm italic text-gray-400 mb-3"></p>
+      <div class="flex justify-center">
+        <span id="reveal-status"></span>
+      </div>
+    </div>
+
+    <!-- Score card -->
+    <div class="bg-white border border-gray-200 rounded-2xl p-5 mb-5 text-center">
+      <p class="text-xs font-bold uppercase tracking-wider text-gray-400 mb-2">Your Path</p>
+      <p id="reveal-trail" class="font-mono text-2xl leading-relaxed tracking-wide break-all"></p>
+    </div>
+
+    <!-- Cool facts -->
+    <div class="mb-5">
+      <div class="flex items-center gap-2 mb-3">
+        <div class="flex-1 h-px bg-gray-200"></div>
+        <span class="text-xs font-bold uppercase tracking-wider text-gray-400">Cool Facts</span>
+        <div class="flex-1 h-px bg-gray-200"></div>
+      </div>
+      <div id="reveal-facts" class="flex flex-col gap-2"></div>
+    </div>
+
+    <!-- Share -->
+    <button onclick="shareResult()"
+            class="w-full bg-teal-500 hover:bg-teal-600 text-white font-bold py-3.5 rounded-2xl transition flex items-center justify-center gap-2 text-base mb-3">
+      <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+           stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
+        <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+        <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+      </svg>
+      <span id="share-label">Share</span>
+    </button>
+
+    <div class="flex gap-2">
+      <a href="{% url 'play' %}"
+         class="flex-1 text-center border border-gray-200 bg-white hover:bg-gray-50 text-gray-700 font-semibold py-3.5 rounded-2xl transition text-sm">
+        Back to Play
+      </a>
+      <button onclick="playAgain()"
+              class="flex-1 border border-gray-200 bg-white hover:bg-gray-50 text-gray-700 font-semibold py-3.5 rounded-2xl transition text-sm">
+        Play Again
+      </button>
+    </div>
+
+  </div><!-- /reveal-screen -->
+
+</div>
+
+<script>
+const CLUES       = {{ clues_json|safe }};
+const ANSWER      = {{ answer_json|safe }};
+const ALL_ANIMALS = {{ all_animals_json|safe }};
+const FACTS       = {{ facts_json|safe }};
+const DAY         = {{ day_number }};
+const TODAY       = '{{ today_iso }}';
+const STORAGE     = `tiatrex-creature-${TODAY}`;
+
+// ── State ─────────────────────────────────────────────────────────────────────
+let cluesRevealed    = 1;
+let guessTrail       = [];
+let eliminated       = [];
+let solved           = false;
+let answered         = false;
+let finalGuessesLeft = 3;
+
+const saved = JSON.parse(localStorage.getItem(STORAGE) || 'null');
+if (saved) {
+  cluesRevealed    = saved.cluesRevealed    ?? 1;
+  guessTrail       = saved.guessTrail       ?? [];
+  eliminated       = saved.eliminated       ?? [];
+  solved           = saved.solved           ?? false;
+  answered         = saved.answered         ?? false;
+  finalGuessesLeft = saved.finalGuessesLeft ?? 3;
+}
+
+function save() {
+  localStorage.setItem(STORAGE, JSON.stringify({ cluesRevealed, guessTrail, eliminated, solved, answered, finalGuessesLeft }));
+}
+
+// ── Pool filtering ────────────────────────────────────────────────────────────
+function getPool() {
+  let pool = ALL_ANIMALS;
+  for (let i = 0; i < cluesRevealed && i < CLUES.length; i++) {
+    const clue = CLUES[i];
+    if (clue.filter_field === null) continue;
+    if (clue.filter_field === 'is_extinct') {
+      pool = pool.filter(a => a.is_extinct === clue.filter_value);
+    } else if (clue.filter_field === 'spotlight') {
+      const keep = new Set(clue.keep_names);
+      pool = pool.filter(a => keep.has(a.common_name));
+    } else {
+      pool = pool.filter(a => a[clue.filter_field] === clue.filter_value);
+    }
+  }
+  return pool.filter(a => !eliminated.includes(a.common_name));
+}
+
+// ── Rendering ─────────────────────────────────────────────────────────────────
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function renderBlanks() {
+  const words = ANSWER.common_name.split(' ');
+  document.getElementById('letter-blanks').textContent =
+    words.map(w => Array.from(w).fill('_').join(' ')).join('   ');
+}
+
+function renderClues() {
+  const stack = document.getElementById('clue-stack');
+  stack.innerHTML = '';
+  for (let i = 0; i < cluesRevealed && i < CLUES.length; i++) {
+    const clue = CLUES[i];
+    if (!clue.text && clue.type !== 'binary') continue;
+    const isLatest = (i === cluesRevealed - 1);
+    const el = document.createElement('div');
+    el.className = `flex items-start gap-3 border-2 rounded-2xl px-4 py-3 ${
+      isLatest ? 'border-teal-300 bg-teal-50 fadein' : 'border-gray-200 bg-white'
+    }`;
+
+    let body;
+    if (clue.type === 'spotlight') {
+      body = `<p class="text-sm font-semibold text-gray-700">🎯 ${esc(clue.text)}</p>`;
+    } else if (clue.type === 'binary') {
+      body = `<div class="flex gap-2 flex-wrap">
+        ${clue.options.map(opt => opt.correct
+          ? `<span class="bg-teal-500 text-white rounded-full px-3 py-1 text-xs font-bold">✓ ${esc(opt.label)}</span>`
+          : `<span class="bg-gray-100 text-gray-400 rounded-full px-3 py-1 text-xs font-bold line-through">${esc(opt.label)}</span>`
+        ).join('')}
+      </div>`;
+    } else {
+      body = `<p class="text-sm font-semibold leading-snug ${isLatest ? 'text-teal-800' : 'text-gray-700'}">${esc(clue.text)}</p>`;
+    }
+
+    el.innerHTML = `
+      <span class="text-[10px] font-black uppercase tracking-wider text-gray-400 flex-shrink-0 mt-0.5">Clue ${i + 1}</span>
+      ${body}
+    `;
+    stack.appendChild(el);
+  }
+}
+
+function renderPool() {
+  const pool    = getPool();
+  const gridEl  = document.getElementById('sil-grid');
+  const countEl = document.getElementById('pool-count');
+
+  countEl.textContent = `${pool.length} animal${pool.length !== 1 ? 's' : ''} match`;
+
+  gridEl.innerHTML = '';
+
+  // Dynamic sizing: cards grow as pool shrinks
+  const n = pool.length;
+  const imgCls  = n > 40 ? 'w-9 h-9'  : n > 20 ? 'w-11 h-11' : 'w-14 h-14';
+  const cardPad = n > 40 ? 'p-1'       : n > 20 ? 'p-1.5'     : 'p-2';
+  const txtCls  = n > 20 ? 'text-[9px]' : 'text-[10px]';
+
+  pool.forEach(animal => {
+    const isElim = eliminated.includes(animal.common_name);
+    const card = document.createElement('div');
+    card.className = `relative flex flex-col items-center text-center rounded-xl ${cardPad} border-2 select-none ${
+      isElim
+        ? 'border-gray-100 bg-gray-50 opacity-40'
+        : 'border-gray-200 bg-white cursor-pointer active:scale-95 transition-transform'
+    }`;
+    card.dataset.name = animal.common_name;
+    card.innerHTML = `
+      <div class="${imgCls} flex items-center justify-center">
+        <img src="${PHYLO_IMG_BASE}${esc(animal.uuid)}.png" alt="${esc(animal.common_name)}"
+             class="max-w-full max-h-full object-contain">
+      </div>
+      <p class="${txtCls} font-semibold text-gray-700 leading-tight mt-0.5 clamp2">${esc(animal.common_name)}</p>
+      ${isElim ? '<div class="absolute inset-0 flex items-center justify-center text-rose-400 text-xl font-black rounded-xl">✗</div>' : ''}
+    `;
+    if (!isElim) card.addEventListener('click', () => guessAnimal(animal.common_name));
+    gridEl.appendChild(card);
+  });
+}
+
+function renderSearch() {
+  const input = document.getElementById('search-input').value.trim();
+  const dd    = document.getElementById('search-dropdown');
+
+  if (!input) { dd.classList.add('hidden'); return; }
+
+  const q       = input.toLowerCase();
+  const pool    = getPool();
+  const matches = pool
+    .filter(a => a.common_name.toLowerCase().includes(q))
+    .slice(0, 20);
+
+  if (!matches.length) {
+    dd.innerHTML = '<p class="px-4 py-3 text-sm text-gray-400 italic">No matches in current pool</p>';
+    dd.classList.remove('hidden');
+    return;
+  }
+
+  dd.innerHTML = matches.map(a => `
+    <div class="px-4 py-2.5 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-0"
+         data-name="${esc(a.common_name)}">
+      <p class="text-sm font-semibold text-gray-800">${esc(a.common_name)}</p>
+      <p class="text-xs italic text-gray-400">${esc(a.scientific_name)}</p>
+    </div>
+  `).join('');
+  dd.classList.remove('hidden');
+}
+
+function updateTrail() {
+  document.getElementById('trail-display').textContent = guessTrail.join('');
+}
+
+function updateButtons() {
+  const nextBtn    = document.getElementById('next-clue-btn');
+  const seeBtn     = document.getElementById('see-answer-btn');
+  const restartBtn = document.getElementById('restart-btn');
+  if (answered) {
+    nextBtn.classList.add('hidden');
+    seeBtn.classList.add('hidden');
+    restartBtn.classList.add('hidden');
+  } else if (cluesRevealed >= CLUES.length) {
+    nextBtn.classList.add('hidden');
+    seeBtn.classList.remove('hidden');
+  } else {
+    nextBtn.classList.remove('hidden');
+    seeBtn.classList.add('hidden');
+  }
+  updateFinalMode();
+}
+
+function updateFinalMode() {
+  const el = document.getElementById('final-guess-counter');
+  if (!answered && cluesRevealed >= CLUES.length && finalGuessesLeft > 0 && finalGuessesLeft < 3) {
+    el.textContent = `${finalGuessesLeft} guess${finalGuessesLeft !== 1 ? 'es' : ''} remaining`;
+    el.classList.remove('hidden');
+  } else if (!answered && cluesRevealed >= CLUES.length && finalGuessesLeft === 3) {
+    el.textContent = '3 guesses left — make them count!';
+    el.classList.remove('hidden');
+  } else {
+    el.classList.add('hidden');
+  }
+}
+
+function restartGame() {
+  localStorage.removeItem(STORAGE);
+  location.reload();
+}
+
+// ── Actions ───────────────────────────────────────────────────────────────────
+function takeClue() {
+  if (answered || cluesRevealed >= CLUES.length) return;
+  guessTrail.push('💡');
+  cluesRevealed++;
+  save();
+  renderClues();
+  renderPool();
+  renderSearch();
+  updateTrail();
+  updateButtons();
+}
+
+function guessAnimal(name) {
+  if (answered) return;
+  document.getElementById('search-input').value = '';
+  document.getElementById('search-dropdown').classList.add('hidden');
+
+  if (name === ANSWER.common_name) {
+    guessTrail.push('✅');
+    solved   = true;
+    answered = true;
+    save();
+    updateTrail();
+    setTimeout(showReveal, 280);
+  } else {
+    guessTrail.push('❌');
+    eliminated.push(name);
+    const inFinalMode = cluesRevealed >= CLUES.length;
+    if (inFinalMode) {
+      finalGuessesLeft--;
+      if (finalGuessesLeft <= 0) {
+        save();
+        updateTrail();
+        setTimeout(revealAnswer, 600);
+        return;
+      }
+    }
+    save();
+    updateTrail();
+    renderPool();
+    renderSearch();
+    updateFinalMode();
+  }
+}
+
+function revealAnswer() {
+  answered = true;
+  save();
+  showReveal();
+}
+
+// ── Reveal ────────────────────────────────────────────────────────────────────
+function showReveal() {
+  document.getElementById('game-screen').classList.add('hidden');
+  document.getElementById('reveal-screen').classList.remove('hidden');
+  updateButtons();
+
+  document.getElementById('reveal-img').src = `${PHYLO_IMG_BASE}${ANSWER.uuid}.png`;
+  document.getElementById('reveal-name').textContent = ANSWER.common_name;
+  document.getElementById('reveal-sci').textContent  = ANSWER.scientific_name;
+
+  const statusEl = document.getElementById('reveal-status');
+  if (ANSWER.is_extinct) {
+    statusEl.textContent = ANSWER.geologic_range
+      ? `† Extinct — ${ANSWER.geologic_range}`
+      : '† Extinct';
+    statusEl.className = 'text-xs font-semibold text-rose-600 bg-rose-50 border border-rose-200 rounded-full px-3 py-1';
+  } else if (ANSWER.conservation_status) {
+    statusEl.textContent = ANSWER.conservation_status;
+    statusEl.className = 'text-xs font-semibold text-teal-700 bg-teal-50 border border-teal-200 rounded-full px-3 py-1';
+  }
+
+  const wrong   = guessTrail.filter(e => e === '❌').length;
+  const cluesTk = guessTrail.filter(e => e === '💡').length;
+  const msgEl   = document.getElementById('reveal-msg');
+  if (solved) {
+    if (cluesTk === 0 && wrong === 0) msgEl.textContent = 'First try — no clues! 🌟';
+    else if (wrong === 0) msgEl.textContent = `Got it in ${cluesTk} clue${cluesTk !== 1 ? 's' : ''}!`;
+    else msgEl.textContent = 'Got it! 🎉';
+  } else {
+    msgEl.textContent = "Better luck tomorrow!";
+  }
+
+  document.getElementById('reveal-trail').textContent = guessTrail.join('') || '—';
+
+  const factsEl = document.getElementById('reveal-facts');
+  if (!FACTS.length) {
+    factsEl.innerHTML = '<p class="text-xs text-gray-400 italic text-center">No facts yet.</p>';
+  } else {
+    factsEl.innerHTML = FACTS.map(f => `
+      <div class="bg-white border border-gray-200 rounded-xl px-4 py-3">
+        <p class="text-sm text-gray-700 leading-relaxed">${esc(f)}</p>
+      </div>
+    `).join('');
+  }
+}
+
+function playAgain() {
+  localStorage.removeItem(STORAGE);
+  location.reload();
+}
+
+function shareResult() {
+  const trail = guessTrail.join('') || '—';
+  const text  = `Tia T-Rex Daily Creature #${DAY}\n${trail}\nWanna find out more? https://www.happylifeunfolding.com/tiatrex/play/creature/`;
+  navigator.clipboard.writeText(text).then(() => {
+    const lbl = document.getElementById('share-label');
+    lbl.textContent = 'Copied!';
+    setTimeout(() => { lbl.textContent = 'Share'; }, 2500);
+  }).catch(() => prompt('Copy this to share:', text));
+}
+
+// ── Event listeners ───────────────────────────────────────────────────────────
+document.getElementById('search-input').addEventListener('input', renderSearch);
+document.getElementById('search-dropdown').addEventListener('click', e => {
+  const item = e.target.closest('[data-name]');
+  if (item) guessAnimal(item.dataset.name);
+});
+document.getElementById('search-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') {
+    const first = document.querySelector('#search-dropdown [data-name]');
+    if (first) guessAnimal(first.dataset.name);
+  }
+});
+document.addEventListener('click', e => {
+  if (!e.target.closest('#search-input') && !e.target.closest('#search-dropdown')) {
+    document.getElementById('search-dropdown').classList.add('hidden');
+  }
+});
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+renderBlanks();
+renderClues();
+updateTrail();
+renderPool();
+updateButtons();
+updateFinalMode();
+if (answered) showReveal();
+</script>
+
+<!-- Bottom nav -->
+<nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-10">
+  <div class="max-w-lg mx-auto flex">
+    <a href="{% url 'play' %}" class="flex-1 flex flex-col items-center gap-0.5 py-3 text-blue-600">
+      <div class="w-11 h-7 bg-blue-50 rounded-2xl flex items-center justify-center">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2Zm-1.5 14.5v-9l6 4.5Z"/>
+        </svg>
+      </div>
+      <span class="text-xs font-semibold">Play</span>
+    </a>
+    <a href="{% url 'explore' %}" class="flex-1 flex flex-col items-center gap-0.5 py-3 text-gray-400">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24"
+           stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+      </svg>
+      <span class="text-xs font-medium">Explore</span>
+    </a>
+    <a href="{% url 'credits' %}" class="flex-1 flex flex-col items-center gap-0.5 py-3 text-gray-400">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24"
+           stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/>
+      </svg>
+      <span class="text-xs font-medium">Credits</span>
+    </a>
+  </div>
+</nav>
+
+</body>
+</html>

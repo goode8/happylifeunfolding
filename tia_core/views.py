@@ -321,6 +321,188 @@ def credits(request):
     })
 
 
+# ── Daily Creature ───────────────────────────────────────────────────────────
+
+def _format_creature_status(animal):
+    if animal.is_extinct:
+        return f"Extinct — {animal.geologic_range}" if animal.geologic_range else "Extinct"
+    if animal.conservation_status:
+        return f"Living — {animal.conservation_status}"
+    return "Living"
+
+
+def _first_sentence(text):
+    if not text:
+        return ''
+    sentence = text.split('.')[0].strip()
+    return (sentence + '.') if sentence else ''
+
+
+@login_required
+def creature_of_day(request):
+    today = date.today()
+    day_number = (today - GAME_EPOCH).days + 1
+    rng = random.Random(f"creature-{today.isoformat()}")
+
+    pa_map = {
+        pa['common_name']: pa['uuid']
+        for pa in PhyloAnimal.objects.values('common_name', 'uuid')
+    }
+
+    all_animals_qs = list(
+        Animal.objects
+        .select_related('category', 'clade')
+        .filter(common_name__in=pa_map)
+        .order_by('common_name')
+    )
+
+    eligible = list(all_animals_qs)
+    rng.shuffle(eligible)
+    daily = eligible[0]
+
+    all_parent_groups = sorted({a.category.parent_group for a in all_animals_qs})
+
+    # Pick two distinct facts for clues 3 & 4 (deterministic via seeded rng, names obscured)
+    daily_facts = list(AnimalFact.objects.filter(animal=daily).values('text_template'))
+    rng.shuffle(daily_facts)
+    fact_clues = [
+        _obscure_name(f['text_template'], daily.common_name)
+        for f in daily_facts[:2]
+    ]
+
+    # Sub-group binary: show whenever named sub_groups exist for this parent_group.
+    # If the answer IS a named sub_group → one pill glows, others struck.
+    # If the answer is "Other" → all named pills struck (meaning "not any of these"),
+    # which still filters the grid down without showing the word "Other".
+    named_sub_groups = sorted({
+        a.category.sub_group
+        for a in all_animals_qs
+        if a.category.parent_group == daily.category.parent_group
+        and a.category.sub_group
+        and a.category.sub_group != 'Other'
+    })
+    answer_sub = daily.category.sub_group or ''
+    sub_group_clue = {
+        'text': answer_sub if (answer_sub and answer_sub != 'Other') else '',
+        'filter_field': 'sub_group',
+        'filter_value': answer_sub,
+        'type': 'binary',
+        'options': [
+            {'label': s, 'correct': s == answer_sub}
+            for s in named_sub_groups
+        ],
+    } if named_sub_groups else None
+
+    # Spotlight clues: randomly trim grid to 20 then 10, keeping the answer.
+    # Compute baseline pool (mirrors JS getPool after classification clues).
+    base_pool = [
+        a.common_name for a in all_animals_qs
+        if a.category.parent_group == daily.category.parent_group
+        and a.is_extinct == daily.is_extinct
+        and (not sub_group_clue or a.category.sub_group == answer_sub)
+    ]
+    non_answer = [n for n in base_pool if n != daily.common_name]
+    rng.shuffle(non_answer)
+
+    spotlight_20_clue = None
+    spotlight_10_clue = None
+
+    if len(base_pool) > 20:
+        keep_20 = [daily.common_name] + non_answer[:19]
+        spotlight_20_clue = {
+            'text': '20 candidates remain',
+            'type': 'spotlight',
+            'filter_field': 'spotlight',
+            'keep_names': keep_20,
+        }
+        keep_10 = [daily.common_name] + non_answer[:9]
+        spotlight_10_clue = {
+            'text': '10 candidates remain',
+            'type': 'spotlight',
+            'filter_field': 'spotlight',
+            'keep_names': keep_10,
+        }
+    elif len(base_pool) > 10:
+        keep_10 = [daily.common_name] + non_answer[:9]
+        spotlight_10_clue = {
+            'text': '10 candidates remain',
+            'type': 'spotlight',
+            'filter_field': 'spotlight',
+            'keep_names': keep_10,
+        }
+
+    clues = [
+        c for c in [
+            # Clue 1: major group — binary reveal across all groups
+            {'text': daily.category.parent_group,
+             'filter_field': 'parent_group',
+             'filter_value': daily.category.parent_group,
+             'type': 'binary',
+             'options': [
+                 {'label': g, 'correct': g == daily.category.parent_group}
+                 for g in all_parent_groups
+             ]},
+            # Clue 2: living or extinct — binary reveal
+            {'text': 'Extinct' if daily.is_extinct else 'Living',
+             'filter_field': 'is_extinct',
+             'filter_value': daily.is_extinct,
+             'type': 'binary',
+             'options': [
+                 {'label': 'Living',  'correct': not daily.is_extinct},
+                 {'label': 'Extinct', 'correct': daily.is_extinct},
+             ]},
+            # Clue 3: sub-group binary — trims the grid
+            sub_group_clue,
+            # Clues 4 & 5: fun facts (name obscured)
+            {'text': fact_clues[0], 'filter_field': None, 'filter_value': None} if len(fact_clues) > 0 else None,
+            {'text': fact_clues[1], 'filter_field': None, 'filter_value': None} if len(fact_clues) > 1 else None,
+            # Clues 6 & 7: spotlight — randomly trim to 20 then 10
+            spotlight_20_clue,
+            spotlight_10_clue,
+        ]
+        if c is not None
+    ]
+
+    all_animals_data = [
+        {
+            'common_name': a.common_name,
+            'scientific_name': a.scientific_name,
+            'uuid': pa_map[a.common_name],
+            'parent_group': a.category.parent_group,
+            'sub_group': a.category.sub_group,
+            'is_extinct': a.is_extinct,
+        }
+        for a in all_animals_qs
+    ]
+
+    facts = []
+    for f in AnimalFact.objects.filter(animal=daily).values('text_template'):
+        try:
+            facts.append(f['text_template'].format(animal=daily.common_name))
+        except (KeyError, ValueError):
+            facts.append(f['text_template'])
+
+    answer = {
+        'common_name': daily.common_name,
+        'scientific_name': daily.scientific_name,
+        'uuid': pa_map[daily.common_name],
+        'is_extinct': daily.is_extinct,
+        'conservation_status': daily.conservation_status,
+        'geologic_range': daily.geologic_range,
+        'lifespan_display': daily.lifespan_display,
+    }
+
+    return render(request, 'tia_core/creature.html', {
+        'clues_json': json.dumps(clues),
+        'answer_json': json.dumps(answer),
+        'all_animals_json': json.dumps(all_animals_data),
+        'facts_json': json.dumps(facts),
+        'day_number': day_number,
+        'today_iso': today.isoformat(),
+        'active_tab': 'play',
+    })
+
+
 # ── Animal Match-Up ───────────────────────────────────────────────────────────
 
 def _obscure_name(text, common_name):
