@@ -144,7 +144,7 @@
         <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
         <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
       </svg>
-      <span id="share-label">Share Result</span>
+      <span id="share-label">Share</span>
     </button>
 
     <button onclick="replayGame()"
@@ -538,7 +538,7 @@ function shareResult() {
   navigator.clipboard.writeText(text).then(() => {
     const lbl = document.getElementById('share-label');
     lbl.textContent = 'Copied!';
-    setTimeout(() => { lbl.textContent = 'Share Result'; }, 2500);
+    setTimeout(() => { lbl.textContent = 'Share'; }, 2500);
   }).catch(() => {
     prompt('Copy this to share:', text);
   });

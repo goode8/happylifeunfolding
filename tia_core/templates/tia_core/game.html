@@ -140,7 +140,7 @@
         <circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/>
         <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
       </svg>
-      <span id="share-label">Share Result</span>
+      <span id="share-label">Share</span>
     </button>
 
     <button onclick="replayGame()"
@@ -332,12 +332,12 @@ function showEndScreen() {
 function shareResult() {
   const score = results.filter(Boolean).length;
   const emoji = results.map(r => r ? '🟩' : '🟥').join('');
-  const text = `Tia T-Rex Daily Challenge #${DAY} ${DAILY_EMOJI}\n${score}/${N}\n${emoji}\nWanna find out more? https://www.happylifeunfolding.com/tiatrex/play/daily/`;
+  const text = `Tia T-Rex How Long Ago? — Daily Challenge #${DAY} ${DAILY_EMOJI}\n${score}/${N}\n${emoji}\nWanna find out more? https://www.happylifeunfolding.com/tiatrex/play/daily/`;
 
   navigator.clipboard.writeText(text).then(() => {
     const lbl = document.getElementById('share-label');
-    lbl.textContent = 'Copied to clipboard!';
-    setTimeout(() => { lbl.textContent = 'Share Result'; }, 2500);
+    lbl.textContent = 'Copied!';
+    setTimeout(() => { lbl.textContent = 'Share'; }, 2500);
   }).catch(() => {
     // Fallback: show text in a prompt
     prompt('Copy this to share:', text);

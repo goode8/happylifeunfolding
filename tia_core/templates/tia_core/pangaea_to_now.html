@@ -228,7 +228,7 @@
           <polyline points="16 6 12 2 8 6"/>
           <line x1="12" y1="2" x2="12" y2="15"/>
         </svg>
-        <span id="share-label">Share result</span>
+        <span id="share-label">Share</span>
       </button>
       <button onclick="restartGame()"
               class="w-full bg-white border border-gray-200 text-gray-600 font-semibold py-3.5 rounded-2xl text-base transition-all hover:bg-gray-50 active:scale-[.98]">
@@ -632,7 +632,7 @@ function shareResult() {
     .then(() => {
       const lbl = document.getElementById('share-label');
       lbl.textContent = 'Copied!';
-      setTimeout(() => { lbl.textContent = 'Share result'; }, 2500);
+      setTimeout(() => { lbl.textContent = 'Share'; }, 2500);
     })
     .catch(() => prompt('Copy this to share:', text));
 }
