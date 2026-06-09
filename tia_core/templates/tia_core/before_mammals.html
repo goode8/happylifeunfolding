@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TiaTrex — Before Mammals</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @keyframes fadein {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .fadein { animation: fadein 0.3s ease forwards; }
+
+    @keyframes pop {
+      0%   { transform: scale(1); }
+      40%  { transform: scale(1.08); }
+      100% { transform: scale(1); }
+    }
+    .pop { animation: pop 0.25s ease; }
+  </style>
+</head>
+<body class="bg-amber-50 font-sans text-gray-900 antialiased min-h-screen">
+
+<div class="max-w-lg mx-auto px-4 pt-5 pb-28">
+
+  <!-- Header -->
+  <div class="flex items-center justify-between mb-4">
+    <a href="{% url 'play' %}"
+       class="w-9 h-9 rounded-full bg-white border border-amber-200 shadow-sm flex items-center justify-center text-gray-500 hover:text-gray-800 flex-shrink-0">
+      <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+           stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="m15 18-6-6 6-6"/>
+      </svg>
+    </a>
+    <div class="text-center">
+      <h1 class="font-black text-lg tracking-tight leading-none">Before Mammals</h1>
+      <p id="round-indicator" class="text-xs text-amber-600 mt-0.5 font-semibold"></p>
+    </div>
+    <button onclick="restartGame()" title="Restart"
+            class="w-9 h-9 rounded-full bg-white border border-amber-200 shadow-sm flex items-center justify-center text-gray-400 hover:text-gray-700 flex-shrink-0">
+      <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+           stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+        <path d="M3 3v5h5"/>
+      </svg>
+    </button>
+  </div>
+
+  <!-- Progress bar -->
+  <div class="w-full bg-amber-100 rounded-full h-1.5 mb-6">
+    <div id="progress-bar" class="bg-amber-500 h-1.5 rounded-full transition-all duration-500" style="width:0%"></div>
+  </div>
+
+  <!-- ── Intro screen ───────────────────────────────────────────────────────── -->
+  <div id="intro-screen" class="hidden fadein">
+
+    <!-- Hero -->
+    <div class="text-center mb-6">
+      <div class="text-6xl mb-4 select-none">🦴</div>
+      <h2 class="text-2xl font-black text-gray-900 leading-tight mb-3">Before the first dinosaur existed,<br>one lineage was already changing.</h2>
+      <p class="text-gray-600 text-sm leading-relaxed">
+        About 300 million years ago, a group called <strong>synapsids</strong> diverged from other vertebrates.
+        Over the next 90 million years, inherited variations that happened to aid survival kept accumulating —
+        different tooth shapes, signs of fur, changes to the jaw and ear.
+        Those changes eventually produced every mammal alive today, including you.
+      </p>
+    </div>
+
+    <!-- Are they our ancestors? -->
+    <div class="bg-white rounded-2xl p-5 mb-4 shadow-sm border border-amber-100">
+      <p class="text-xs font-bold text-amber-700 uppercase tracking-wider mb-3">Are these our ancestors?</p>
+      <p class="text-sm text-gray-700 leading-relaxed mb-3">
+        Most are not direct ancestors — they're relatives. The synapsid family had many branches,
+        and most died out. Five of the six animals here belong to branches that went extinct.
+        Morganucodon is close to the lineage that survived to become modern mammals.
+      </p>
+      <p class="text-sm text-gray-700 leading-relaxed mb-3">
+        All of their fossils are valuable because they preserve the same kinds of changes that were
+        spreading across many synapsid lineages at the time — shifts in tooth structure,
+        evidence of fur, changes to the jaw and skull. Each one spread because, over many
+        generations, it happened to improve survival or reproduction.
+      </p>
+      <p class="text-sm text-gray-700 leading-relaxed">
+        These six animals are snapshots of that process at different moments in time.
+      </p>
+    </div>
+
+    <!-- The six animals -->
+    <div class="bg-white rounded-2xl p-5 mb-5 shadow-sm border border-amber-100">
+      <p class="text-xs font-bold text-amber-700 uppercase tracking-wider mb-3">Six animals. Six evolutionary shifts.</p>
+      <div class="flex flex-col gap-3">
+        <div class="flex items-center gap-3">
+          <span class="text-2xl flex-shrink-0 select-none">🦎</span>
+          <div>
+            <p class="text-sm font-bold text-gray-800 leading-none">Dimetrodon</p>
+            <p class="text-xs text-gray-500 mt-0.5">Earliest known synapsid with differentiated tooth types</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-3">
+          <span class="text-2xl flex-shrink-0 select-none">🐅</span>
+          <div>
+            <p class="text-sm font-bold text-gray-800 leading-none">Inostrancevia</p>
+            <p class="text-xs text-gray-500 mt-0.5">Top predator — enlarged canine teeth, wide jaw gape</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-3">
+          <span class="text-2xl flex-shrink-0 select-none">🦏</span>
+          <div>
+            <p class="text-sm font-bold text-gray-800 leading-none">Lystrosaurus</p>
+            <p class="text-xs text-gray-500 mt-0.5">Replaced most teeth with a beak; survived the Permian-Triassic extinction</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-3">
+          <span class="text-2xl flex-shrink-0 select-none">🦦</span>
+          <div>
+            <p class="text-sm font-bold text-gray-800 leading-none">Thrinaxodon</p>
+            <p class="text-xs text-gray-500 mt-0.5">Skull pits indicate whiskers — earliest fossil evidence of fur</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-3">
+          <span class="text-2xl flex-shrink-0 select-none">🐺</span>
+          <div>
+            <p class="text-sm font-bold text-gray-800 leading-none">Cynognathus</p>
+            <p class="text-xs text-gray-500 mt-0.5">A bony secondary palate separated breathing from eating</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-3">
+          <span class="text-2xl flex-shrink-0 select-none">🐭</span>
+          <div>
+            <p class="text-sm font-bold text-gray-800 leading-none">Morganucodon</p>
+            <p class="text-xs text-gray-500 mt-0.5">Three middle ear bones; one of the earliest true mammals</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- How it works -->
+    <div class="bg-amber-50 border border-amber-200 rounded-2xl px-4 py-3.5 mb-5">
+      <p class="text-xs font-bold text-amber-700 uppercase tracking-wider mb-1">Learn More</p>
+      <p class="text-sm text-amber-900 leading-relaxed">
+        For each animal, learn what evolutionary change it represents — then a question
+        about why that change mattered for survival, and what it means for us today.
+      </p>
+    </div>
+
+    <button onclick="startGame()"
+            class="w-full bg-amber-500 hover:bg-amber-600 active:scale-[.98] text-white font-bold py-4 rounded-2xl text-base transition-all shadow-md shadow-amber-100">
+      Let's Go
+    </button>
+
+  </div><!-- /intro-screen -->
+
+  <!-- ── Game screen ─────────────────────────────────────────────────────────── -->
+  <div id="game-screen">
+
+    <!-- Teach phase -->
+    <div id="teach-phase">
+
+      <!-- Animal hero card -->
+      <div class="rounded-3xl p-6 mb-4 bg-gradient-to-br from-amber-400 to-orange-500 shadow-lg shadow-orange-100">
+        <div class="flex items-start justify-between mb-4">
+          <div class="flex-1 min-w-0 pr-3">
+            <span id="teach-group" class="text-xs font-bold uppercase tracking-wider text-white/70 mb-1 block"></span>
+            <h2 id="teach-name" class="text-3xl font-black text-white leading-none"></h2>
+            <p id="teach-period" class="text-sm text-white/80 mt-1 font-medium"></p>
+          </div>
+          <div id="teach-emoji" class="text-5xl select-none flex-shrink-0"></div>
+        </div>
+        <div class="bg-white/20 rounded-2xl px-4 py-3">
+          <p class="text-xs font-bold uppercase tracking-wider text-white/70 mb-1">New innovation</p>
+          <p id="teach-innovation" class="text-xl font-black text-white leading-snug"></p>
+        </div>
+      </div>
+
+      <!-- Teach text -->
+      <div class="bg-white rounded-2xl p-5 mb-3 shadow-sm border border-amber-100">
+        <p id="teach-text" class="text-gray-700 text-sm leading-relaxed"></p>
+      </div>
+
+      <!-- Context facts list -->
+      <div class="bg-white rounded-2xl p-5 mb-3 shadow-sm border border-amber-100">
+        <p class="text-xs font-bold text-amber-700 uppercase tracking-wider mb-3">About this animal</p>
+        <ul class="flex flex-col gap-2.5">
+          <li class="flex gap-2 text-sm">
+            <span class="font-bold text-gray-500 flex-shrink-0 w-20">Size</span>
+            <span id="teach-size" class="text-gray-700 leading-snug"></span>
+          </li>
+          <li class="flex gap-2 text-sm">
+            <span class="font-bold text-gray-500 flex-shrink-0 w-20">Movement</span>
+            <span id="teach-locomotion" class="text-gray-700 leading-snug"></span>
+          </li>
+          <li class="flex gap-2 text-sm">
+            <span class="font-bold text-gray-500 flex-shrink-0 w-20">Diet</span>
+            <span id="teach-diet" class="text-gray-700 leading-snug"></span>
+          </li>
+          <li class="flex gap-2 text-sm">
+            <span class="font-bold text-gray-500 flex-shrink-0 w-20">Habitat</span>
+            <span id="teach-habitat" class="text-gray-700 leading-snug"></span>
+          </li>
+          <li class="flex gap-2 text-sm">
+            <span class="font-bold text-gray-500 flex-shrink-0 w-20">Climate</span>
+            <span id="teach-climate" class="text-gray-700 leading-snug"></span>
+          </li>
+          <li class="flex gap-2 text-sm">
+            <span class="font-bold text-gray-500 flex-shrink-0 w-20">Where</span>
+            <span id="teach-landmass" class="text-gray-700 leading-snug"></span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Fun fact -->
+      <div class="bg-amber-50 border border-amber-200 rounded-2xl px-4 py-3.5 mb-5">
+        <p class="text-xs font-bold text-amber-700 uppercase tracking-wider mb-1">Bonus fact</p>
+        <p id="teach-fun-fact" class="text-sm text-amber-900 leading-relaxed"></p>
+      </div>
+
+      <button onclick="goToQuiz()"
+              class="w-full bg-amber-500 hover:bg-amber-600 active:scale-[.98] text-white font-bold py-4 rounded-2xl text-base transition-all shadow-md shadow-amber-100">
+        Got it — quiz me &rarr;
+      </button>
+
+    </div><!-- /teach-phase -->
+
+    <!-- Quiz phase -->
+    <div id="quiz-phase" class="hidden">
+
+      <!-- Mini animal header -->
+      <div class="flex items-center gap-3 mb-5 bg-white rounded-2xl px-4 py-3 shadow-sm border border-amber-100">
+        <div id="quiz-emoji" class="text-2xl select-none flex-shrink-0"></div>
+        <div class="min-w-0">
+          <p id="quiz-name" class="font-bold text-sm text-gray-800 truncate"></p>
+          <p id="quiz-innovation" class="text-xs text-amber-600 font-semibold truncate"></p>
+        </div>
+      </div>
+
+      <!-- Question -->
+      <p id="quiz-question" class="text-base font-semibold text-gray-800 mb-4 leading-snug"></p>
+
+      <!-- Options -->
+      <div id="options-container" class="flex flex-col gap-2 mb-4"></div>
+
+      <!-- Explanation box (shown after answer) -->
+      <div id="explanation-box" class="hidden rounded-2xl p-4 mb-4 fadein">
+        <p id="explanation-text" class="text-sm leading-relaxed font-medium"></p>
+      </div>
+
+      <!-- Next button (shown after answer) -->
+      <button id="next-btn" onclick="nextRound()"
+              class="hidden w-full bg-gray-800 hover:bg-gray-900 active:scale-[.98] text-white font-bold py-4 rounded-2xl text-base transition-all">
+        Next animal &rarr;
+      </button>
+
+    </div><!-- /quiz-phase -->
+
+  </div><!-- /game-screen -->
+
+  <!-- ── End screen ──────────────────────────────────────────────────────────── -->
+  <div id="end-screen" class="hidden fadein text-center">
+
+    <div class="mb-6 pt-4">
+      <div id="end-emoji" class="text-6xl mb-3 select-none"></div>
+      <h2 id="end-title" class="text-2xl font-black text-gray-900 mb-1"></h2>
+      <p id="end-score" class="text-5xl font-black text-amber-500 mb-2"></p>
+      <p id="end-msg" class="text-gray-500 text-sm"></p>
+    </div>
+
+    <!-- Trail -->
+    <div class="bg-white rounded-2xl p-4 mb-5 shadow-sm border border-amber-100">
+      <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Your answers</p>
+      <p id="end-trail" class="text-2xl tracking-widest"></p>
+    </div>
+
+    <!-- Per-animal summary -->
+    <div id="end-summary" class="text-left mb-5 flex flex-col gap-2"></div>
+
+    <!-- Synapsid context -->
+    <div class="bg-white rounded-2xl p-5 mb-5 shadow-sm border border-amber-100 text-left">
+      <p class="text-xs font-bold text-amber-700 uppercase tracking-wider mb-3">The bigger picture</p>
+      <p class="text-sm text-gray-700 leading-relaxed mb-3">
+        You just met six animals. But the synapsid family has thousands more — scientists have
+        identified over a thousand different species so far, with more being discovered as
+        fossil research continues.
+      </p>
+      <p class="text-sm text-gray-700 leading-relaxed mb-3">
+        Lystrosaurus belonged to a group called dicynodonts — that group alone had over 200 species.
+        Inostrancevia's group, the gorgonopsians, had nearly 80. For tens of millions of years,
+        before a single dinosaur existed, synapsids were the most common large animals on land.
+      </p>
+      <p class="text-sm text-gray-700 leading-relaxed">
+        And here's the thing: the family never died out. Every mammal alive today is a synapsid.
+        That includes dogs, whales, bats — and you.
+      </p>
+    </div>
+
+    <!-- Share + replay -->
+    <div class="flex flex-col gap-3">
+      <button onclick="shareResult()"
+              class="w-full bg-amber-500 hover:bg-amber-600 active:scale-[.98] text-white font-bold py-4 rounded-2xl text-base transition-all shadow-md shadow-amber-100 flex items-center justify-center gap-2">
+        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"
+             stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/>
+          <polyline points="16 6 12 2 8 6"/>
+          <line x1="12" y1="2" x2="12" y2="15"/>
+        </svg>
+        <span id="share-label">Share result</span>
+      </button>
+      <button onclick="restartGame()"
+              class="w-full bg-white border border-gray-200 text-gray-600 font-semibold py-3.5 rounded-2xl text-base transition-all hover:bg-gray-50 active:scale-[.98]">
+        Play again
+      </button>
+    </div>
+
+  </div><!-- /end-screen -->
+
+</div><!-- /container -->
+
+<!-- Bottom nav -->
+<nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-10">
+  <div class="max-w-lg mx-auto flex">
+    <a href="{% url 'play' %}" class="flex-1 flex flex-col items-center gap-0.5 py-3 text-blue-600">
+      <div class="w-11 h-7 bg-blue-50 rounded-2xl flex items-center justify-center">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2Zm-1.5 14.5v-9l6 4.5Z"/>
+        </svg>
+      </div>
+      <span class="text-xs font-semibold">Play</span>
+    </a>
+    <a href="{% url 'explore' %}" class="flex-1 flex flex-col items-center gap-0.5 py-3 text-gray-400">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24"
+           stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+      </svg>
+      <span class="text-xs font-medium">Explore</span>
+    </a>
+    <a href="{% url 'credits' %}" class="flex-1 flex flex-col items-center gap-0.5 py-3 text-gray-400">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24"
+           stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/>
+      </svg>
+      <span class="text-xs font-medium">Credits</span>
+    </a>
+  </div>
+</nav>
+
+<script>
+const ROUNDS = {{ rounds_json|safe }};
+const STORAGE = 'tiatrex-before-mammals';
+
+// ── State ─────────────────────────────────────────────────────────────────────
+function shuffledIndices(n) {
+  const arr = Array.from({length: n}, (_, i) => i);
+  for (let i = n - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function freshState() {
+  return {
+    phase: 'intro',
+    currentRound: 0,
+    answers: [],
+    answered: false,
+    selectedOption: null,
+    optionOrders: ROUNDS.map(r => shuffledIndices(r.options.length)),
+  };
+}
+
+function loadState() {
+  try {
+    const s = JSON.parse(localStorage.getItem(STORAGE));
+    if (!s || typeof s.currentRound !== 'number') return null;
+    if (!s.optionOrders || s.optionOrders.length !== ROUNDS.length) {
+      s.optionOrders = ROUNDS.map(r => shuffledIndices(r.options.length));
+    }
+    return s;
+  } catch { return null; }
+}
+
+let state = loadState() || freshState();
+
+function save() {
+  localStorage.setItem(STORAGE, JSON.stringify(state));
+}
+
+function restartGame() {
+  localStorage.removeItem(STORAGE);
+  location.reload();
+}
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+function esc(s) {
+  return String(s)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;');
+}
+
+// ── Rendering ─────────────────────────────────────────────────────────────────
+function renderAll() {
+  updateProgress();
+  updateRoundIndicator();
+
+  const introEl = document.getElementById('intro-screen');
+  const gameEl  = document.getElementById('game-screen');
+  const endEl   = document.getElementById('end-screen');
+
+  if (state.phase === 'intro') {
+    introEl.classList.remove('hidden');
+    gameEl.classList.add('hidden');
+    endEl.classList.add('hidden');
+    return;
+  }
+
+  introEl.classList.add('hidden');
+
+  if (state.phase === 'end') {
+    gameEl.classList.add('hidden');
+    endEl.classList.remove('hidden');
+    renderEndScreen();
+    return;
+  }
+
+  gameEl.classList.remove('hidden');
+  endEl.classList.add('hidden');
+
+  const round = ROUNDS[state.currentRound];
+
+  if (state.phase === 'teach') {
+    document.getElementById('teach-phase').classList.remove('hidden');
+    document.getElementById('quiz-phase').classList.add('hidden');
+    renderTeach(round);
+  } else {
+    document.getElementById('teach-phase').classList.add('hidden');
+    document.getElementById('quiz-phase').classList.remove('hidden');
+    renderQuiz(round);
+  }
+}
+
+function updateProgress() {
+  const pct = state.phase === 'end'
+    ? 100
+    : (state.currentRound / ROUNDS.length) * 100;
+  document.getElementById('progress-bar').style.width = pct + '%';
+}
+
+function updateRoundIndicator() {
+  const el = document.getElementById('round-indicator');
+  if (state.phase === 'intro')      el.textContent = `${ROUNDS.length} animals`;
+  else if (state.phase === 'end')   el.textContent = 'Complete!';
+  else                              el.textContent = `${state.currentRound + 1} of ${ROUNDS.length}`;
+}
+
+function renderTeach(round) {
+  document.getElementById('teach-group').textContent      = round.group;
+  document.getElementById('teach-name').textContent       = round.name;
+  document.getElementById('teach-period').textContent     = round.period;
+  document.getElementById('teach-emoji').textContent      = round.emoji;
+  document.getElementById('teach-innovation').textContent = round.innovation;
+  document.getElementById('teach-text').textContent       = round.teach_text;
+  document.getElementById('teach-size').textContent       = round.size;
+  document.getElementById('teach-locomotion').textContent = round.locomotion;
+  document.getElementById('teach-diet').textContent       = round.diet;
+  document.getElementById('teach-habitat').textContent    = round.habitat;
+  document.getElementById('teach-climate').textContent    = round.climate;
+  document.getElementById('teach-landmass').textContent   = round.landmass;
+  document.getElementById('teach-fun-fact').textContent   = round.fun_fact;
+}
+
+function renderQuiz(round) {
+  document.getElementById('quiz-emoji').textContent      = round.emoji;
+  document.getElementById('quiz-name').textContent       = round.name;
+  document.getElementById('quiz-innovation').textContent = round.innovation;
+  document.getElementById('quiz-question').textContent   = round.quiz_question;
+
+  const container = document.getElementById('options-container');
+  container.innerHTML = '';
+
+  const order = state.optionOrders[state.currentRound];
+  order.forEach((origIdx) => {
+    const opt = round.options[origIdx];
+    const btn = document.createElement('button');
+
+    if (!state.answered) {
+      btn.className = 'w-full text-left px-4 py-3.5 rounded-2xl border-2 bg-white border-gray-200 text-gray-800 text-sm font-medium hover:border-amber-400 hover:bg-amber-50 active:scale-[.98] transition-all';
+      btn.textContent = opt.text;
+      btn.onclick = () => answerQuiz(origIdx);
+    } else {
+      if (opt.correct) {
+        btn.className = 'w-full text-left px-4 py-3.5 rounded-2xl border-2 bg-green-50 border-green-400 text-green-800 text-sm font-medium';
+        btn.innerHTML = `<span class="mr-2 font-bold">&#10003;</span>${esc(opt.text)}`;
+      } else if (origIdx === state.selectedOption) {
+        btn.className = 'w-full text-left px-4 py-3.5 rounded-2xl border-2 bg-red-50 border-red-300 text-red-700 text-sm font-medium';
+        btn.innerHTML = `<span class="mr-2 font-bold">&#10007;</span>${esc(opt.text)}`;
+      } else {
+        btn.className = 'w-full text-left px-4 py-3.5 rounded-2xl border-2 bg-white border-gray-100 text-gray-400 text-sm font-medium';
+        btn.textContent = opt.text;
+      }
+      btn.disabled = true;
+    }
+
+    container.appendChild(btn);
+  });
+
+  const explBox  = document.getElementById('explanation-box');
+  const explText = document.getElementById('explanation-text');
+  const nextBtn  = document.getElementById('next-btn');
+
+  if (state.answered) {
+    const correctOpt = round.options.find(o => o.correct);
+    const wasCorrect = round.options[state.selectedOption]?.correct;
+
+    explBox.classList.remove('hidden');
+    if (wasCorrect) {
+      explBox.className = 'rounded-2xl p-4 mb-4 bg-green-50 border border-green-200 fadein';
+      explText.className = 'text-sm leading-relaxed font-medium text-green-800';
+    } else {
+      explBox.className = 'rounded-2xl p-4 mb-4 bg-red-50 border border-red-200 fadein';
+      explText.className = 'text-sm leading-relaxed font-medium text-red-700';
+    }
+    explText.textContent = correctOpt.explanation;
+
+    nextBtn.classList.remove('hidden');
+    nextBtn.textContent = state.currentRound >= ROUNDS.length - 1
+      ? 'See results →'
+      : 'Next animal →';
+  } else {
+    explBox.classList.add('hidden');
+    nextBtn.classList.add('hidden');
+  }
+}
+
+function renderEndScreen() {
+  document.getElementById('progress-bar').style.width = '100%';
+  document.getElementById('round-indicator').textContent = 'Complete!';
+
+  const score = state.answers.filter(Boolean).length;
+  const total = ROUNDS.length;
+
+  let emoji, title;
+  if (score === total)      { emoji = '🏆'; title = 'Perfect score!'; }
+  else if (score >= total - 1) { emoji = '🦴'; title = 'Great job!'; }
+  else if (score >= 3)      { emoji = '🔬'; title = 'Not bad!'; }
+  else                      { emoji = '🌋'; title = 'You learned something!'; }
+
+  document.getElementById('end-emoji').textContent = emoji;
+  document.getElementById('end-title').textContent = title;
+  document.getElementById('end-score').textContent = `${score} / ${total}`;
+  document.getElementById('end-msg').textContent   = score === total
+    ? 'You know your proto-mammals!'
+    : 'These animals were our great-great-(etc)-grandparents.';
+
+  document.getElementById('end-trail').textContent = state.answers.map(a => a ? '✅' : '❌').join('');
+
+  document.getElementById('end-summary').innerHTML = ROUNDS.map((r, i) => {
+    const correct = state.answers[i];
+    return `
+      <div class="bg-white rounded-2xl px-4 py-3 border ${correct ? 'border-green-100' : 'border-red-100'} flex items-start gap-3">
+        <span class="text-base flex-shrink-0 mt-0.5">${correct ? '✅' : '❌'}</span>
+        <div class="min-w-0">
+          <p class="text-xs font-bold text-gray-400">${esc(r.name)} &middot; ${esc(r.period)}</p>
+          <p class="text-sm font-semibold text-gray-800">${esc(r.innovation)}</p>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+// ── Actions ───────────────────────────────────────────────────────────────────
+function startGame() {
+  state.phase = 'teach';
+  save();
+  window.scrollTo(0, 0);
+
+  const tp = document.getElementById('teach-phase');
+  tp.classList.remove('fadein');
+  void tp.offsetWidth;
+  tp.classList.add('fadein');
+
+  renderAll();
+}
+
+function goToQuiz() {
+  state.phase = 'quiz';
+  state.answered = false;
+  state.selectedOption = null;
+  save();
+  window.scrollTo(0, 0);
+
+  const qp = document.getElementById('quiz-phase');
+  qp.classList.remove('fadein');
+  void qp.offsetWidth;
+  qp.classList.add('fadein');
+
+  renderAll();
+}
+
+function answerQuiz(optionIndex) {
+  if (state.answered) return;
+  const isCorrect = ROUNDS[state.currentRound].options[optionIndex].correct;
+  state.answered      = true;
+  state.selectedOption = optionIndex;
+  state.answers.push(isCorrect);
+  save();
+  renderAll();
+}
+
+function nextRound() {
+  if (state.currentRound >= ROUNDS.length - 1) {
+    state.phase = 'end';
+    save();
+    window.scrollTo(0, 0);
+    renderAll();
+    return;
+  }
+  state.currentRound++;
+  state.phase          = 'teach';
+  state.answered       = false;
+  state.selectedOption = null;
+  save();
+  window.scrollTo(0, 0);
+
+  const tp = document.getElementById('teach-phase');
+  tp.classList.remove('fadein');
+  void tp.offsetWidth;
+  tp.classList.add('fadein');
+
+  renderAll();
+}
+
+function shareResult() {
+  const score = state.answers.filter(Boolean).length;
+  const trail = state.answers.map(a => a ? '✅' : '❌').join('');
+  const text  = `Tia T-Rex — Before Mammals\n${trail} ${score}/${ROUNDS.length}\nWanna find out more? https://www.happylifeunfolding.com/tiatrex/play/before-mammals/`;
+  navigator.clipboard.writeText(text)
+    .then(() => {
+      const lbl = document.getElementById('share-label');
+      lbl.textContent = 'Copied!';
+      setTimeout(() => { lbl.textContent = 'Share result'; }, 2500);
+    })
+    .catch(() => prompt('Copy this to share:', text));
+}
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+renderAll();
+</script>
+
+</body>
+</html>

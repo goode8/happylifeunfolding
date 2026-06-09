@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TiaTrex — Pangaea to Now</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @keyframes fadein {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    .fadein { animation: fadein 0.3s ease forwards; }
+  </style>
+</head>
+<body class="bg-emerald-50 font-sans text-gray-900 antialiased min-h-screen">
+
+<div class="max-w-lg mx-auto px-4 pt-5 pb-28">
+
+  <!-- Header -->
+  <div class="flex items-center justify-between mb-4">
+    <button id="back-btn" onclick="goBack()"
+            class="w-9 h-9 rounded-full bg-white border border-emerald-200 shadow-sm flex items-center justify-center text-gray-500 hover:text-gray-800 flex-shrink-0">
+      <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="m15 18-6-6 6-6"/>
+      </svg>
+    </button>
+    <div class="text-center">
+      <h1 class="font-black text-lg tracking-tight leading-none">Pangaea to Now</h1>
+      <p id="round-indicator" class="text-xs text-emerald-600 mt-0.5 font-semibold"></p>
+    </div>
+    <button onclick="restartGame()" title="Restart"
+            class="w-9 h-9 rounded-full bg-white border border-emerald-200 shadow-sm flex items-center justify-center text-gray-400 hover:text-gray-700 flex-shrink-0">
+      <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>
+      </svg>
+    </button>
+  </div>
+
+  <!-- Progress bar -->
+  <div class="w-full bg-emerald-100 rounded-full h-1.5 mb-6">
+    <div id="progress-bar" class="bg-emerald-500 h-1.5 rounded-full transition-all duration-500" style="width:0%"></div>
+  </div>
+
+  <!-- ── Intro screen ────────────────────────────────────────────────────────── -->
+  <div id="intro-screen" class="hidden fadein">
+    <div class="text-center mb-6">
+      <div class="text-6xl mb-4 select-none">🌍</div>
+      <h2 class="text-2xl font-black text-gray-900 leading-tight mb-3">The ground under your feet has been everywhere.</h2>
+      <p class="text-gray-600 text-sm leading-relaxed">
+        The land you're standing on has traveled thousands of kilometers, been submerged under shallow seas,
+        been walked on by dinosaurs, and been blasted by asteroids. Earth's surface is always moving —
+        just too slowly to feel. Geography isn't a backdrop for life. It <em>shapes</em> it.
+      </p>
+    </div>
+
+    <div class="bg-white rounded-2xl p-5 mb-4 shadow-sm border border-emerald-100">
+      <p class="text-xs font-bold text-emerald-700 uppercase tracking-wider mb-3">Why does geography change?</p>
+      <p class="text-sm text-gray-700 leading-relaxed mb-3">
+        Earth's outer shell is broken into a dozen large plates that float on the slowly churning mantle beneath.
+        Heat from the planet's core drives convection that moves them — at roughly the same speed your fingernails grow.
+        Over millions of years, those small movements add up to continents crossing oceans.
+      </p>
+      <p class="text-sm text-gray-700 leading-relaxed">
+        When plates collide, they crumple into mountain ranges. When they pull apart, new ocean floor wells up between them.
+        Every major mountain range, ocean, and continent is the result of this process running for 4.5 billion years.
+      </p>
+    </div>
+
+    <div class="bg-white rounded-2xl p-5 mb-5 shadow-sm border border-emerald-100">
+      <p class="text-xs font-bold text-emerald-700 uppercase tracking-wider mb-3">Six moments. Six transformations.</p>
+      <div class="flex flex-col gap-3">
+        <div class="flex items-center gap-3">
+          <span class="text-2xl flex-shrink-0 select-none">🌍</span>
+          <div><p class="text-sm font-bold text-gray-800 leading-none">Pangaea</p><p class="text-xs text-gray-500 mt-0.5">All of Earth's land fused into one supercontinent</p></div>
+        </div>
+        <div class="flex items-center gap-3">
+          <span class="text-2xl flex-shrink-0 select-none">🗺️</span>
+          <div><p class="text-sm font-bold text-gray-800 leading-none">Gondwana</p><p class="text-xs text-gray-500 mt-0.5">Pangaea splits; the southern continents begin their long drift</p></div>
+        </div>
+        <div class="flex items-center gap-3">
+          <span class="text-2xl flex-shrink-0 select-none">🦕</span>
+          <div><p class="text-sm font-bold text-gray-800 leading-none">Morrison Formation</p><p class="text-xs text-gray-500 mt-0.5">A Jurassic floodplain — the richest dinosaur fossil site on Earth</p></div>
+        </div>
+        <div class="flex items-center gap-3">
+          <span class="text-2xl flex-shrink-0 select-none">🌊</span>
+          <div><p class="text-sm font-bold text-gray-800 leading-none">Western Interior Seaway</p><p class="text-xs text-gray-500 mt-0.5">An inland sea split North America in two during the Cretaceous</p></div>
+        </div>
+        <div class="flex items-center gap-3">
+          <span class="text-2xl flex-shrink-0 select-none">☄️</span>
+          <div><p class="text-sm font-bold text-gray-800 leading-none">Chicxulub Impact</p><p class="text-xs text-gray-500 mt-0.5">The asteroid that ended the age of non-bird dinosaurs</p></div>
+        </div>
+        <div class="flex items-center gap-3">
+          <span class="text-2xl flex-shrink-0 select-none">🌎</span>
+          <div><p class="text-sm font-bold text-gray-800 leading-none">Isthmus of Panama</p><p class="text-xs text-gray-500 mt-0.5">A land bridge connected the Americas and triggered the Ice Ages</p></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="bg-emerald-50 border border-emerald-200 rounded-2xl px-4 py-3.5 mb-5">
+      <p class="text-xs font-bold text-emerald-700 uppercase tracking-wider mb-1">How it works</p>
+      <p class="text-sm text-emerald-900 leading-relaxed">
+        Three slides of info per moment, then a quiz question. You can go back at any point to re-read.
+      </p>
+    </div>
+
+    <button onclick="startGame()"
+            class="w-full bg-emerald-500 hover:bg-emerald-600 active:scale-[.98] text-white font-bold py-4 rounded-2xl text-base transition-all shadow-md shadow-emerald-100">
+      Let's Go
+    </button>
+  </div><!-- /intro-screen -->
+
+  <!-- ── Game screen ─────────────────────────────────────────────────────────── -->
+  <div id="game-screen">
+
+    <!-- ── Teach phase ─────────────────────────────────────────────────────── -->
+    <div id="teach-phase">
+
+      <!-- Hero card (constant per round) -->
+      <div class="rounded-3xl p-6 mb-4 bg-gradient-to-br from-emerald-500 to-teal-600 shadow-lg shadow-teal-100">
+        <div class="flex items-start justify-between mb-4">
+          <div class="flex-1 min-w-0 pr-3">
+            <span id="teach-group" class="text-xs font-bold uppercase tracking-wider text-white/70 mb-1 block"></span>
+            <h2 id="teach-name" class="text-3xl font-black text-white leading-none"></h2>
+            <p id="teach-period" class="text-sm text-white/80 mt-1 font-medium"></p>
+          </div>
+          <div id="teach-emoji" class="text-5xl select-none flex-shrink-0"></div>
+        </div>
+        <div class="bg-white/20 rounded-2xl px-4 py-3">
+          <p class="text-xs font-bold uppercase tracking-wider text-white/70 mb-1">Key shift</p>
+          <p id="teach-innovation" class="text-xl font-black text-white leading-snug"></p>
+        </div>
+      </div>
+
+      <!-- Slide content card -->
+      <div id="slide-card" class="bg-white rounded-2xl p-5 mb-3 shadow-sm border border-emerald-100 fadein">
+        <div class="flex items-center justify-between mb-3">
+          <span id="slide-label" class="text-xs font-bold text-emerald-700 uppercase tracking-wider"></span>
+          <div id="slide-dots" class="flex gap-1.5"></div>
+        </div>
+        <h3 id="slide-title" class="font-black text-gray-900 text-base leading-tight mb-2"></h3>
+        <p id="slide-body" class="text-gray-700 text-sm leading-relaxed"></p>
+        <div id="slide-details-wrap" class="mt-4 pt-4 border-t border-gray-100">
+          <ul id="slide-details" class="flex flex-col gap-2.5"></ul>
+        </div>
+      </div>
+
+      <!-- Bonus fact (only on slides that have one) -->
+      <div id="slide-funfact-box" class="hidden bg-emerald-50 border border-emerald-200 rounded-2xl px-4 py-3.5 mb-5">
+        <p class="text-xs font-bold text-emerald-700 uppercase tracking-wider mb-1">Bonus fact</p>
+        <p id="slide-funfact-text" class="text-sm text-emerald-900 leading-relaxed"></p>
+      </div>
+
+      <button id="advance-btn" onclick="advanceTeach()"
+              class="w-full bg-emerald-500 hover:bg-emerald-600 active:scale-[.98] text-white font-bold py-4 rounded-2xl text-base transition-all shadow-md shadow-emerald-100">
+        Continue →
+      </button>
+
+    </div><!-- /teach-phase -->
+
+    <!-- ── Quiz phase ──────────────────────────────────────────────────────── -->
+    <div id="quiz-phase" class="hidden">
+
+      <div class="flex items-center gap-3 mb-5 bg-white rounded-2xl px-4 py-3 shadow-sm border border-emerald-100">
+        <div id="quiz-emoji" class="text-2xl select-none flex-shrink-0"></div>
+        <div class="min-w-0">
+          <p id="quiz-name" class="font-bold text-sm text-gray-800 truncate"></p>
+          <p id="quiz-innovation" class="text-xs text-emerald-600 font-semibold truncate"></p>
+        </div>
+      </div>
+
+      <p id="quiz-question" class="text-base font-semibold text-gray-800 mb-4 leading-snug"></p>
+      <div id="options-container" class="flex flex-col gap-2 mb-4"></div>
+
+      <div id="explanation-box" class="hidden rounded-2xl p-4 mb-4 fadein">
+        <p id="explanation-text" class="text-sm leading-relaxed font-medium"></p>
+      </div>
+
+      <button id="next-btn" onclick="nextRound()"
+              class="hidden w-full bg-gray-800 hover:bg-gray-900 active:scale-[.98] text-white font-bold py-4 rounded-2xl text-base transition-all">
+        Next →
+      </button>
+
+    </div><!-- /quiz-phase -->
+
+  </div><!-- /game-screen -->
+
+  <!-- ── End screen ──────────────────────────────────────────────────────────── -->
+  <div id="end-screen" class="hidden fadein text-center">
+
+    <div class="mb-6 pt-4">
+      <div id="end-emoji" class="text-6xl mb-3 select-none"></div>
+      <h2 id="end-title" class="text-2xl font-black text-gray-900 mb-1"></h2>
+      <p id="end-score" class="text-5xl font-black text-emerald-500 mb-2"></p>
+      <p id="end-msg" class="text-gray-500 text-sm"></p>
+    </div>
+
+    <div class="bg-white rounded-2xl p-4 mb-5 shadow-sm border border-emerald-100">
+      <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Your answers</p>
+      <p id="end-trail" class="text-2xl tracking-widest"></p>
+    </div>
+
+    <div id="end-summary" class="text-left mb-5 flex flex-col gap-2"></div>
+
+    <div class="bg-white rounded-2xl p-5 mb-5 shadow-sm border border-emerald-100 text-left">
+      <p class="text-xs font-bold text-emerald-700 uppercase tracking-wider mb-3">The bigger picture</p>
+      <p class="text-sm text-gray-700 leading-relaxed mb-3">
+        You just covered 335 million years — but the full story goes back 4.5 billion. Before Pangaea,
+        there were earlier supercontinents: Rodinia (~700 Ma), Columbia (~1.8 Ga), and others.
+        The cycle of assembly and breakup has happened at least three times that we know of.
+      </p>
+      <p class="text-sm text-gray-700 leading-relaxed mb-3">
+        Right now, the Atlantic is still widening at about 2.5 cm per year. Africa is slowly colliding
+        with Europe, which will eventually close the Mediterranean. Australia is drifting north toward
+        Asia at about 7 cm per year.
+      </p>
+      <p class="text-sm text-gray-700 leading-relaxed">
+        In about 250 million years, the continents are predicted to reunite into a new supercontinent —
+        sometimes called Pangaea Proxima. The cycle never stops.
+      </p>
+    </div>
+
+    <div class="flex flex-col gap-3">
+      <button onclick="shareResult()"
+              class="w-full bg-emerald-500 hover:bg-emerald-600 active:scale-[.98] text-white font-bold py-4 rounded-2xl text-base transition-all shadow-md shadow-emerald-100 flex items-center justify-center gap-2">
+        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/>
+          <polyline points="16 6 12 2 8 6"/>
+          <line x1="12" y1="2" x2="12" y2="15"/>
+        </svg>
+        <span id="share-label">Share result</span>
+      </button>
+      <button onclick="restartGame()"
+              class="w-full bg-white border border-gray-200 text-gray-600 font-semibold py-3.5 rounded-2xl text-base transition-all hover:bg-gray-50 active:scale-[.98]">
+        Play again
+      </button>
+    </div>
+
+  </div><!-- /end-screen -->
+
+</div><!-- /container -->
+
+<!-- Bottom nav -->
+<nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-10">
+  <div class="max-w-lg mx-auto flex">
+    <a href="{% url 'play' %}" class="flex-1 flex flex-col items-center gap-0.5 py-3 text-blue-600">
+      <div class="w-11 h-7 bg-blue-50 rounded-2xl flex items-center justify-center">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M12 2a10 10 0 1 0 10 10A10 10 0 0 0 12 2Zm-1.5 14.5v-9l6 4.5Z"/>
+        </svg>
+      </div>
+      <span class="text-xs font-semibold">Play</span>
+    </a>
+    <a href="{% url 'explore' %}" class="flex-1 flex flex-col items-center gap-0.5 py-3 text-gray-400">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
+      </svg>
+      <span class="text-xs font-medium">Explore</span>
+    </a>
+    <a href="{% url 'credits' %}" class="flex-1 flex flex-col items-center gap-0.5 py-3 text-gray-400">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/>
+      </svg>
+      <span class="text-xs font-medium">Credits</span>
+    </a>
+  </div>
+</nav>
+
+<script>
+const ROUNDS = {{ rounds_json|safe }};
+const STORAGE = 'tiatrex-pangaea-to-now';
+const PLAY_URL = '{% url "play" %}';
+
+// ── State ─────────────────────────────────────────────────────────────────────
+// selectedOptions: { roundIndex: chosenOptionIndex } — persists per round so
+// going back to a previous quiz shows the correct answered/wrong state.
+// answers: { roundIndex: boolean } — whether each round was answered correctly.
+
+function shuffledIndices(n) {
+  const arr = Array.from({length: n}, (_, i) => i);
+  for (let i = n - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function freshState() {
+  return {
+    phase: 'intro',
+    currentRound: 0,
+    currentSlide: 0,
+    answers: {},
+    selectedOptions: {},
+    optionOrders: ROUNDS.map(r => shuffledIndices(r.options.length)),
+  };
+}
+
+function loadState() {
+  try {
+    const s = JSON.parse(localStorage.getItem(STORAGE));
+    if (!s || typeof s.currentRound !== 'number') return null;
+    // Migrate old array-based answers format
+    if (Array.isArray(s.answers)) {
+      const ans = {};
+      s.answers.forEach((v, i) => { ans[i] = v; });
+      s.answers = ans;
+    }
+    if (!s.answers || typeof s.answers !== 'object') s.answers = {};
+    if (!s.selectedOptions || typeof s.selectedOptions !== 'object') s.selectedOptions = {};
+    if (typeof s.currentSlide !== 'number') s.currentSlide = 0;
+    if (!s.optionOrders || s.optionOrders.length !== ROUNDS.length) {
+      s.optionOrders = ROUNDS.map(r => shuffledIndices(r.options.length));
+    }
+    return s;
+  } catch { return null; }
+}
+
+let state = loadState() || freshState();
+
+function save() { localStorage.setItem(STORAGE, JSON.stringify(state)); }
+
+function restartGame() { localStorage.removeItem(STORAGE); location.reload(); }
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+function esc(s) {
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function isRoundAnswered(ri) {
+  return state.selectedOptions[ri] !== undefined;
+}
+
+// ── Rendering ─────────────────────────────────────────────────────────────────
+function renderAll() {
+  updateProgress();
+  updateRoundIndicator();
+
+  const introEl = document.getElementById('intro-screen');
+  const gameEl  = document.getElementById('game-screen');
+  const endEl   = document.getElementById('end-screen');
+
+  if (state.phase === 'intro') {
+    introEl.classList.remove('hidden'); gameEl.classList.add('hidden'); endEl.classList.add('hidden');
+    return;
+  }
+  introEl.classList.add('hidden');
+
+  if (state.phase === 'end') {
+    gameEl.classList.add('hidden'); endEl.classList.remove('hidden');
+    renderEndScreen(); return;
+  }
+
+  gameEl.classList.remove('hidden'); endEl.classList.add('hidden');
+
+  const round = ROUNDS[state.currentRound];
+  if (state.phase === 'teach') {
+    document.getElementById('teach-phase').classList.remove('hidden');
+    document.getElementById('quiz-phase').classList.add('hidden');
+    renderTeach(round);
+  } else {
+    document.getElementById('teach-phase').classList.add('hidden');
+    document.getElementById('quiz-phase').classList.remove('hidden');
+    renderQuiz(round);
+  }
+}
+
+function updateProgress() {
+  const pct = state.phase === 'end' ? 100 : (state.currentRound / ROUNDS.length) * 100;
+  document.getElementById('progress-bar').style.width = pct + '%';
+}
+
+function updateRoundIndicator() {
+  const el = document.getElementById('round-indicator');
+  if (state.phase === 'intro')    el.textContent = `${ROUNDS.length} moments`;
+  else if (state.phase === 'end') el.textContent = 'Complete!';
+  else                            el.textContent = ROUNDS[state.currentRound].name;
+}
+
+function renderTeach(round) {
+  document.getElementById('teach-group').textContent      = round.group;
+  document.getElementById('teach-name').textContent       = round.name;
+  document.getElementById('teach-period').textContent     = round.period;
+  document.getElementById('teach-emoji').textContent      = round.emoji;
+  document.getElementById('teach-innovation').textContent = round.innovation;
+
+  const slide = round.slides[state.currentSlide];
+
+  document.getElementById('slide-label').textContent = slide.label;
+  const dots = document.getElementById('slide-dots');
+  dots.innerHTML = round.slides.map((_, i) =>
+    `<div class="w-2 h-2 rounded-full ${i === state.currentSlide ? 'bg-emerald-500' : 'bg-emerald-200'}"></div>`
+  ).join('');
+
+  document.getElementById('slide-title').textContent = slide.title;
+  document.getElementById('slide-body').textContent  = slide.body;
+
+  const detailsList = document.getElementById('slide-details');
+  if (slide.details && slide.details.length) {
+    document.getElementById('slide-details-wrap').classList.remove('hidden');
+    detailsList.innerHTML = slide.details.map(d =>
+      `<li class="flex gap-2 text-sm">
+        <span class="font-bold text-gray-500 flex-shrink-0 w-24">${esc(d.key)}</span>
+        <span class="text-gray-700 leading-snug">${esc(d.value)}</span>
+      </li>`
+    ).join('');
+  } else {
+    document.getElementById('slide-details-wrap').classList.add('hidden');
+  }
+
+  const funFactBox = document.getElementById('slide-funfact-box');
+  if (slide.fun_fact) {
+    funFactBox.classList.remove('hidden');
+    document.getElementById('slide-funfact-text').textContent = slide.fun_fact;
+  } else {
+    funFactBox.classList.add('hidden');
+  }
+
+  const isLast = state.currentSlide >= round.slides.length - 1;
+  document.getElementById('advance-btn').textContent = isLast ? 'Quiz me →' : 'Continue →';
+}
+
+function renderQuiz(round) {
+  document.getElementById('quiz-emoji').textContent      = round.emoji;
+  document.getElementById('quiz-name').textContent       = round.name;
+  document.getElementById('quiz-innovation').textContent = round.innovation;
+  document.getElementById('quiz-question').textContent   = round.quiz_question;
+
+  const ri       = state.currentRound;
+  const answered = isRoundAnswered(ri);
+  const selected = state.selectedOptions[ri];
+
+  const container = document.getElementById('options-container');
+  container.innerHTML = '';
+  const order = state.optionOrders[ri];
+  order.forEach((origIdx) => {
+    const opt = round.options[origIdx];
+    const btn = document.createElement('button');
+    if (!answered) {
+      btn.className = 'w-full text-left px-4 py-3.5 rounded-2xl border-2 bg-white border-gray-200 text-gray-800 text-sm font-medium hover:border-emerald-400 hover:bg-emerald-50 active:scale-[.98] transition-all';
+      btn.textContent = opt.text;
+      btn.onclick = () => answerQuiz(origIdx);
+    } else {
+      if (opt.correct) {
+        btn.className = 'w-full text-left px-4 py-3.5 rounded-2xl border-2 bg-green-50 border-green-400 text-green-800 text-sm font-medium';
+        btn.innerHTML = `<span class="mr-2 font-bold">&#10003;</span>${esc(opt.text)}`;
+      } else if (origIdx === selected) {
+        btn.className = 'w-full text-left px-4 py-3.5 rounded-2xl border-2 bg-red-50 border-red-300 text-red-700 text-sm font-medium';
+        btn.innerHTML = `<span class="mr-2 font-bold">&#10007;</span>${esc(opt.text)}`;
+      } else {
+        btn.className = 'w-full text-left px-4 py-3.5 rounded-2xl border-2 bg-white border-gray-100 text-gray-400 text-sm font-medium';
+        btn.textContent = opt.text;
+      }
+      btn.disabled = true;
+    }
+    container.appendChild(btn);
+  });
+
+  const explBox  = document.getElementById('explanation-box');
+  const explText = document.getElementById('explanation-text');
+  const nextBtn  = document.getElementById('next-btn');
+
+  if (answered) {
+    const correctOpt = round.options.find(o => o.correct);
+    const wasCorrect = round.options[selected]?.correct;
+    explBox.classList.remove('hidden');
+    if (wasCorrect) {
+      explBox.className = 'rounded-2xl p-4 mb-4 bg-green-50 border border-green-200 fadein';
+      explText.className = 'text-sm leading-relaxed font-medium text-green-800';
+    } else {
+      explBox.className = 'rounded-2xl p-4 mb-4 bg-red-50 border border-red-200 fadein';
+      explText.className = 'text-sm leading-relaxed font-medium text-red-700';
+    }
+    explText.textContent = correctOpt.explanation;
+    nextBtn.classList.remove('hidden');
+    nextBtn.textContent = state.currentRound >= ROUNDS.length - 1 ? 'See results →' : 'Next →';
+  } else {
+    explBox.classList.add('hidden');
+    nextBtn.classList.add('hidden');
+  }
+}
+
+function renderEndScreen() {
+  const score = Object.values(state.answers).filter(Boolean).length;
+  const total = ROUNDS.length;
+  let emoji, title;
+  if (score === total)         { emoji = '🏆'; title = 'Perfect score!'; }
+  else if (score >= total - 1) { emoji = '🌍'; title = 'Great job!'; }
+  else if (score >= 3)         { emoji = '🗺️'; title = 'Not bad!'; }
+  else                         { emoji = '☄️'; title = 'You learned something!'; }
+
+  document.getElementById('end-emoji').textContent = emoji;
+  document.getElementById('end-title').textContent = title;
+  document.getElementById('end-score').textContent = `${score} / ${total}`;
+  document.getElementById('end-msg').textContent   = score === total
+    ? 'You know your deep geography!'
+    : 'The ground under your feet has quite a history.';
+  document.getElementById('end-trail').textContent =
+    ROUNDS.map((_, i) => state.answers[i] ? '✅' : '❌').join('');
+  document.getElementById('end-summary').innerHTML = ROUNDS.map((r, i) => {
+    const correct = state.answers[i];
+    return `<div class="bg-white rounded-2xl px-4 py-3 border ${correct ? 'border-green-100' : 'border-red-100'} flex items-start gap-3">
+      <span class="text-base flex-shrink-0 mt-0.5">${correct ? '✅' : '❌'}</span>
+      <div class="min-w-0">
+        <p class="text-xs font-bold text-gray-400">${esc(r.name)} &middot; ${esc(r.period)}</p>
+        <p class="text-sm font-semibold text-gray-800">${esc(r.innovation)}</p>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── Actions ───────────────────────────────────────────────────────────────────
+function startGame() {
+  state.phase = 'teach';
+  state.currentSlide = 0;
+  save();
+  window.scrollTo(0, 0);
+  animateSlideCard();
+  renderAll();
+}
+
+function animateSlideCard() {
+  const el = document.getElementById('slide-card');
+  el.classList.remove('fadein');
+  void el.offsetWidth;
+  el.classList.add('fadein');
+}
+
+function advanceTeach() {
+  const slides = ROUNDS[state.currentRound].slides;
+  if (state.currentSlide < slides.length - 1) {
+    state.currentSlide++;
+    save();
+    window.scrollTo(0, 0);
+    animateSlideCard();
+    renderAll();
+  } else {
+    state.phase = 'quiz';
+    save();
+    window.scrollTo(0, 0);
+    const qp = document.getElementById('quiz-phase');
+    qp.classList.remove('fadein');
+    void qp.offsetWidth;
+    qp.classList.add('fadein');
+    renderAll();
+  }
+}
+
+function answerQuiz(optionIndex) {
+  const ri = state.currentRound;
+  if (isRoundAnswered(ri)) return;
+  const isCorrect = ROUNDS[ri].options[optionIndex].correct;
+  state.selectedOptions[ri] = optionIndex;
+  state.answers[ri]         = isCorrect;
+  save();
+  renderAll();
+}
+
+function nextRound() {
+  if (state.currentRound >= ROUNDS.length - 1) {
+    state.phase = 'end';
+    save();
+    window.scrollTo(0, 0);
+    renderAll();
+    return;
+  }
+  state.currentRound++;
+  state.currentSlide = 0;
+  state.phase        = 'teach';
+  save();
+  window.scrollTo(0, 0);
+  animateSlideCard();
+  renderAll();
+}
+
+function goBack() {
+  window.scrollTo(0, 0);
+
+  if (state.phase === 'intro') {
+    window.location.href = PLAY_URL;
+    return;
+  }
+
+  if (state.phase === 'end') {
+    // Back to the last round's quiz (shows answered state)
+    state.phase = 'quiz';
+    state.currentRound = ROUNDS.length - 1;
+    save();
+    renderAll();
+    return;
+  }
+
+  if (state.phase === 'quiz') {
+    // Back to the last slide of this round's teach phase
+    state.phase = 'teach';
+    state.currentSlide = ROUNDS[state.currentRound].slides.length - 1;
+    save();
+    animateSlideCard();
+    renderAll();
+    return;
+  }
+
+  // teach phase
+  if (state.currentSlide > 0) {
+    state.currentSlide--;
+    save();
+    animateSlideCard();
+    renderAll();
+    return;
+  }
+
+  if (state.currentRound > 0) {
+    // Back to previous round's quiz (shows answered state)
+    state.currentRound--;
+    state.phase = 'quiz';
+    save();
+    renderAll();
+    return;
+  }
+
+  // First slide of first round — back to intro
+  state.phase = 'intro';
+  save();
+  renderAll();
+}
+
+function shareResult() {
+  const score = Object.values(state.answers).filter(Boolean).length;
+  const trail = ROUNDS.map((_, i) => state.answers[i] ? '✅' : '❌').join('');
+  const text  = `Tia T-Rex — Pangaea to Now\n${trail} ${score}/${ROUNDS.length}\nWanna find out more? https://www.happylifeunfolding.com/tiatrex/play/pangaea-to-now/`;
+  navigator.clipboard.writeText(text)
+    .then(() => {
+      const lbl = document.getElementById('share-label');
+      lbl.textContent = 'Copied!';
+      setTimeout(() => { lbl.textContent = 'Share result'; }, 2500);
+    })
+    .catch(() => prompt('Copy this to share:', text));
+}
+
+// ── Init ──────────────────────────────────────────────────────────────────────
+renderAll();
+</script>
+
+</body>
+</html>

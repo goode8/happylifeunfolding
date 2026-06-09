@@ -8,6 +8,8 @@ urlpatterns = [
     path('play/daily/', views.game, name='daily_game'),
     path('play/match/', views.match_up, name='match_up'),
     path('play/creature/', views.creature_of_day, name='creature_of_day'),
+    path('play/before-mammals/', views.before_mammals, name='before_mammals'),
+    path('play/pangaea-to-now/', views.pangaea_to_now, name='pangaea_to_now'),
     path('explore/', views.explore, name='explore'),
     path('credits/', views.credits, name='credits'),
     re_path(
