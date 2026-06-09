@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>TiaTrex — Before Mammals</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <script>const PHYLO_IMG_BASE = "{% url 'phylo_image' uuid='00000000-0000-0000-0000-000000000000' %}".replace('00000000-0000-0000-0000-000000000000.png', '');</script>
   <style>
     @keyframes fadein {
       from { opacity: 0; transform: translateY(10px); }
@@ -26,13 +27,13 @@
 
   <!-- Header -->
   <div class="flex items-center justify-between mb-4">
-    <a href="{% url 'play' %}"
-       class="w-9 h-9 rounded-full bg-white border border-amber-200 shadow-sm flex items-center justify-center text-gray-500 hover:text-gray-800 flex-shrink-0">
+    <button id="back-btn" onclick="goBack()"
+            class="w-9 h-9 rounded-full bg-white border border-amber-200 shadow-sm flex items-center justify-center text-gray-500 hover:text-gray-800 flex-shrink-0">
       <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"
            stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
         <path d="m15 18-6-6 6-6"/>
       </svg>
-    </a>
+    </button>
     <div class="text-center">
       <h1 class="font-black text-lg tracking-tight leading-none">Before Mammals</h1>
       <p id="round-indicator" class="text-xs text-amber-600 mt-0.5 font-semibold"></p>
@@ -91,42 +92,54 @@
       <p class="text-xs font-bold text-amber-700 uppercase tracking-wider mb-3">Six animals. Six evolutionary shifts.</p>
       <div class="flex flex-col gap-3">
         <div class="flex items-center gap-3">
-          <span class="text-2xl flex-shrink-0 select-none">🦎</span>
+          <div class="w-9 h-9 flex-shrink-0 flex items-center justify-center">
+            <img src="{% url 'phylo_image' uuid='ee7f1c8c-c98d-4611-aa4e-c112e86782e6' %}" alt="Dimetrodon" class="max-w-full max-h-full object-contain">
+          </div>
           <div>
             <p class="text-sm font-bold text-gray-800 leading-none">Dimetrodon</p>
             <p class="text-xs text-gray-500 mt-0.5">Earliest known synapsid with differentiated tooth types</p>
           </div>
         </div>
         <div class="flex items-center gap-3">
-          <span class="text-2xl flex-shrink-0 select-none">🐅</span>
+          <div class="w-9 h-9 flex-shrink-0 flex items-center justify-center">
+            <img src="{% url 'phylo_image' uuid='730f5066-4b02-4548-be22-6d683af13d70' %}" alt="Inostrancevia" class="max-w-full max-h-full object-contain">
+          </div>
           <div>
             <p class="text-sm font-bold text-gray-800 leading-none">Inostrancevia</p>
             <p class="text-xs text-gray-500 mt-0.5">Top predator — enlarged canine teeth, wide jaw gape</p>
           </div>
         </div>
         <div class="flex items-center gap-3">
-          <span class="text-2xl flex-shrink-0 select-none">🦏</span>
+          <div class="w-9 h-9 flex-shrink-0 flex items-center justify-center">
+            <img src="{% url 'phylo_image' uuid='b4b49b73-e13a-4f5b-8fda-2bf6d6dcb1eb' %}" alt="Lystrosaurus" class="max-w-full max-h-full object-contain">
+          </div>
           <div>
             <p class="text-sm font-bold text-gray-800 leading-none">Lystrosaurus</p>
             <p class="text-xs text-gray-500 mt-0.5">Replaced most teeth with a beak; survived the Permian-Triassic extinction</p>
           </div>
         </div>
         <div class="flex items-center gap-3">
-          <span class="text-2xl flex-shrink-0 select-none">🦦</span>
+          <div class="w-9 h-9 flex-shrink-0 flex items-center justify-center">
+            <img src="{% url 'phylo_image' uuid='94fda119-5435-4246-ad23-20b15f3bcb8d' %}" alt="Thrinaxodon" class="max-w-full max-h-full object-contain">
+          </div>
           <div>
             <p class="text-sm font-bold text-gray-800 leading-none">Thrinaxodon</p>
             <p class="text-xs text-gray-500 mt-0.5">Skull pits indicate whiskers — earliest fossil evidence of fur</p>
           </div>
         </div>
         <div class="flex items-center gap-3">
-          <span class="text-2xl flex-shrink-0 select-none">🐺</span>
+          <div class="w-9 h-9 flex-shrink-0 flex items-center justify-center">
+            <img src="{% url 'phylo_image' uuid='6cbe14b2-022a-4982-82c0-53c0e0fb5cb8' %}" alt="Cynognathus" class="max-w-full max-h-full object-contain">
+          </div>
           <div>
             <p class="text-sm font-bold text-gray-800 leading-none">Cynognathus</p>
             <p class="text-xs text-gray-500 mt-0.5">A bony secondary palate separated breathing from eating</p>
           </div>
         </div>
         <div class="flex items-center gap-3">
-          <span class="text-2xl flex-shrink-0 select-none">🐭</span>
+          <div class="w-9 h-9 flex-shrink-0 flex items-center justify-center">
+            <img src="{% url 'phylo_image' uuid='be4fd4ac-7dfb-4dbc-bdb8-6be298aa9015' %}" alt="Morganucodon" class="max-w-full max-h-full object-contain">
+          </div>
           <div>
             <p class="text-sm font-bold text-gray-800 leading-none">Morganucodon</p>
             <p class="text-xs text-gray-500 mt-0.5">Three middle ear bones; one of the earliest true mammals</p>
@@ -165,7 +178,9 @@
             <h2 id="teach-name" class="text-3xl font-black text-white leading-none"></h2>
             <p id="teach-period" class="text-sm text-white/80 mt-1 font-medium"></p>
           </div>
-          <div id="teach-emoji" class="text-5xl select-none flex-shrink-0"></div>
+          <div class="w-16 h-16 flex-shrink-0 flex items-center justify-center">
+            <img id="teach-img" src="" alt="" class="max-w-full max-h-full object-contain" style="filter: brightness(0) invert(1);">
+          </div>
         </div>
         <div class="bg-white/20 rounded-2xl px-4 py-3">
           <p class="text-xs font-bold uppercase tracking-wider text-white/70 mb-1">New innovation</p>
@@ -227,7 +242,9 @@
 
       <!-- Mini animal header -->
       <div class="flex items-center gap-3 mb-5 bg-white rounded-2xl px-4 py-3 shadow-sm border border-amber-100">
-        <div id="quiz-emoji" class="text-2xl select-none flex-shrink-0"></div>
+        <div class="w-10 h-10 flex-shrink-0 flex items-center justify-center">
+          <img id="quiz-img" src="" alt="" class="max-w-full max-h-full object-contain">
+        </div>
         <div class="min-w-0">
           <p id="quiz-name" class="font-bold text-sm text-gray-800 truncate"></p>
           <p id="quiz-innovation" class="text-xs text-amber-600 font-semibold truncate"></p>
@@ -346,6 +363,7 @@
 <script>
 const ROUNDS = {{ rounds_json|safe }};
 const STORAGE = 'tiatrex-before-mammals';
+const PLAY_URL = '{% url "play" %}';
 
 // ── State ─────────────────────────────────────────────────────────────────────
 function shuffledIndices(n) {
@@ -361,9 +379,8 @@ function freshState() {
   return {
     phase: 'intro',
     currentRound: 0,
-    answers: [],
-    answered: false,
-    selectedOption: null,
+    answers: {},
+    selectedOptions: {},
     optionOrders: ROUNDS.map(r => shuffledIndices(r.options.length)),
   };
 }
@@ -375,6 +392,14 @@ function loadState() {
     if (!s.optionOrders || s.optionOrders.length !== ROUNDS.length) {
       s.optionOrders = ROUNDS.map(r => shuffledIndices(r.options.length));
     }
+    // Migrate old array-based answers format
+    if (Array.isArray(s.answers)) {
+      const ans = {};
+      s.answers.forEach((v, i) => { ans[i] = v; });
+      s.answers = ans;
+    }
+    if (!s.answers || typeof s.answers !== 'object') s.answers = {};
+    if (!s.selectedOptions || typeof s.selectedOptions !== 'object') s.selectedOptions = {};
     return s;
   } catch { return null; }
 }
@@ -388,6 +413,10 @@ function save() {
 function restartGame() {
   localStorage.removeItem(STORAGE);
   location.reload();
+}
+
+function isRoundAnswered(ri) {
+  return state.selectedOptions[ri] !== undefined;
 }
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -457,7 +486,9 @@ function renderTeach(round) {
   document.getElementById('teach-group').textContent      = round.group;
   document.getElementById('teach-name').textContent       = round.name;
   document.getElementById('teach-period').textContent     = round.period;
-  document.getElementById('teach-emoji').textContent      = round.emoji;
+  const teachImg = document.getElementById('teach-img');
+  teachImg.src = PHYLO_IMG_BASE + round.uuid + '.png';
+  teachImg.alt = round.name;
   document.getElementById('teach-innovation').textContent = round.innovation;
   document.getElementById('teach-text').textContent       = round.teach_text;
   document.getElementById('teach-size').textContent       = round.size;
@@ -470,7 +501,9 @@ function renderTeach(round) {
 }
 
 function renderQuiz(round) {
-  document.getElementById('quiz-emoji').textContent      = round.emoji;
+  const quizImg = document.getElementById('quiz-img');
+  quizImg.src = PHYLO_IMG_BASE + round.uuid + '.png';
+  quizImg.alt = round.name;
   document.getElementById('quiz-name').textContent       = round.name;
   document.getElementById('quiz-innovation').textContent = round.innovation;
   document.getElementById('quiz-question').textContent   = round.quiz_question;
@@ -478,12 +511,16 @@ function renderQuiz(round) {
   const container = document.getElementById('options-container');
   container.innerHTML = '';
 
-  const order = state.optionOrders[state.currentRound];
+  const ri      = state.currentRound;
+  const answered = isRoundAnswered(ri);
+  const selected = state.selectedOptions[ri];
+  const order   = state.optionOrders[ri];
+
   order.forEach((origIdx) => {
     const opt = round.options[origIdx];
     const btn = document.createElement('button');
 
-    if (!state.answered) {
+    if (!answered) {
       btn.className = 'w-full text-left px-4 py-3.5 rounded-2xl border-2 bg-white border-gray-200 text-gray-800 text-sm font-medium hover:border-amber-400 hover:bg-amber-50 active:scale-[.98] transition-all';
       btn.textContent = opt.text;
       btn.onclick = () => answerQuiz(origIdx);
@@ -491,7 +528,7 @@ function renderQuiz(round) {
       if (opt.correct) {
         btn.className = 'w-full text-left px-4 py-3.5 rounded-2xl border-2 bg-green-50 border-green-400 text-green-800 text-sm font-medium';
         btn.innerHTML = `<span class="mr-2 font-bold">&#10003;</span>${esc(opt.text)}`;
-      } else if (origIdx === state.selectedOption) {
+      } else if (origIdx === selected) {
         btn.className = 'w-full text-left px-4 py-3.5 rounded-2xl border-2 bg-red-50 border-red-300 text-red-700 text-sm font-medium';
         btn.innerHTML = `<span class="mr-2 font-bold">&#10007;</span>${esc(opt.text)}`;
       } else {
@@ -508,9 +545,9 @@ function renderQuiz(round) {
   const explText = document.getElementById('explanation-text');
   const nextBtn  = document.getElementById('next-btn');
 
-  if (state.answered) {
+  if (answered) {
     const correctOpt = round.options.find(o => o.correct);
-    const wasCorrect = round.options[state.selectedOption]?.correct;
+    const wasCorrect = round.options[selected]?.correct;
 
     explBox.classList.remove('hidden');
     if (wasCorrect) {
@@ -523,9 +560,7 @@ function renderQuiz(round) {
     explText.textContent = correctOpt.explanation;
 
     nextBtn.classList.remove('hidden');
-    nextBtn.textContent = state.currentRound >= ROUNDS.length - 1
-      ? 'See results →'
-      : 'Next animal →';
+    nextBtn.textContent = ri >= ROUNDS.length - 1 ? 'See results →' : 'Next animal →';
   } else {
     explBox.classList.add('hidden');
     nextBtn.classList.add('hidden');
@@ -536,7 +571,7 @@ function renderEndScreen() {
   document.getElementById('progress-bar').style.width = '100%';
   document.getElementById('round-indicator').textContent = 'Complete!';
 
-  const score = state.answers.filter(Boolean).length;
+  const score = Object.values(state.answers).filter(Boolean).length;
   const total = ROUNDS.length;
 
   let emoji, title;
@@ -552,13 +587,16 @@ function renderEndScreen() {
     ? 'You know your proto-mammals!'
     : 'These animals were our great-great-(etc)-grandparents.';
 
-  document.getElementById('end-trail').textContent = state.answers.map(a => a ? '✅' : '❌').join('');
+  document.getElementById('end-trail').textContent = ROUNDS.map((_, i) => state.answers[i] ? '✅' : '❌').join('');
 
   document.getElementById('end-summary').innerHTML = ROUNDS.map((r, i) => {
     const correct = state.answers[i];
     return `
-      <div class="bg-white rounded-2xl px-4 py-3 border ${correct ? 'border-green-100' : 'border-red-100'} flex items-start gap-3">
-        <span class="text-base flex-shrink-0 mt-0.5">${correct ? '✅' : '❌'}</span>
+      <div class="bg-white rounded-2xl px-4 py-3 border ${correct ? 'border-green-100' : 'border-red-100'} flex items-center gap-3">
+        <span class="text-base flex-shrink-0">${correct ? '✅' : '❌'}</span>
+        <div class="w-8 h-8 flex-shrink-0 flex items-center justify-center">
+          <img src="${PHYLO_IMG_BASE}${esc(r.uuid)}.png" alt="${esc(r.name)}" class="max-w-full max-h-full object-contain">
+        </div>
         <div class="min-w-0">
           <p class="text-xs font-bold text-gray-400">${esc(r.name)} &middot; ${esc(r.period)}</p>
           <p class="text-sm font-semibold text-gray-800">${esc(r.innovation)}</p>
@@ -583,8 +621,6 @@ function startGame() {
 
 function goToQuiz() {
   state.phase = 'quiz';
-  state.answered = false;
-  state.selectedOption = null;
   save();
   window.scrollTo(0, 0);
 
@@ -597,11 +633,11 @@ function goToQuiz() {
 }
 
 function answerQuiz(optionIndex) {
-  if (state.answered) return;
-  const isCorrect = ROUNDS[state.currentRound].options[optionIndex].correct;
-  state.answered      = true;
-  state.selectedOption = optionIndex;
-  state.answers.push(isCorrect);
+  const ri = state.currentRound;
+  if (isRoundAnswered(ri)) return;
+  const isCorrect = ROUNDS[ri].options[optionIndex].correct;
+  state.selectedOptions[ri] = optionIndex;
+  state.answers[ri]         = isCorrect;
   save();
   renderAll();
 }
@@ -615,9 +651,7 @@ function nextRound() {
     return;
   }
   state.currentRound++;
-  state.phase          = 'teach';
-  state.answered       = false;
-  state.selectedOption = null;
+  state.phase = 'teach';
   save();
   window.scrollTo(0, 0);
 
@@ -629,9 +663,47 @@ function nextRound() {
   renderAll();
 }
 
+function goBack() {
+  window.scrollTo(0, 0);
+
+  if (state.phase === 'intro') {
+    window.location.href = PLAY_URL;
+    return;
+  }
+
+  if (state.phase === 'end') {
+    state.phase = 'quiz';
+    state.currentRound = ROUNDS.length - 1;
+    save();
+    renderAll();
+    return;
+  }
+
+  if (state.phase === 'quiz') {
+    state.phase = 'teach';
+    save();
+    renderAll();
+    return;
+  }
+
+  // teach phase
+  if (state.currentRound > 0) {
+    state.currentRound--;
+    state.phase = 'quiz';
+    save();
+    renderAll();
+    return;
+  }
+
+  // First round teach — back to intro
+  state.phase = 'intro';
+  save();
+  renderAll();
+}
+
 function shareResult() {
-  const score = state.answers.filter(Boolean).length;
-  const trail = state.answers.map(a => a ? '✅' : '❌').join('');
+  const score = Object.values(state.answers).filter(Boolean).length;
+  const trail = ROUNDS.map((_, i) => state.answers[i] ? '✅' : '❌').join('');
   const text  = `Tia T-Rex — Before Mammals\n${trail} ${score}/${ROUNDS.length}\nWanna find out more? https://www.happylifeunfolding.com/tiatrex/play/before-mammals/`;
   navigator.clipboard.writeText(text)
     .then(() => {

@@ -1,3 +1,4 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,7 +13,7 @@
 
   <!-- Brand mark -->
   <div class="text-center mb-6">
-    <div class="text-5xl mb-2 select-none" role="img" aria-label="T-Rex">🦖</div>
+    <img src="{% static 'core/images/tia-t-rex.png' %}" alt="Tia T-Rex" class="h-16 w-auto mx-auto mb-2 select-none" style="transform: scaleX(-1);">
     <h1 class="text-4xl font-black tracking-tight">Tia T-Rex</h1>
   </div>
 

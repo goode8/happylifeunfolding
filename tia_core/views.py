@@ -24,6 +24,7 @@ _PHYLO_IMG_DIR = Path(os.environ.get('PHYLO_IMG_DIR', ''))
 BEFORE_MAMMALS_ROUNDS = [
     {
         "name": "Dimetrodon",
+        "uuid": "ee7f1c8c-c98d-4611-aa4e-c112e86782e6",
         "group": "Pelycosaur · Early Synapsid",
         "period": "~295 million years ago",
         "emoji": "🦎",
@@ -46,6 +47,7 @@ BEFORE_MAMMALS_ROUNDS = [
     },
     {
         "name": "Inostrancevia",
+        "uuid": "730f5066-4b02-4548-be22-6d683af13d70",
         "group": "Gorgonopsian · Therapsid",
         "period": "~260 million years ago",
         "emoji": "🐅",
@@ -68,6 +70,7 @@ BEFORE_MAMMALS_ROUNDS = [
     },
     {
         "name": "Lystrosaurus",
+        "uuid": "b4b49b73-e13a-4f5b-8fda-2bf6d6dcb1eb",
         "group": "Dicynodont · Therapsid",
         "period": "~255 million years ago",
         "emoji": "🦏",
@@ -90,6 +93,7 @@ BEFORE_MAMMALS_ROUNDS = [
     },
     {
         "name": "Thrinaxodon",
+        "uuid": "94fda119-5435-4246-ad23-20b15f3bcb8d",
         "group": "Cynodont · Early Cynodontia",
         "period": "~250 million years ago",
         "emoji": "🦦",
@@ -112,6 +116,7 @@ BEFORE_MAMMALS_ROUNDS = [
     },
     {
         "name": "Cynognathus",
+        "uuid": "6cbe14b2-022a-4982-82c0-53c0e0fb5cb8",
         "group": "Cynodont · Advanced Cynodontia",
         "period": "~245 million years ago",
         "emoji": "🐺",
@@ -134,6 +139,7 @@ BEFORE_MAMMALS_ROUNDS = [
     },
     {
         "name": "Morganucodon",
+        "uuid": "be4fd4ac-7dfb-4dbc-bdb8-6be298aa9015",
         "group": "Early Mammaliaform",
         "period": "~210 million years ago",
         "emoji": "🐭",

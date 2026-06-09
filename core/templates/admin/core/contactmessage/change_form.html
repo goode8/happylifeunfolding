@@ -1,0 +1,23 @@
+{% extends "admin/change_form.html" %}
+
+{% block content %}
+<div style="display:flex; gap:0.75em; align-items:center; margin-bottom:1.25em;">
+    {% if prev_id %}
+        <a href="../../{{ prev_id }}/change/" class="button">← Newer</a>
+    {% else %}
+        <span class="button" style="opacity:0.35; cursor:default;">← Newer</span>
+    {% endif %}
+
+    {% if next_id %}
+        <a href="../../{{ next_id }}/change/" class="button">Older →</a>
+    {% else %}
+        <span class="button" style="opacity:0.35; cursor:default;">Older →</span>
+    {% endif %}
+
+    <form method="post" action="../delete-now/" style="margin:0;">
+        {% csrf_token %}
+        <button type="submit" class="button" style="background:#ba2121; color:white; border:none; cursor:pointer;">Delete</button>
+    </form>
+</div>
+{{ block.super }}
+{% endblock %}
