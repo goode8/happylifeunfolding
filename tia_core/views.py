@@ -1007,3 +1007,235 @@ def pangaea_to_now(request):
         'rounds_json': json.dumps(PANGAEA_TO_NOW_ROUNDS),
         'active_tab': 'play',
     })
+
+
+EXTINCTION_EVENTS_ROUNDS = [
+    {
+        "name": "Ordovician-Silurian",
+        "group": "Big Five · ~443 Million Years Ago",
+        "period": "~443 million years ago",
+        "emoji": "🧊",
+        "innovation": "Glaciation emptied the seas",
+        "slides": [
+            {
+                "label": "The Big Picture",
+                "title": "When a continent drifted over the South Pole",
+                "body": "The Ordovician world was almost entirely marine — the land was bare rock with only a thin crust of microbial mats. Nearly all complex life lived in warm, shallow seas on continental shelves. Then the supercontinent Gondwana drifted southward until it sat over the South Pole. As Gondwana occupied the pole, massive ice sheets formed, drawing sea levels down by as much as 100 meters. The warm shallow seas that supported most Ordovician life simply drained off the continental shelves. Roughly 85% of all species were lost — the second-largest extinction in Earth's history, and the first of the Big Five. This is where the story begins.",
+                "details": [
+                    {"key": "Span", "value": "~1–2 million years at the main pulse; two distinct kill phases"},
+                    {"key": "Today", "value": "Gondwana's fragments are today's southern continents: Africa, South America, Antarctica, Australia, India"},
+                ],
+            },
+            {
+                "label": "The Victims",
+                "title": "A world without a backbone",
+                "body": "In the Ordovician, no vertebrate animal had yet colonized land. Almost all complex life was marine. Trilobites — ancient arthropods that had ruled the seas since the Cambrian, about 80 million years by this point — lost most of their diversity. Brachiopods, bryozoans, corals, and graptolites all suffered massive losses. The extinction struck in two pulses: first when the ice expanded (rapid cooling and sea level fall), then when it melted (rapid warming and ocean chemistry change). Jawless fish — the earliest vertebrates, and the ancestors of every backboned animal alive today — survived, but barely.",
+                "details": [
+                    {"key": "Climate", "value": "Brief but severe glaciation; sea levels fell ~100 m; then rapid warming as ice melted"},
+                    {"key": "Life", "value": "Trilobites, brachiopods, corals, graptolites devastated; jawless fish survived to become all vertebrates"},
+                ],
+            },
+            {
+                "label": "The Recovery",
+                "title": "The survivors that changed everything",
+                "body": "After the glaciers melted and seas refilled, life rebounded over about 5 million years. Jawed fish evolved in the Silurian — the first vertebrates with teeth, opening enormous new possibilities in how animals could eat and what they could hunt. Vascular plants began colonizing the land in the Silurian. By the Devonian, fish had diversified into an enormous range of forms. Among them were lobe-finned fish — fish with muscular, bone-supported fins that could prop up their weight in shallow water. Over millions of years, some began moving through mudflats and wetlands. By the late Devonian, the first true tetrapods — four-limbed animals capable of moving on land — had made the crossing. The entire story of land animals — including every reptile, dinosaur, bird, and mammal, and every human being — flows through the vertebrate lineage that survived this extinction.",
+                "details": [
+                    {"key": "Feature", "value": "The Iapetus Ocean — an ancient ocean that closed as Gondwana drifted, later reopening as the Atlantic"},
+                    {"key": "Evidence", "value": "Glacial deposits and sea-level-fall indicators found in Saharan Africa, which was then at the South Pole"},
+                ],
+                "fun_fact": "CO2 in the Ordovician was roughly 8x today's levels — kept high by volcanic activity and the near-total absence of land plants to absorb it. Yet the planet glaciated anyway, mainly because Gondwana was sitting over the South Pole, where ice could accumulate on land. But CO2 may also have started dropping as early plants (mosses and liverworts) began colonizing bare rock, and as mountain-building exposed fresh silicate rock that absorbed CO2 as it weathered. The glaciation may have had some help from life itself.",
+            },
+        ],
+        "quiz_question": "Why did falling sea levels cause such devastating losses to Ordovician life?",
+        "options": [
+            {"text": "Lower sea levels made the remaining water too salty for most animals", "correct": False, "explanation": "Salinity doesn't rise enough from sea level drops to become toxic — the real issue was habitat loss, not chemistry."},
+            {"text": "Most life depended on the warm, shallow continental-shelf seas that simply drained away", "correct": True, "explanation": "Animals hadn't yet colonized land — every animal on Earth was marine. The shallow shelves were where almost all of them lived. When those shelves drained, the habitat disappeared entirely."},
+            {"text": "Colder water holds less oxygen, and the glaciation suffocated animals adapted to warm well-oxygenated seas", "correct": False, "explanation": "Colder water actually holds more dissolved oxygen, not less. The main killer was habitat loss as the shelves drained, not oxygen levels."},
+            {"text": "The shrinking ocean surface meant less sunlight could penetrate the water, collapsing the photosynthesis that supported the food chain", "correct": False, "explanation": "Sunlight penetration depends on depth and clarity, not total ocean size. The real issue was that the shallow shelf habitats — where life was — simply disappeared."},
+        ],
+    },
+    {
+        "name": "Late Devonian",
+        "group": "Big Five · ~374–359 Million Years Ago",
+        "period": "~374–359 million years ago",
+        "emoji": "🌳",
+        "innovation": "Trees created a catastrophe",
+        "slides": [
+            {
+                "label": "The Big Picture",
+                "title": "The extinction that trees caused",
+                "body": "About 70 million years after the Ordovician extinction, another crisis began — though this one unfolded slowly. The Late Devonian extinction wasn't a single event — it was a series of pulses spread across ~20 million years, wiping out ~75% of all species. Marine life was hit hardest. The most striking cause is one of the stranger stories in Earth's history: trees had only just evolved, and as tree roots penetrated deep into rock for the first time, they broke down minerals — especially phosphorus — that had never before been exposed to water. The resulting flood of nutrients poured into the seas, triggering massive algal blooms. When those blooms died and decomposed, the decomposition consumed all the oxygen. The seas asphyxiated.",
+                "details": [
+                    {"key": "Span", "value": "Multiple pulses ~374–359 Ma (Kellwasser and Hangenberg events); not one sudden event"},
+                    {"key": "Today", "value": "The Catskill Mountains in New York State preserve Devonian river deltas — some of the earliest forest sediments on Earth"},
+                ],
+            },
+            {
+                "label": "Ocean Anoxia",
+                "title": "When the seas ran out of oxygen",
+                "body": "Devonian reef ecosystems had been the most complex on Earth since the Cambrian — dominated by a now-extinct reef-building sponge called stromatoporoids. The ocean anoxia triggered by plant-fueled algal blooms wiped these reefs out almost completely. It took roughly 100 million years for reef ecosystems to rebuild. Placoderms — armored fish that had dominated the seas for tens of millions of years — went mostly extinct. Trilobites lost more diversity, never recovering. But the early tetrapods — four-limbed vertebrates just beginning to crawl onto land — were barely affected. Their lineage would conquer the continents.",
+                "details": [
+                    {"key": "Climate", "value": "Repeated cooling pulses; widespread ocean anoxia (oxygen depletion) in shallow seas"},
+                    {"key": "Life", "value": "Placoderms, stromatoporoid reefs, many trilobite groups lost; early tetrapods (first land vertebrates) survived"},
+                ],
+            },
+            {
+                "label": "The Legacy",
+                "title": "Coal, tetrapods, and the road to land",
+                "body": "The forests that caused the Devonian extinction kept expanding throughout the Carboniferous, eventually creating the vast coal swamps that were buried and compressed into the coal seams we find today. The lobe-finned fish that survived the Devonian — including the tetrapod lineage crawling ashore — were our distant ancestors. The loss of their marine competitors may have helped early land vertebrates thrive. Every land animal that ever lived: every amphibian, reptile, dinosaur, bird, and mammal — all trace back through the fish that survived this extinction.",
+                "details": [
+                    {"key": "Feature", "value": "The 'Devonian wood gap' — trees evolved but fungi hadn't yet evolved to decompose wood, so dead trees piled up for millions of years, eventually becoming coal"},
+                    {"key": "Evidence", "value": "Black shale layers rich in organic matter — signs of anoxic, oxygen-free seafloor — appear worldwide at the extinction horizons"},
+                ],
+                "fun_fact": "Most of the world's coal seams are Carboniferous forest. Dead trees fell into swamps, were buried under sediment, and compressed over 300+ million years into carbon-dense rock — carbon that ancient trees pulled from the air long before the first dinosaur walked the Earth.",
+            },
+        ],
+        "quiz_question": "Trees had just evolved when they helped trigger the Late Devonian extinction. What did their roots actually do?",
+        "options": [
+            {"text": "They released oxygen into soil so quickly that underground fires broke out, sending ash and toxins into coastal waterways", "correct": False, "explanation": "Plants releasing oxygen into soil isn't a real mechanism — and there's no evidence of extinction-scale underground fires. The damage came through chemistry, not combustion."},
+            {"text": "They absorbed so much CO2 from the atmosphere that the planet rapidly cooled and glaciated, similar to the Ordovician extinction", "correct": False, "explanation": "Trees did draw down CO2 over millions of years, and this probably did contribute to later Ice Ages — but the Devonian extinction was driven by ocean anoxia, not glaciation."},
+            {"text": "They broke down rock and flushed nutrients into rivers and seas, fueling algal blooms that stripped oxygen from the water as they decayed", "correct": True, "explanation": "Roots were the first things to penetrate deep rock, releasing nutrients like phosphorus that had never before reached the sea. The resulting blooms, and their decay, asphyxiated ocean life."},
+            {"text": "Their undecomposed wood piled up in rivers and estuaries, blocking water flow and creating stagnant dead zones at the coast", "correct": False, "explanation": "The Devonian wood gap is real — fungi hadn't evolved to decompose wood yet — but log jams aren't what caused ocean anoxia. The damage came from nutrient runoff, not physical blockage."},
+        ],
+    },
+    {
+        "name": "Permian-Triassic",
+        "group": "Big Five · ~252 Million Years Ago",
+        "period": "~252 million years ago",
+        "emoji": "🌋",
+        "innovation": "96% of species lost — the worst extinction ever",
+        "slides": [
+            {
+                "label": "The Catastrophe",
+                "title": "How bad was it?",
+                "body": "About 107 million years after the last Devonian pulse, and 252 million years ago in total, Earth lost more life than at any other time in its history. ~96% of marine species and ~70% of terrestrial species went extinct. Reefs — marine ecosystems built from calcium carbonate by corals and sponges — dissolved as the ocean turned acidic. Most fish lineages were wiped out. The lush Carboniferous coal forests were replaced by a nearly lifeless landscape. On land, insects — almost never affected by mass extinctions — experienced their only known mass extinction event. Scientists call it simply 'The Great Dying.' It took roughly 10 million years for biodiversity to recover — longer than for any other extinction in Earth's history.",
+                "details": [
+                    {"key": "Span", "value": "Main pulse ~60,000 years — geologically instantaneous; recovery took ~10 million years"},
+                    {"key": "Today", "value": "The Permian-Triassic boundary is visible as a thin black layer in rock faces on every continent — the horizon where life nearly vanished"},
+                ],
+            },
+            {
+                "label": "The Cause",
+                "title": "Siberian Traps — a continent on fire",
+                "body": "The prime suspect: the Siberian Traps eruptions — a volcanic event that covered an area the size of Europe in lava over roughly a million years, releasing unimaginable volumes of CO2, methane, and sulfur dioxide. CO2 warmed the planet by ~10°C. That warming released frozen methane from seafloor sediments — a feedback loop that drove temperatures higher still. Ocean temperatures reached 40°C in the tropics — lethal for most marine life. Seawater turned acidic. Vast ocean regions became anoxic — then sulfidic. In the deep ocean, dissolved oxygen was replaced by hydrogen sulfide, the gas that makes rotten eggs smell. Purple sulfur bacteria bloomed near the surface. In some models, H2S reached the atmosphere in concentrations toxic to land animals. The ocean turned poisonous. On land: acid rain, extreme heat, food web collapse. The eruptions punched through ancient coal seams, vaporizing carbon stores accumulated over 50 million years.",
+                "details": [
+                    {"key": "Climate", "value": "~10°C global temperature rise; ocean acidification; widespread anoxia; CO2 several times current levels"},
+                    {"key": "Life", "value": "Lystrosaurus (from Before Mammals!) briefly made up 90%+ of all land vertebrates after the extinction; archosaurs then radiated into the empty world"},
+                ],
+            },
+            {
+                "label": "The Aftermath",
+                "title": "The world that came after",
+                "body": "Lystrosaurus — the beak-jawed dicynodont from the Before Mammals game — survived by eating tough roots and buried vegetation when lush plant life collapsed. It briefly made up over 90% of all land vertebrates. The ecological 'recovery' wasn't a real recovery for tens of millions of years: simplified, low-diversity ecosystems persisted through the early Triassic. The archosaurs that survived split into two lineages: one eventually gave rise to dinosaurs and pterosaurs, and the other became today's crocodilians. Without the Permian-Triassic extinction, there probably would have been no dinosaurs. And without dinosaurs' dominance — and eventual extinction — the age of mammals may never have happened.",
+                "details": [
+                    {"key": "Feature", "value": "The 'Coal Gap' — for ~10 million years after the extinction, almost no coal was deposited because forests didn't recover enough to accumulate"},
+                    {"key": "Evidence", "value": "Carbon isotope excursions worldwide; anoxic black shales; collapsed food webs; Siberian lava fields still covering millions of km²"},
+                ],
+                "fun_fact": "The Siberian Traps erupted right through thick Carboniferous coal seams and ignited them. Underground coal fires burned for centuries, pouring sulfur, mercury, and toxic gases into an atmosphere already drowning in volcanic CO2. The eruptions didn't just release the carbon ancient forests had spent 50 million years pulling from the air — they lit the world's largest coal fire, and kept it burning. At the extinction boundary itself, the fossil record shows a massive spike in fungal spores. Forests died so completely that the world was briefly carpeted in fungi decomposing the dead trees — a global layer of rot, preserved in rock. The Devonian left a world of undecomposed trees because fungi hadn't yet evolved to eat wood. The P-T left a world of rotting trees because nothing else was left to stop them.",
+            },
+        ],
+        "quiz_question": "What turned the Siberian Traps volcanic eruptions into the worst extinction in Earth's history?",
+        "options": [
+            {"text": "The eruptions coincided with a large asteroid impact, combining two catastrophes at once", "correct": False, "explanation": "There's no confirmed major asteroid impact at the Permian-Triassic boundary. The volcanism alone, amplified by feedback loops, was enough."},
+            {"text": "The ash cloud blocked sunlight for millions of years, causing a perpetual volcanic winter", "correct": False, "explanation": "Volcanic winters from ash last years or decades, not millions of years. The Permian extinction was driven by runaway warming, not prolonged cooling."},
+            {"text": "Volcanic CO2 triggered warming that released frozen seafloor methane, creating a self-reinforcing feedback loop that drove temperatures far beyond what the eruptions alone would have caused", "correct": True, "explanation": "This is what made it uniquely devastating. CO2 warmed the oceans; warming oceans released methane; methane caused more warming. Each step amplified the last."},
+            {"text": "Pangaea's geography — one massive landmass with no moderating ocean currents in its interior — meant the heat from volcanism had nowhere to dissipate", "correct": False, "explanation": "Pangaea's geography did make its interior harsh, but ocean circulation moderates climate globally regardless of landmass shape. The real amplifier was the methane feedback, not geography."},
+        ],
+    },
+    {
+        "name": "Triassic-Jurassic",
+        "group": "Big Five · ~201 Million Years Ago",
+        "period": "~201 million years ago",
+        "emoji": "🦕",
+        "innovation": "Volcanism cleared the path for dinosaurs",
+        "slides": [
+            {
+                "label": "The Big Picture",
+                "title": "The eruptions that opened the Atlantic",
+                "body": "Just 51 million years after the Great Dying — a short gap by geological standards — another mass extinction wiped out roughly 80% of all species. The cause: the Central Atlantic Magmatic Province (CAMP) — one of the largest volcanic episodes in Earth's history, erupting as Pangaea began splitting apart. CAMP flooded what is now eastern North America, northwest Africa, and South America with enormous lava fields and released massive volumes of CO2 into the atmosphere. (This is the same event described in the Pangaea to Now game: the birth of the proto-Atlantic Ocean.) Lava rock from CAMP can still be found today in New Jersey, Nova Scotia, Morocco, and the Amazon Basin — all once adjacent parts of Pangaea.",
+                "details": [
+                    {"key": "Span", "value": "Main pulse ~10,000–20,000 years; total CAMP volcanism lasted ~600,000 years"},
+                    {"key": "Today", "value": "The Palisades of New Jersey and the Watchung Mountains are CAMP lava flows; identical rock formations appear in Morocco across the Atlantic"},
+                ],
+            },
+            {
+                "label": "Winners and Losers",
+                "title": "The extinction that made the Jurassic",
+                "body": "Before the Triassic-Jurassic extinction, dinosaurs were minor players — small and living alongside much larger competitors called crurotarsans, archosaur relatives of modern crocodilians that had been the dominant large land animals since recovering from the Permian-Triassic event. The Triassic-Jurassic extinction nearly eliminated the crurotarsans. Dinosaurs survived and, with their competitors gone, expanded explosively into every vacant ecological role — becoming the dominant land animals on Earth for the next 135 million years. The Jurassic world of giant sauropods, apex theropods, and herding ornithischians was only possible because of this extinction.",
+                "details": [
+                    {"key": "Climate", "value": "Rapid CO2-driven warming; acid rain; ecosystem disruption mirroring the Permian-Triassic, but shorter"},
+                    {"key": "Life", "value": "Crurotarsans (croc-line archosaurs), many large amphibians wiped out; dinosaurs, pterosaurs, early mammals survived and radiated"},
+                ],
+            },
+            {
+                "label": "The Chain",
+                "title": "Each extinction creates the next world",
+                "body": "The Triassic-Jurassic extinction is a perfect example of a pattern running through all five mass extinctions: catastrophe clears the stage, and the survivors inherit the world. Small, generalist dinosaurs that survived the CAMP eruptions rapidly evolved into everything: sauropods weighing 50+ tonnes, theropods (the lineage leading to T. rex, and to birds), ornithischians (Stegosaurus, Triceratops). For the next 135 million years, mammals — warm-blooded, diverse, capable — remained small and mostly nocturnal, unable to compete with dinosaurs in daylight. That constraint was lifted only by the next extinction.",
+                "details": [
+                    {"key": "Feature", "value": "The oldest known dinosaur footprints in North America date to just after the Triassic-Jurassic boundary — they walked into an empty landscape"},
+                    {"key": "Evidence", "value": "Sharp faunal turnover in the fossil record; CAMP lava interbedded with Triassic-Jurassic boundary sediments on multiple continents"},
+                ],
+                "fun_fact": "After the Triassic-Jurassic extinction, the dominant large land animals on Earth were — for the first time — predominantly warm-blooded. The cold-blooded crurotarsans had thrived in the warm, stable Triassic. As conditions became more variable after the CAMP eruptions, warm-blooded dinosaurs had an edge.",
+            },
+        ],
+        "quiz_question": "Before the Triassic-Jurassic extinction, what kept dinosaurs from being the dominant large land animals?",
+        "options": [
+            {"text": "Dinosaurs were warm-blooded in an era when the stable, hot Triassic climate favored cold-blooded animals that didn't need to eat as constantly", "correct": False, "explanation": "Being warm-blooded was actually an advantage after the extinction, not a disadvantage before it. And the real constraint on dinosaurs was competition, not metabolism."},
+            {"text": "The Triassic climate was too hot and dry for the large body sizes dinosaurs later evolved into", "correct": False, "explanation": "Dinosaurs were present throughout the hot, dry Triassic — they just weren't large or dominant yet. Climate wasn't what constrained them."},
+            {"text": "Crurotarsans — archosaur relatives of crocodilians — held the dominant large-animal roles and outcompeted dinosaurs", "correct": True, "explanation": "Crurotarsans were larger, more diverse, and more ecologically dominant than early dinosaurs for tens of millions of years. The extinction nearly wiped them out, and dinosaurs filled the gap."},
+            {"text": "Early dinosaurs were carnivores only and couldn't fill the herbivore roles that would have let them grow large", "correct": False, "explanation": "Plant-eating dinosaurs (sauropodomorphs) already existed in the Triassic — the constraint was competition from crurotarsans, not diet."},
+        ],
+    },
+    {
+        "name": "Cretaceous-Paleogene",
+        "group": "Big Five · ~66 Million Years Ago",
+        "period": "~66 million years ago",
+        "emoji": "☄️",
+        "innovation": "An asteroid ended 165 million years of dinosaur dominance",
+        "slides": [
+            {
+                "label": "The Reset",
+                "title": "What survived — and why",
+                "body": "135 million years after the Triassic-Jurassic extinction — the longest gap between any two of the Big Five — a 10–15 km asteroid struck the Yucatan Peninsula, killing 75% of all species. Geologists call this the K-Pg boundary — K for Cretaceous, Pg for Paleogene. A boundary in geology is a physical line visible in rock: above it is one era, below it another. The K-Pg boundary is a thin layer of ash and iridium found in rock on every continent — the exact moment, preserved in stone, where the old world ended. (The mechanics of the impact are covered in the Pangaea to Now game.) What's remarkable isn't just what died — it's what survived, and the pattern behind it. Animals that made it through shared a profile: small, cold-tolerant, able to eat almost anything, able to hide underground or in water. Insects (most orders survived), frogs, turtles, lizards, snakes, crocodilians, birds — one lineage of feathered theropod dinosaurs that nested on the ground — and small mammals all made it through. Large body size was a serious disadvantage.",
+                "details": [
+                    {"key": "Span", "value": "Impact seconds; impact winter years to decades; full recovery of ecosystems millions of years"},
+                    {"key": "Today", "value": "Chicxulub crater beneath the Yucatan Peninsula; a ring of cenotes (sacred Maya sinkholes) marks the crater rim at the surface"},
+                ],
+            },
+            {
+                "label": "The Mammal Opportunity",
+                "title": "160 million years of waiting",
+                "body": "For 160 million years, mammals had been tiny and mostly nocturnal — capable, warm-blooded, diverse in many ways, but unable to grow large or fill daylight ecological roles in a world dominated by dinosaurs. Within 100,000 years of the extinction — geologically overnight — mammals began diversifying explosively. Whales evolved from land mammals within 15 million years of the impact. Bats, horses, elephants, rodents, primates — every mammal body plan we recognize today emerged within roughly the same 10-million-year window. Before the extinction: one basic small mammal shape, living in the shadows. After: everything. True primates appear in the fossil record within about 10 million years of the extinction. Every primate alive today, including humans, owes its existence to the survival profile of a small, furry, ground-dwelling mammal 66 million years ago.",
+                "details": [
+                    {"key": "Climate", "value": "Impact winter years to decades; then gradual warming as CO2 from the Deccan Traps accumulated; overall warmer than today for millions of years after"},
+                    {"key": "Life", "value": "Mammals radiated into all ecological roles vacated by non-bird dinosaurs; birds diversified rapidly into ground-dwelling, predatory, and large flightless forms"},
+                ],
+            },
+            {
+                "label": "The Pattern",
+                "title": "Five extinctions, one story",
+                "body": "Across all five mass extinctions, the same pattern repeats: catastrophe, collapse — then explosive diversification in the survivors. The Ordovician extinction opened the sea for the jawless fish lineage that became all vertebrates. The Devonian extinction cleared space for the tetrapods crawling ashore. The Permian extinction made room for archosaurs and eventually dinosaurs. The Triassic-Jurassic extinction handed the world to dinosaurs. The K-Pg extinction handed it to mammals. Each extinction looks like an ending. Each one was also a beginning. Life doesn't just survive mass extinctions — it uses them.",
+                "details": [
+                    {"key": "Feature", "value": "The Deccan Traps in India — enormous eruptions happening around the same time as the asteroid, possibly weakening ecosystems before the impact"},
+                    {"key": "Evidence", "value": "Global iridium layer at exactly 66 Ma; shocked quartz; glass spherules from the impact; abrupt global faunal turnover"},
+                ],
+                "fun_fact": "Birds are dinosaurs. Specifically, they are one lineage of feathered theropod dinosaurs that survived this extinction. When you see a pigeon, you are looking at a living dinosaur. The dinosaur lineage appeared after the third extinction, dominated the world after the fourth, and one branch of it made it through this one.",
+            },
+        ],
+        "quiz_question": "Which of these is technically a dinosaur?",
+        "options": [
+            {"text": "Pigeon", "correct": True, "explanation": "Birds are living theropod dinosaurs. A pigeon is more closely related to T. rex than a crocodile is. One ground-nesting lineage of feathered theropods made it through the K-Pg extinction — and today they fill the skies."},
+            {"text": "Crocodile", "correct": False, "explanation": "Crocodilians are archosaurs — the same broad group as dinosaurs — but they split off before the dinosaur lineage emerged. Dinosaur cousins, not dinosaurs."},
+            {"text": "Pterodactyl", "correct": False, "explanation": "Pterosaurs were flying archosaurs, related to dinosaurs but a separate lineage. They went extinct at the K-Pg boundary alongside non-bird dinosaurs."},
+            {"text": "Komodo dragon", "correct": False, "explanation": "Komodo dragons are lizards — squamates, more closely related to snakes than to dinosaurs. Impressive, but not an archosaur."},
+        ],
+    },
+]
+
+
+@login_required
+def extinction_events(request):
+    return render(request, 'tia_core/extinction_events.html', {
+        'rounds_json': json.dumps(EXTINCTION_EVENTS_ROUNDS),
+        'active_tab': 'play',
+    })

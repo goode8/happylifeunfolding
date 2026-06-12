@@ -10,6 +10,7 @@ urlpatterns = [
     path('play/creature/', views.creature_of_day, name='creature_of_day'),
     path('play/before-mammals/', views.before_mammals, name='before_mammals'),
     path('play/pangaea-to-now/', views.pangaea_to_now, name='pangaea_to_now'),
+    path('play/extinction-events/', views.extinction_events, name='extinction_events'),
     path('explore/', views.explore, name='explore'),
     path('credits/', views.credits, name='credits'),
     re_path(

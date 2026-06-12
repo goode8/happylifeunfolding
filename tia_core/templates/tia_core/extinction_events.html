@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TiaTrex — Pangaea to Now</title>
+  <title>TiaTrex — Extinction Events</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
     @keyframes fadein {
@@ -13,7 +13,7 @@
     .fadein { animation: fadein 0.3s ease forwards; }
   </style>
 </head>
-<body class="bg-emerald-50 font-sans text-gray-900 antialiased min-h-screen">
+<body class="bg-red-50 font-sans text-gray-900 antialiased min-h-screen">
 <script>history.scrollRestoration = 'manual'; window.scrollTo(0, 0);</script>
 
 <div class="max-w-lg mx-auto px-4 pt-5 pb-28">
@@ -21,17 +21,17 @@
   <!-- Header -->
   <div class="flex items-center justify-between mb-4">
     <button id="back-btn" onclick="goBack()"
-            class="w-9 h-9 rounded-full bg-white border border-emerald-200 shadow-sm flex items-center justify-center text-gray-500 hover:text-gray-800 flex-shrink-0">
+            class="w-9 h-9 rounded-full bg-white border border-red-200 shadow-sm flex items-center justify-center text-gray-500 hover:text-gray-800 flex-shrink-0">
       <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
         <path d="m15 18-6-6 6-6"/>
       </svg>
     </button>
     <div class="text-center">
-      <h1 class="font-black text-lg tracking-tight leading-none">Pangaea to Now</h1>
-      <p id="round-indicator" class="text-xs text-emerald-600 mt-0.5 font-semibold"></p>
+      <h1 class="font-black text-lg tracking-tight leading-none">Extinction Events</h1>
+      <p id="round-indicator" class="text-xs text-red-600 mt-0.5 font-semibold"></p>
     </div>
     <button onclick="restartGame()" title="Restart"
-            class="w-9 h-9 rounded-full bg-white border border-emerald-200 shadow-sm flex items-center justify-center text-gray-400 hover:text-gray-700 flex-shrink-0">
+            class="w-9 h-9 rounded-full bg-white border border-red-200 shadow-sm flex items-center justify-center text-gray-400 hover:text-gray-700 flex-shrink-0">
       <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
         <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/>
       </svg>
@@ -39,74 +39,72 @@
   </div>
 
   <!-- Progress bar -->
-  <div class="w-full bg-emerald-100 rounded-full h-1.5 mb-6">
-    <div id="progress-bar" class="bg-emerald-500 h-1.5 rounded-full transition-all duration-500" style="width:0%"></div>
+  <div class="w-full bg-red-100 rounded-full h-1.5 mb-6">
+    <div id="progress-bar" class="bg-red-500 h-1.5 rounded-full transition-all duration-500" style="width:0%"></div>
   </div>
 
   <!-- ── Intro screen ────────────────────────────────────────────────────────── -->
   <div id="intro-screen" class="hidden fadein">
     <div class="text-center mb-6">
-      <div class="text-6xl mb-4 select-none">🌍</div>
-      <h2 class="text-2xl font-black text-gray-900 leading-tight mb-3">The ground under your feet has been everywhere.</h2>
+      <div class="text-6xl mb-4 select-none">🌋</div>
+      <h2 class="text-2xl font-black text-gray-900 leading-tight mb-3">Five times, a lot of life didn't make it.</h2>
       <p class="text-gray-600 text-sm leading-relaxed">
-        The land you're standing on has traveled thousands of kilometers, been submerged under shallow seas,
-        been walked on by dinosaurs, and been blasted by asteroids. Earth's surface is always moving —
-        just too slowly to feel. Geography isn't a backdrop for life. It <em>shapes</em> it.
+        In the last 500 million years, Earth has experienced five mass extinctions — events so severe that more than
+        75% of all species on Earth were wiped out each time. Each one caused big changes. Each one also started a
+        new set of possibilities in the world. The animal you are traces through every single one of these bottlenecks.
+        Not all information is 100% agreed upon, but this is what we think we know.
       </p>
     </div>
 
-    <div class="bg-white rounded-2xl p-5 mb-4 shadow-sm border border-emerald-100">
-      <p class="text-xs font-bold text-emerald-700 uppercase tracking-wider mb-3">Why does geography change?</p>
+    <div class="bg-white rounded-2xl p-5 mb-4 shadow-sm border border-red-100">
+      <p class="text-xs font-bold text-red-700 uppercase tracking-wider mb-3">What causes a mass extinction?</p>
       <p class="text-sm text-gray-700 leading-relaxed mb-3">
-        Earth's outer shell is broken into a dozen large plates that float on the slowly churning mantle beneath.
-        Heat from the planet's core drives convection that moves them — at roughly the same speed your fingernails grow.
-        Over millions of years, those small movements add up to continents crossing oceans.
+        The causes vary enormously: glaciation, volcanic eruptions, asteroid impact, even trees. Some struck
+        in years, others unfolded over millions. What they share is change that outpaced evolution — shifts in
+        climate, chemistry, or habitat faster than most species could adapt to. The survivors are rarely the
+        most complex or specialized — they're the most adaptable to sudden change.
       </p>
       <p class="text-sm text-gray-700 leading-relaxed">
-        When plates collide, they crumple into mountain ranges. When they pull apart, new ocean floor wells up between them.
-        Every major mountain range, ocean, and continent is the result of this process running for 4.5 billion years.
+        Each extinction also created an opportunity. When dominant groups disappear, surviving lineages
+        diversify explosively to fill gaps. The pattern repeats across all five extinction events.
       </p>
     </div>
 
-    <div class="bg-white rounded-2xl p-5 mb-5 shadow-sm border border-emerald-100">
-      <p class="text-xs font-bold text-emerald-700 uppercase tracking-wider mb-3">Six moments. Six transformations.</p>
+    <div class="bg-white rounded-2xl p-5 mb-5 shadow-sm border border-red-100">
+      <p class="text-xs font-bold text-red-700 uppercase tracking-wider mb-3">Five extinctions. Five turning points.</p>
       <div class="flex flex-col gap-3">
         <div class="flex items-center gap-3">
-          <span class="text-2xl flex-shrink-0 select-none">🌍</span>
-          <div><p class="text-sm font-bold text-gray-800 leading-none">Pangaea</p><p class="text-xs text-gray-500 mt-0.5">All of Earth's land fused into one supercontinent</p></div>
+          <span class="text-2xl flex-shrink-0 select-none">🧊</span>
+          <div><p class="text-sm font-bold text-gray-800 leading-none">Ordovician-Silurian</p><p class="text-xs text-gray-500 mt-0.5">~443 Ma — a continent drifted over the South Pole</p></div>
         </div>
         <div class="flex items-center gap-3">
-          <span class="text-2xl flex-shrink-0 select-none">🗺️</span>
-          <div><p class="text-sm font-bold text-gray-800 leading-none">Gondwana</p><p class="text-xs text-gray-500 mt-0.5">Pangaea splits; the southern continents begin their long drift</p></div>
+          <span class="text-2xl flex-shrink-0 select-none">🌳</span>
+          <div><p class="text-sm font-bold text-gray-800 leading-none">Late Devonian</p><p class="text-xs text-gray-500 mt-0.5">~374–359 Ma — the extinction that trees caused</p></div>
+        </div>
+        <div class="flex items-center gap-3">
+          <span class="text-2xl flex-shrink-0 select-none">🌋</span>
+          <div><p class="text-sm font-bold text-gray-800 leading-none">Permian-Triassic</p><p class="text-xs text-gray-500 mt-0.5">~252 Ma — The Great Dying; 96% of species lost</p></div>
         </div>
         <div class="flex items-center gap-3">
           <span class="text-2xl flex-shrink-0 select-none">🦕</span>
-          <div><p class="text-sm font-bold text-gray-800 leading-none">Morrison Formation</p><p class="text-xs text-gray-500 mt-0.5">A Jurassic floodplain — the richest dinosaur fossil site on Earth</p></div>
-        </div>
-        <div class="flex items-center gap-3">
-          <span class="text-2xl flex-shrink-0 select-none">🌊</span>
-          <div><p class="text-sm font-bold text-gray-800 leading-none">Western Interior Seaway</p><p class="text-xs text-gray-500 mt-0.5">An inland sea split North America in two during the Cretaceous</p></div>
+          <div><p class="text-sm font-bold text-gray-800 leading-none">Triassic-Jurassic</p><p class="text-xs text-gray-500 mt-0.5">~201 Ma — volcanism opened the door for dinosaurs</p></div>
         </div>
         <div class="flex items-center gap-3">
           <span class="text-2xl flex-shrink-0 select-none">☄️</span>
-          <div><p class="text-sm font-bold text-gray-800 leading-none">Chicxulub Impact</p><p class="text-xs text-gray-500 mt-0.5">The asteroid that ended the age of non-bird dinosaurs</p></div>
-        </div>
-        <div class="flex items-center gap-3">
-          <span class="text-2xl flex-shrink-0 select-none">🌎</span>
-          <div><p class="text-sm font-bold text-gray-800 leading-none">Isthmus of Panama</p><p class="text-xs text-gray-500 mt-0.5">A land bridge connected the Americas and triggered the Ice Ages</p></div>
+          <div><p class="text-sm font-bold text-gray-800 leading-none">Cretaceous-Paleogene</p><p class="text-xs text-gray-500 mt-0.5">~66 Ma — asteroid ended the dinosaurs; mammals inherited the Earth</p></div>
         </div>
       </div>
     </div>
 
-    <div class="bg-emerald-50 border border-emerald-200 rounded-2xl px-4 py-3.5 mb-5">
-      <p class="text-xs font-bold text-emerald-700 uppercase tracking-wider mb-1">How it works</p>
-      <p class="text-sm text-emerald-900 leading-relaxed">
-        Three slides of info per moment, then a quiz question. You can go back at any point to re-read.
+    <div class="bg-red-50 border border-red-200 rounded-2xl px-4 py-3.5 mb-5">
+      <p class="text-xs font-bold text-red-700 uppercase tracking-wider mb-1">How it works</p>
+      <p class="text-sm text-red-900 leading-relaxed">
+        Three slides of info per extinction, then a quiz question. You can go back at any point to re-read.
       </p>
     </div>
 
     <button onclick="startGame()"
-            class="w-full bg-emerald-500 hover:bg-emerald-600 active:scale-[.98] text-white font-bold py-4 rounded-2xl text-base transition-all shadow-md shadow-emerald-100">
+            class="w-full bg-red-600 hover:bg-red-700 active:scale-[.98] text-white font-bold py-4 rounded-2xl text-base transition-all shadow-md shadow-red-100">
       Let's Go
     </button>
   </div><!-- /intro-screen -->
@@ -117,8 +115,8 @@
     <!-- ── Teach phase ─────────────────────────────────────────────────────── -->
     <div id="teach-phase">
 
-      <!-- Hero card (constant per round) -->
-      <div class="rounded-3xl p-6 mb-4 bg-gradient-to-br from-emerald-500 to-teal-600 shadow-lg shadow-teal-100">
+      <!-- Hero card -->
+      <div class="rounded-3xl p-6 mb-4 bg-gradient-to-br from-red-600 to-rose-700 shadow-lg shadow-rose-100">
         <div class="flex items-start justify-between mb-4">
           <div class="flex-1 min-w-0 pr-3">
             <span id="teach-group" class="text-xs font-bold uppercase tracking-wider text-white/70 mb-1 block"></span>
@@ -128,15 +126,15 @@
           <div id="teach-emoji" class="text-5xl select-none flex-shrink-0"></div>
         </div>
         <div class="bg-white/20 rounded-2xl px-4 py-3">
-          <p class="text-xs font-bold uppercase tracking-wider text-white/70 mb-1">Key shift</p>
+          <p class="text-xs font-bold uppercase tracking-wider text-white/70 mb-1">What happened</p>
           <p id="teach-innovation" class="text-xl font-black text-white leading-snug"></p>
         </div>
       </div>
 
       <!-- Slide content card -->
-      <div id="slide-card" class="bg-white rounded-2xl p-5 mb-3 shadow-sm border border-emerald-100 fadein">
+      <div id="slide-card" class="bg-white rounded-2xl p-5 mb-3 shadow-sm border border-red-100 fadein">
         <div class="flex items-center justify-between mb-3">
-          <span id="slide-label" class="text-xs font-bold text-emerald-700 uppercase tracking-wider"></span>
+          <span id="slide-label" class="text-xs font-bold text-red-700 uppercase tracking-wider"></span>
           <div id="slide-dots" class="flex gap-1.5"></div>
         </div>
         <h3 id="slide-title" class="font-black text-gray-900 text-base leading-tight mb-2"></h3>
@@ -146,14 +144,14 @@
         </div>
       </div>
 
-      <!-- Bonus fact (only on slides that have one) -->
-      <div id="slide-funfact-box" class="hidden bg-emerald-50 border border-emerald-200 rounded-2xl px-4 py-3.5 mb-5">
-        <p class="text-xs font-bold text-emerald-700 uppercase tracking-wider mb-1">Bonus fact</p>
-        <p id="slide-funfact-text" class="text-sm text-emerald-900 leading-relaxed"></p>
+      <!-- Bonus fact -->
+      <div id="slide-funfact-box" class="hidden bg-red-50 border border-red-200 rounded-2xl px-4 py-3.5 mb-5">
+        <p class="text-xs font-bold text-red-700 uppercase tracking-wider mb-1">Bonus fact</p>
+        <p id="slide-funfact-text" class="text-sm text-red-900 leading-relaxed"></p>
       </div>
 
       <button id="advance-btn" onclick="advanceTeach()"
-              class="w-full bg-emerald-500 hover:bg-emerald-600 active:scale-[.98] text-white font-bold py-4 rounded-2xl text-base transition-all shadow-md shadow-emerald-100">
+              class="w-full bg-red-600 hover:bg-red-700 active:scale-[.98] text-white font-bold py-4 rounded-2xl text-base transition-all shadow-md shadow-red-100">
         Continue →
       </button>
 
@@ -162,11 +160,11 @@
     <!-- ── Quiz phase ──────────────────────────────────────────────────────── -->
     <div id="quiz-phase" class="hidden">
 
-      <div class="flex items-center gap-3 mb-5 bg-white rounded-2xl px-4 py-3 shadow-sm border border-emerald-100">
+      <div class="flex items-center gap-3 mb-5 bg-white rounded-2xl px-4 py-3 shadow-sm border border-red-100">
         <div id="quiz-emoji" class="text-2xl select-none flex-shrink-0"></div>
         <div class="min-w-0">
           <p id="quiz-name" class="font-bold text-sm text-gray-800 truncate"></p>
-          <p id="quiz-innovation" class="text-xs text-emerald-600 font-semibold truncate"></p>
+          <p id="quiz-innovation" class="text-xs text-red-600 font-semibold truncate"></p>
         </div>
       </div>
 
@@ -192,38 +190,36 @@
     <div class="mb-6 pt-4">
       <div id="end-emoji" class="text-6xl mb-3 select-none"></div>
       <h2 id="end-title" class="text-2xl font-black text-gray-900 mb-1"></h2>
-      <p id="end-score" class="text-5xl font-black text-emerald-500 mb-2"></p>
+      <p id="end-score" class="text-5xl font-black text-red-500 mb-2"></p>
       <p id="end-msg" class="text-gray-500 text-sm"></p>
     </div>
 
-    <div class="bg-white rounded-2xl p-4 mb-5 shadow-sm border border-emerald-100">
+    <div class="bg-white rounded-2xl p-4 mb-5 shadow-sm border border-red-100">
       <p class="text-xs font-bold text-gray-400 uppercase tracking-wider mb-2">Your answers</p>
       <p id="end-trail" class="text-2xl tracking-widest"></p>
     </div>
 
     <div id="end-summary" class="text-left mb-5 flex flex-col gap-2"></div>
 
-    <div class="bg-white rounded-2xl p-5 mb-5 shadow-sm border border-emerald-100 text-left">
-      <p class="text-xs font-bold text-emerald-700 uppercase tracking-wider mb-3">The bigger picture</p>
+    <div class="bg-white rounded-2xl p-5 mb-5 shadow-sm border border-red-100 text-left">
+      <p class="text-xs font-bold text-red-700 uppercase tracking-wider mb-3">The bigger picture</p>
       <p class="text-sm text-gray-700 leading-relaxed mb-3">
-        You just covered 335 million years — but the full story goes back 4.5 billion. Before Pangaea,
-        there were earlier supercontinents: Rodinia (~700 Ma), Columbia (~1.8 Ga), and others.
-        The cycle of assembly and breakup has happened at least three times that we know of.
+        You are here because your ancestors survived all five of these events. Every bottleneck — every time
+        life nearly ended — was passed through by the lineage that led to you.
       </p>
       <p class="text-sm text-gray-700 leading-relaxed mb-3">
-        Right now, the Atlantic is still widening at about 2.5 cm per year. Africa is slowly colliding
-        with Europe, which will eventually close the Mediterranean. Australia is drifting north toward
-        Asia at about 7 cm per year.
+        Some scientists argue we're living through a sixth mass extinction right now, driven by habitat loss,
+        climate change, and human activity. Current extinction rates are estimated at 100–1,000 times the
+        background rate — the pace at which species normally disappear between mass extinctions.
       </p>
       <p class="text-sm text-gray-700 leading-relaxed">
-        In about 250 million years, the continents are predicted to reunite into a new supercontinent —
-        sometimes called Pangaea Proxima. The cycle never stops.
+        Unlike the previous five, this one has a cause that can understand what it's doing.
       </p>
     </div>
 
     <div class="flex flex-col gap-3">
       <button onclick="shareResult()"
-              class="w-full bg-emerald-500 hover:bg-emerald-600 active:scale-[.98] text-white font-bold py-4 rounded-2xl text-base transition-all shadow-md shadow-emerald-100 flex items-center justify-center gap-2">
+              class="w-full bg-red-600 hover:bg-red-700 active:scale-[.98] text-white font-bold py-4 rounded-2xl text-base transition-all shadow-md shadow-red-100 flex items-center justify-center gap-2">
         <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
           <path d="M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8"/>
           <polyline points="16 6 12 2 8 6"/>
@@ -253,13 +249,15 @@
       <span class="text-xs font-semibold">Play</span>
     </a>
     <a href="{% url 'explore' %}" class="flex-1 flex flex-col items-center gap-0.5 py-3 text-gray-400">
-      <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24"
+           stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/>
       </svg>
       <span class="text-xs font-medium">Explore</span>
     </a>
     <a href="{% url 'credits' %}" class="flex-1 flex flex-col items-center gap-0.5 py-3 text-gray-400">
-      <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24"
+           stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
         <circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/>
       </svg>
       <span class="text-xs font-medium">Credits</span>
@@ -269,14 +267,10 @@
 
 <script>
 const ROUNDS = {{ rounds_json|safe }};
-const STORAGE = 'tiatrex-pangaea-to-now';
+const STORAGE = 'tiatrex-extinction-events';
 const PLAY_URL = '{% url "play" %}';
 
 // ── State ─────────────────────────────────────────────────────────────────────
-// selectedOptions: { roundIndex: chosenOptionIndex } — persists per round so
-// going back to a previous quiz shows the correct answered/wrong state.
-// answers: { roundIndex: boolean } — whether each round was answered correctly.
-
 function shuffledIndices(n) {
   const arr = Array.from({length: n}, (_, i) => i);
   for (let i = n - 1; i > 0; i--) {
@@ -301,7 +295,6 @@ function loadState() {
   try {
     const s = JSON.parse(localStorage.getItem(STORAGE));
     if (!s || typeof s.currentRound !== 'number') return null;
-    // Migrate old array-based answers format
     if (Array.isArray(s.answers)) {
       const ans = {};
       s.answers.forEach((v, i) => { ans[i] = v; });
@@ -373,7 +366,7 @@ function updateProgress() {
 
 function updateRoundIndicator() {
   const el = document.getElementById('round-indicator');
-  if (state.phase === 'intro')    el.textContent = `${ROUNDS.length} moments`;
+  if (state.phase === 'intro')    el.textContent = `${ROUNDS.length} extinctions`;
   else if (state.phase === 'end') el.textContent = 'Complete!';
   else                            el.textContent = ROUNDS[state.currentRound].name;
 }
@@ -390,7 +383,7 @@ function renderTeach(round) {
   document.getElementById('slide-label').textContent = slide.label;
   const dots = document.getElementById('slide-dots');
   dots.innerHTML = round.slides.map((_, i) =>
-    `<div class="w-2 h-2 rounded-full ${i === state.currentSlide ? 'bg-emerald-500' : 'bg-emerald-200'}"></div>`
+    `<div class="w-2 h-2 rounded-full ${i === state.currentSlide ? 'bg-red-500' : 'bg-red-200'}"></div>`
   ).join('');
 
   document.getElementById('slide-title').textContent = slide.title;
@@ -438,7 +431,7 @@ function renderQuiz(round) {
     const opt = round.options[origIdx];
     const btn = document.createElement('button');
     if (!answered) {
-      btn.className = 'w-full text-left px-4 py-3.5 rounded-2xl border-2 bg-white border-gray-200 text-gray-800 text-sm font-medium hover:border-emerald-400 hover:bg-emerald-50 active:scale-[.98] transition-all';
+      btn.className = 'w-full text-left px-4 py-3.5 rounded-2xl border-2 bg-white border-gray-200 text-gray-800 text-sm font-medium hover:border-red-400 hover:bg-red-50 active:scale-[.98] transition-all';
       btn.textContent = opt.text;
       btn.onclick = () => answerQuiz(origIdx);
     } else {
@@ -486,26 +479,27 @@ function renderEndScreen() {
   const total = ROUNDS.length;
   let emoji, title;
   if (score === total)         { emoji = '🏆'; title = 'Perfect score!'; }
-  else if (score >= total - 1) { emoji = '🌍'; title = 'Great job!'; }
-  else if (score >= 3)         { emoji = '🗺️'; title = 'Not bad!'; }
+  else if (score >= total - 1) { emoji = '🌋'; title = 'Great job!'; }
+  else if (score >= 3)         { emoji = '🧊'; title = 'Not bad!'; }
   else                         { emoji = '☄️'; title = 'You learned something!'; }
 
   document.getElementById('end-emoji').textContent = emoji;
   document.getElementById('end-title').textContent = title;
   document.getElementById('end-score').textContent = `${score} / ${total}`;
   document.getElementById('end-msg').textContent   = score === total
-    ? 'You know your deep geography!'
-    : 'The ground under your feet has quite a history.';
+    ? 'You know your extinctions — and survived all five!'
+    : 'Your ancestors made it through all five. Now you know why that was hard.';
   document.getElementById('end-trail').textContent =
     ROUNDS.map((_, i) => state.answers[i] ? '✅' : '❌').join('');
   document.getElementById('end-summary').innerHTML = ROUNDS.map((r, i) => {
     const correct = state.answers[i];
     return `<div class="bg-white rounded-2xl px-4 py-3 border ${correct ? 'border-green-100' : 'border-red-100'} flex items-start gap-3">
-      <span class="text-base flex-shrink-0 mt-0.5">${correct ? '✅' : '❌'}</span>
+      <span class="text-xl flex-shrink-0 mt-0.5">${esc(r.emoji)}</span>
       <div class="min-w-0">
         <p class="text-xs font-bold text-gray-400">${esc(r.name)} &middot; ${esc(r.period)}</p>
         <p class="text-sm font-semibold text-gray-800">${esc(r.innovation)}</p>
       </div>
+      <span class="text-base flex-shrink-0 ml-auto">${correct ? '✅' : '❌'}</span>
     </div>`;
   }).join('');
 }
@@ -583,7 +577,6 @@ function goBack() {
   }
 
   if (state.phase === 'end') {
-    // Back to the last round's quiz (shows answered state)
     state.phase = 'quiz';
     state.currentRound = ROUNDS.length - 1;
     save();
@@ -592,7 +585,6 @@ function goBack() {
   }
 
   if (state.phase === 'quiz') {
-    // Back to the last slide of this round's teach phase
     state.phase = 'teach';
     state.currentSlide = ROUNDS[state.currentRound].slides.length - 1;
     save();
@@ -611,7 +603,6 @@ function goBack() {
   }
 
   if (state.currentRound > 0) {
-    // Back to previous round's quiz (shows answered state)
     state.currentRound--;
     state.phase = 'quiz';
     save();
@@ -619,7 +610,6 @@ function goBack() {
     return;
   }
 
-  // First slide of first round — back to intro
   state.phase = 'intro';
   save();
   renderAll();
@@ -628,7 +618,7 @@ function goBack() {
 function shareResult() {
   const score = Object.values(state.answers).filter(Boolean).length;
   const trail = ROUNDS.map((_, i) => state.answers[i] ? '✅' : '❌').join('');
-  const text  = `Tia T-Rex — Pangaea to Now\n${trail} ${score}/${ROUNDS.length}\nWanna find out more? https://www.happylifeunfolding.com/tiatrex/play/pangaea-to-now/`;
+  const text  = `Tia T-Rex — Extinction Events\n${trail} ${score}/${ROUNDS.length}\nWanna find out more? https://www.happylifeunfolding.com/tiatrex/play/extinction-events/`;
   navigator.clipboard.writeText(text)
     .then(() => {
       const lbl = document.getElementById('share-label');
