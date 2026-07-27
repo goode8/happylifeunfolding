@@ -62,6 +62,17 @@ NAME_CORRECTIONS = {
     'Tiktaalik roseae': 'Tiktaalik',
     # Ichthyosaurus communis, Plesiosaurus dolichodeirus, Australopithecus africanus:
     # no correction needed — original names resolve via approx-match fallback below.
+    'Corvus (brachyrhynchos)': 'Corvus brachyrhynchos',
+    'Neogale vison': 'Neovison vison',
+    'Ovis (canadensis)': 'Ovis canadensis',
+    'Lumbricus (terrestris)': 'Lumbricus terrestris',
+    'Neosciurus carolinensis': 'Sciurus carolinensis',
+    'Anolis (carolinensis)': 'Anolis carolinensis',
+    'Spheniscus (humboldti)': 'Spheniscus humboldti',
+    'Acrocodia (indica)': 'Tapirus indicus',
+    'Nyala angasii': 'Tragelaphus angasii',
+    'Anarhynchus nivosus': 'Charadrius nivosus',
+    'Ambystoma (tigrinum)': 'Ambystoma tigrinum',
 }
 
 

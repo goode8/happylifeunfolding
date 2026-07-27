@@ -17,8 +17,8 @@
     <div class="detail-description">{{ app.description|linebreaksbr }}</div>
 
     <div class="detail-store-links">
-      {% if app.product_url %}
-      <a href="{{ app.product_url }}" class="btn-store" target="_blank" rel="noopener">{{ app.product_url_label }}</a>
+      {% if product_url %}
+      <a href="{{ product_url }}" class="btn-store" target="_blank" rel="noopener">{{ app.product_url_label }}</a>
       {% endif %}
       {% if app.app_store_url %}
       <a href="{{ app.app_store_url }}" class="btn-store" target="_blank" rel="noopener">Download on the App Store</a>

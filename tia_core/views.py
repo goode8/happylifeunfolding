@@ -433,6 +433,12 @@ def credits(request):
         .values('uuid', 'common_name', 'taxon_name', 'license_type', 'license_url',
                 'contributor_name', 'contributor_url', 'group_name')
     )
+    wiki_urls = dict(
+        Animal.objects.exclude(wikipedia_url='').values_list('common_name', 'wikipedia_url')
+    )
+    for a in animals:
+        a['wikipedia_url'] = wiki_urls.get(a['common_name'], '')
+
     animals_by_letter = [
         (letter, list(grp))
         for letter, grp in groupby(animals, key=lambda a: a['common_name'][0].upper())

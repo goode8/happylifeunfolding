@@ -1,7 +1,13 @@
 import json
+from urllib.parse import urlsplit, urlunsplit
+from django.conf import settings
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse
 from .models import App, ContactMessage
+
+# Production hosts whose links should be swapped for the current host when DEBUG is on,
+# so "Play"/product links on a local dev server stay on the dev server instead of prod.
+OWN_HOSTS = {"happylifeunfolding.com", "www.happylifeunfolding.com"}
 
 # ── Tia T-Rex smart app linking ─────────────────────────────────────
 
@@ -86,8 +92,17 @@ def app_detail(request, slug):
         return redirect(app.app_store_url)
     if device == "android" and app.play_store_url:
         return redirect(app.play_store_url)
+
+    product_url = app.product_url
+    if settings.DEBUG and product_url:
+        parts = urlsplit(product_url)
+        if parts.netloc in OWN_HOSTS:
+            local = urlsplit(request.build_absolute_uri('/'))
+            product_url = urlunsplit((local.scheme, local.netloc, parts.path, parts.query, parts.fragment))
+
     return render(request, 'core/app_detail.html', {
         'app': app,
+        'product_url': product_url,
         'support_url': app.get_support_url(),
         'privacy_url': app.get_privacy_url(),
     })
