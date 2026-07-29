@@ -91,7 +91,7 @@ wheels/
 import_data/
 old-versions/
 tiatrex_data.json
-images/
+/images/
         
 
 # PythonAnywhere specific
