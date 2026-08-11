@@ -101,3 +101,10 @@ tiatrex_data.json
 animals/management/commands/
 taxonomy/management/commands/
 tia_taxonomy/management/commands/fetch_phylo_facts.py
+tia_game/management/
+
+# Timestamped backups
+*.bak-*
+
+# Developer notes (local only)
+DOCS.md

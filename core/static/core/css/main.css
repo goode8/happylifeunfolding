@@ -42,13 +42,17 @@
 
 /* ─── RESET ──────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; }
+html { scroll-behavior: smooth; overflow-x: hidden; }
 body {
   background: var(--bg);
   color: var(--text);
   font-family: var(--font-body);
   font-size: 15px;
   line-height: 1.6;
+  /* Mobile-first: never let anything push the page wider than the screen.
+     (overflow-x guard lives on <html> so the sticky nav keeps working.) */
+  width: 100%;
+  max-width: 100%;
   transition: background var(--transition), color var(--transition);
 }
 a { color: inherit; text-decoration: none; }
@@ -96,6 +100,7 @@ img { max-width: 100%; display: block; }
   display: flex;
   gap: 28px;
   list-style: none;
+  min-width: 0;
 }
 .nav-links a {
   color: var(--muted);
@@ -105,8 +110,46 @@ img { max-width: 100%; display: block; }
   text-transform: uppercase;
   transition: color var(--transition);
 }
-.nav-links a:hover,
+.nav-links a:hover { color: var(--accent); }
 .nav-links a.active { color: var(--text); }
+
+.nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+/* Hamburger — hidden on desktop, revealed on mobile in the responsive block. */
+.nav-toggle {
+  display: none;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+}
+.nav-toggle-bars,
+.nav-toggle-bars::before,
+.nav-toggle-bars::after {
+  content: "";
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: currentColor;
+  border-radius: 2px;
+  transition: transform var(--transition), opacity var(--transition);
+}
+.nav-toggle-bars { position: relative; }
+.nav-toggle-bars::before { position: absolute; top: -7px; left: 0; }
+.nav-toggle-bars::after  { position: absolute; top:  7px; left: 0; }
+/* Open state morphs the three bars into an X. */
+.nav-links.open ~ .nav-actions .nav-toggle-bars { background: transparent; }
+.nav-links.open ~ .nav-actions .nav-toggle-bars::before { top: 0; transform: rotate(45deg); }
+.nav-links.open ~ .nav-actions .nav-toggle-bars::after  { top: 0; transform: rotate(-45deg); }
 
 .theme-switch {
   position: relative;
@@ -725,9 +768,43 @@ img { max-width: 100%; display: block; }
 
 /* ─── RESPONSIVE ─────────────────────────────────────── */
 @media (max-width: 768px) {
-  .site-nav { padding: 0 20px; }
-  .nav-inner { padding: 14px 0; }
-  .nav-links { gap: 16px; }
+  .site-nav { padding: 0 16px; }
+  .nav-inner { padding: 14px 0; gap: 12px; }
+
+  /* Bar keeps only logo + actions; links collapse into a dropdown. */
+  .nav-toggle { display: inline-flex; }
+  .nav-links {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    gap: 0;
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+    padding: 4px 16px 12px;
+    display: none;            /* collapsed until the hamburger opens it */
+  }
+  .nav-links.open { display: flex; }
+  .nav-links li { width: 100%; }
+  .nav-links a {
+    display: block;
+    padding: 13px 4px;
+    font-size: 13px;
+    letter-spacing: .06em;
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-links li:last-child a { border-bottom: none; }
+  /* Highlight the current page clearly against the other links. */
+  .nav-links a.active {
+    color: var(--accent);
+    font-weight: 600;
+    background: rgba(29, 158, 117, 0.12);
+    box-shadow: inset 3px 0 0 var(--accent);
+    padding-left: 12px;
+    border-radius: var(--radius-sm);
+  }
+
   .hero { padding: 48px 20px 40px; }
   .section { padding: 32px 20px 48px; }
   .stats-row { grid-template-columns: 1fr; gap: 10px; }

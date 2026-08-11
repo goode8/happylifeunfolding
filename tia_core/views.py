@@ -122,7 +122,7 @@ BEFORE_MAMMALS_ROUNDS = [
         "emoji": "🐺",
         "innovation": "Secondary palate",
         "teach_text": "Cynognathus was wolf-sized and had a fully formed secondary palate — a bony shelf across the roof of its mouth separating the nasal passage from the oral cavity. You have this too: feel the hard front part of the roof of your mouth. Without it, every chew interrupts breathing. With it, an animal can eat for long stretches, which is essential when you're warm-blooded and need constant fuel.",
-        "fun_fact": "Cynognathus also had a lower jaw that was nearly one single bone — compared to the many small bones in fish and reptile jaws. It was zeroing in on the modern mammalian jaw design.",
+        "fun_fact": "Cynognathus also had a lower jaw that was nearly one single bone — compared to the many small bones in fish and reptile jaws. It was zeroing in on the modern mammalian jaw design. Its group's name, Cynodontia, means 'dog-toothed' — a nod to the complex, differentiated teeth that set these animals apart from the simple, uniform teeth of their earlier reptile-like ancestors.",
         "size": "About 1.2 meters long — the build of a large dog or small wolf",
         "locomotion": "Four legs with a more erect, dog-like stance — one of the first animals to walk this way",
         "diet": "Carnivore — an active pursuit predator that hunted large animals",
