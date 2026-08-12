@@ -42,7 +42,10 @@
 
 /* ─── RESET ──────────────────────────────────────────── */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-html { scroll-behavior: smooth; overflow-x: hidden; }
+/* overflow-x: clip (not hidden) guards against horizontal overflow WITHOUT
+   turning <html> into a scroll container — hidden/auto here makes Firefox
+   mis-repaint the sticky nav during scroll, bleeding page text through it. */
+html { scroll-behavior: smooth; overflow-x: clip; }
 body {
   background: var(--bg);
   color: var(--text);
