@@ -144,6 +144,18 @@ USE_TZ = True
 STATIC_URL = "/static/"
 STATIC_ROOT = os.environ.get('STATIC_ROOT', BASE_DIR / 'staticfiles')
 
+# Cache-busting: hash each file's contents into its name (main.<hash>.css) so a
+# changed file gets a new URL and browsers can never serve a stale cached copy.
+# Only active with collectstatic (prod, DEBUG=False); the dev server ignores it.
+STORAGES = {
+    "default": {
+        "BACKEND": "django.core.files.storage.FileSystemStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "django.contrib.staticfiles.storage.ManifestStaticFilesStorage",
+    },
+}
+
 MEDIA_URL = '/media/'
 MEDIA_ROOT = BASE_DIR / 'media'
 
