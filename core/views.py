@@ -87,12 +87,8 @@ def app_list(request):
 
 def app_detail(request, slug):
     app = get_object_or_404(App, slug=slug, is_published=True)
-    device = _detect_device(request)
-    if device == "ios" and app.app_store_url:
-        return redirect(app.app_store_url)
-    if device == "android" and app.play_store_url:
-        return redirect(app.play_store_url)
-
+    # Always show the app page (with both "web" and store links) rather than
+    # redirecting mobile visitors straight to the App/Play store.
     product_url = app.product_url
     if settings.DEBUG and product_url:
         parts = urlsplit(product_url)
