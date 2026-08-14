@@ -7,6 +7,7 @@
   <title>Tia T-Rex — Credits</title>
   <link rel="icon" href="{% static 'tia_core/images/favicon.ico' %}">
   <script src="https://cdn.tailwindcss.com"></script>
+  <script>const SUGGEST_URL = "{% url 'suggest_animal' %}";</script>
   <style>
     /* Opt out of mobile browsers' automatic "font inflation" / text autosizing (a legacy
        feature for viewing non-mobile-optimized pages that can zoom the whole page rather than
@@ -213,6 +214,9 @@
       </div>
     </div>
     <p id="showing-count" class="text-sm text-gray-400 -mt-2 mb-4"></p>
+    <p id="ask-link" class="hidden text-sm -mt-2 mb-4">
+      <a href="#" class="text-blue-600 hover:underline">Don't see it? Ask us to add it →</a>
+    </p>
 
     <!-- ── Animals ───────────────────────────────────────────────────────── -->
     <h3 id="section-animals" class="text-base font-semibold text-gray-700 mb-3">
@@ -401,6 +405,8 @@
   const pdEl    = document.getElementById('pd-count');
   const attrEl  = document.getElementById('attr-count');
   const showEl  = document.getElementById('showing-count');
+  const askEl   = document.getElementById('ask-link');
+  const askLink = askEl.querySelector('a');
   const sidebar = document.getElementById('az-sidebar');
   const total   = cards.length;
 
@@ -440,6 +446,13 @@
     showEl.textContent = q ? `Showing ${visible} of ${total} images` : '';
     sidebar.style.display = q ? 'none' : '';
     updateLetterHeaders();
+
+    if (q && visible === 0) {
+      askLink.href = `${SUGGEST_URL}?message=${encodeURIComponent(search.value.trim())}`;
+      askEl.classList.remove('hidden');
+    } else {
+      askEl.classList.add('hidden');
+    }
   });
 
   // ── Jump to section+letter ───────────────────────────────────────────────

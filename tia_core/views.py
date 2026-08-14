@@ -10,7 +10,7 @@ from django.http import FileResponse, Http404
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 
-from tia_animals.models import Animal, Fact as AnimalFact
+from tia_animals.models import Animal, Fact as AnimalFact, AnimalSuggestion
 from tia_phylo.models import PhyloAnimal, PhyloAnimalLineage, PhyloLineageNode
 from tia_taxonomy.models import PhyloDivergence
 
@@ -380,36 +380,37 @@ def explore(request):
     )
     animals_json = json.dumps(list(all_animals))
 
-    if request.method != 'POST':
-        return render(request, 'tia_core/explore.html', {
-            'animals_json': animals_json,
-            'mode': 'picker',
-            'active_tab': 'explore',
-        })
+    context = {
+        'animals_json': animals_json,
+        'active_tab': 'explore',
+    }
 
+    if request.method != 'POST':
+        context.update({'mode': 'picker', 'subtab': 'compare'})
+        return render(request, 'tia_core/explore.html', context)
+
+    if 'animal_id' in request.POST:
+        return _explore_facts(request, context)
+
+    return _explore_compare(request, context)
+
+
+def _explore_compare(request, context):
+    context['subtab'] = 'compare'
     try:
         a_id = int(request.POST['animal_a'])
         b_id = int(request.POST['animal_b'])
     except (KeyError, ValueError):
-        return render(request, 'tia_core/explore.html', {
-            'animals_json': animals_json,
-            'mode': 'picker',
-            'error': 'Please select two animals.',
-            'active_tab': 'explore',
-        })
+        context.update({'mode': 'picker', 'error': 'Please select two animals.'})
+        return render(request, 'tia_core/explore.html', context)
 
     if a_id == b_id:
-        return render(request, 'tia_core/explore.html', {
-            'animals_json': animals_json,
-            'mode': 'picker',
-            'error': 'Please pick two different animals.',
-            'active_tab': 'explore',
-        })
+        context.update({'mode': 'picker', 'error': 'Please pick two different animals.'})
+        return render(request, 'tia_core/explore.html', context)
 
     animal_a, animal_b, path_a, path_b, lca_node, divergence = _compute_lca(a_id, b_id)
 
-    return render(request, 'tia_core/explore.html', {
-        'animals_json': animals_json,
+    context.update({
         'animal_a': animal_a,
         'animal_b': animal_b,
         'path_a': path_a,
@@ -419,8 +420,45 @@ def explore(request):
         'mode': 'result',
         'selected_a': a_id,
         'selected_b': b_id,
-        'active_tab': 'explore',
     })
+    return render(request, 'tia_core/explore.html', context)
+
+
+def _explore_facts(request, context):
+    context['subtab'] = 'facts'
+    try:
+        animal_id = int(request.POST['animal_id'])
+    except (KeyError, ValueError):
+        context.update({'mode': 'picker', 'error': 'Please select an animal.'})
+        return render(request, 'tia_core/explore.html', context)
+
+    try:
+        phylo_animal = PhyloAnimal.objects.get(id=animal_id)
+    except PhyloAnimal.DoesNotExist:
+        context.update({'mode': 'picker', 'error': 'Please select an animal.'})
+        return render(request, 'tia_core/explore.html', context)
+
+    animal = Animal.objects.filter(common_name=phylo_animal.common_name).first()
+    facts = []
+    description = ''
+    wikipedia_url = ''
+    if animal:
+        description = animal.description
+        wikipedia_url = animal.wikipedia_url
+        facts = [
+            f.render()
+            for f in AnimalFact.objects.filter(animal=animal, is_approved=True).order_by('?')
+        ]
+
+    context.update({
+        'phylo_animal': phylo_animal,
+        'description': description,
+        'wikipedia_url': wikipedia_url,
+        'facts': facts,
+        'mode': 'facts_result',
+        'selected_f': animal_id,
+    })
+    return render(request, 'tia_core/explore.html', context)
 
 
 # ── Credits ───────────────────────────────────────────────────────────────────
@@ -466,6 +504,28 @@ def credits(request):
         'public_domain_count': public_domain_count,
         'attribution_count': attribution_count,
         'active_tab': 'credits',
+    })
+
+
+# ── Suggest an animal ────────────────────────────────────────────────────────
+
+@login_required
+def suggest_animal(request):
+    submitted = False
+    if request.method == 'POST':
+        # Honeypot — real users never see or fill this field; bots that
+        # blindly fill every input will trip it. Fail silently either way.
+        if not request.POST.get('website', '').strip():
+            name = request.POST.get('name', '').strip()
+            message = request.POST.get('message', '').strip()
+            feedback = request.POST.get('feedback', '').strip()
+            if message:
+                AnimalSuggestion.objects.create(name=name, message=message, feedback=feedback)
+        submitted = True
+
+    return render(request, 'tia_core/suggest.html', {
+        'submitted': submitted,
+        'prefill_message': request.GET.get('message', ''),
     })
 
 

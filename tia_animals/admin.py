@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.utils.html import format_html
-from .models import Animal, Silhouette, Fact
+from .models import Animal, Silhouette, Fact, AnimalSuggestion
 
 
 class SilhouetteInline(admin.TabularInline):
@@ -113,3 +113,19 @@ class FactAdmin(admin.ModelAdmin):
             return '—'
         return f"{(obj.times_correct / obj.times_shown * 100):.0f}%"
     success_rate.short_description = 'Success'
+
+
+@admin.register(AnimalSuggestion)
+class AnimalSuggestionAdmin(admin.ModelAdmin):
+    list_display = ['name', 'short_message', 'has_feedback', 'created_at', 'is_read']
+    list_editable = ['is_read']
+    list_filter = ['is_read']
+    readonly_fields = ['name', 'message', 'feedback', 'created_at']
+
+    def short_message(self, obj):
+        return obj.message[:80] + ('…' if len(obj.message) > 80 else '')
+    short_message.short_description = 'Message'
+
+    def has_feedback(self, obj):
+        return bool(obj.feedback)
+    has_feedback.boolean = True

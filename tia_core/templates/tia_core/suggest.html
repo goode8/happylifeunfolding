@@ -1,0 +1,76 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Tia T-Rex — Suggest an Animal</title>
+  <link rel="icon" href="{% static 'tia_core/images/favicon.ico' %}">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    input { font-size: 1rem; }
+    /* Honeypot — kept in the layout (not display:none) and reachable by DOM/CSS
+       parsers so unsophisticated bots still find and fill it, but invisible and
+       unreachable for a real visitor tabbing or scrolling through the form. */
+    .hp-field {
+      position: absolute; left: -9999px; top: -9999px;
+      width: 1px; height: 1px; overflow: hidden;
+    }
+  </style>
+</head>
+<body class="bg-white font-sans text-gray-900 antialiased min-h-screen">
+<script>history.scrollRestoration = 'manual'; window.scrollTo(0, 0);</script>
+
+<div class="max-w-lg mx-auto px-4 pt-8 pb-16">
+
+  <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Explore</p>
+  <h1 class="text-3xl font-black leading-tight mb-6">Suggest an Animal</h1>
+
+  {% if submitted %}
+  <div class="bg-green-50 border border-green-100 rounded-2xl px-4 py-4 text-sm text-green-700 font-medium mb-6">
+    Thanks! We'll take a look.
+  </div>
+  <a href="{% url 'explore' %}" class="text-blue-600 text-sm font-semibold hover:underline">← Back to Explore</a>
+  {% else %}
+  <p class="text-sm text-gray-500 mb-6 leading-relaxed">
+    Tell us the animal you were looking for and we'll consider adding it.
+  </p>
+
+  <form method="post">
+    {% csrf_token %}
+
+    <div class="hp-field" aria-hidden="true">
+      <label for="website">Leave this field blank</label>
+      <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
+    </div>
+
+    <div class="mb-5">
+      <label class="block text-base font-bold mb-2">Your name <span class="text-gray-400 font-normal">(optional)</span></label>
+      <input type="text" name="name" autocomplete="off"
+             class="w-full border border-gray-200 rounded-2xl px-4 py-4 text-base focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent">
+    </div>
+
+    <div class="mb-5">
+      <label class="block text-base font-bold mb-2">What animal?</label>
+      <textarea name="message" rows="4" required
+                class="w-full border border-gray-200 rounded-2xl px-4 py-4 text-base focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent">{{ prefill_message }}</textarea>
+    </div>
+
+    <div class="mb-8">
+      <label class="block text-base font-bold mb-2">Anything else? <span class="text-gray-400 font-normal">(optional)</span></label>
+      <textarea name="feedback" rows="3" placeholder="Bugs, ideas, general feedback…"
+                class="w-full border border-gray-200 rounded-2xl px-4 py-4 text-base focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent"></textarea>
+    </div>
+
+    <button type="submit"
+            class="w-full py-4 rounded-3xl text-base font-bold bg-gray-900 text-white cursor-pointer hover:bg-gray-700 active:scale-[.98] transition-all">
+      Send
+    </button>
+  </form>
+  {% endif %}
+
+</div>
+
+</body>
+</html>

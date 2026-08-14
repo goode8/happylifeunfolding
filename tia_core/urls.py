@@ -13,6 +13,7 @@ urlpatterns = [
     path('play/extinction-events/', views.extinction_events, name='extinction_events'),
     path('explore/', views.explore, name='explore'),
     path('credits/', views.credits, name='credits'),
+    path('suggest/', views.suggest_animal, name='suggest_animal'),
     re_path(
         r'^phylo-img/(?P<uuid>[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})\.png$',
         views.phylo_image,

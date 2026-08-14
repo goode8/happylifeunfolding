@@ -155,3 +155,20 @@ class Fact(models.Model):
     def render(self, name_override=None):
         """Render the fact with the animal's name (or a custom replacement like 'this animal')."""
         return self.text_template.format(animal=name_override or self.animal.common_name)
+
+
+class AnimalSuggestion(models.Model):
+    """A player's request to add an animal that isn't in the game yet."""
+    name = models.CharField(max_length=100, blank=True)
+    message = models.TextField()
+    feedback = models.TextField(blank=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    is_read = models.BooleanField(default=False)
+
+    class Meta:
+        db_table = 'animals_suggestion'
+        ordering = ['-created_at']
+
+    def __str__(self):
+        return f"{self.name or 'Anonymous'} — {self.created_at.strftime('%b %d %Y')}"
