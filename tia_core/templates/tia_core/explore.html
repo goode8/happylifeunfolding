@@ -273,11 +273,7 @@
       {% endif %}
     </div>
 
-    {% if description %}
-    <div class="bg-gray-50 border border-gray-100 rounded-2xl px-4 py-4 mb-4 text-sm text-gray-700 leading-relaxed [&_p]:mb-2 [&_p:last-child]:mb-0">
-      {{ description|linebreaks }}
-    </div>
-    {% endif %}
+    {# Wiki description hidden for now — {{ description }} still passed in context #}
 
     {% if facts %}
     <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Fun Facts</p>
@@ -289,7 +285,7 @@
       </div>
       {% endfor %}
     </div>
-    {% elif not description %}
+    {% else %}
     <div class="text-center py-8 text-gray-500 text-sm">
       No facts available for this animal yet.
     </div>
